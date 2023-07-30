@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        python web常见漏洞02 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">python web常见漏洞02</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/python%E5%AE%89%E5%85%A8/" class="post-tag">#python安全</a>
+  
+
+
+          <span class="post-date">2023-06-23</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="toc-text">SQL注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RCE"><span class="toc-text">RCE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XSS"><span class="toc-text">XSS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#XXE"><span class="toc-text">XXE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF"><span class="toc-text">CSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSRF"><span class="toc-text">SSRF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSTI"><span class="toc-text">SSTI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="toc-text">文件操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">反序列化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E6%84%8FURL%E8%B7%B3%E8%BD%AC"><span class="toc-text">任意URL跳转</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>[TOC]</p>
+<p>总结一下python里面常见安全问题，文章大部分内容来自<code>MisakiKata</code>师傅的<a target="_blank" rel="noopener" href="https://github.com/MisakiKata/python_code_audit">python_code_audit</a>项目，对原文进行了一些修改，后续会使用编写了规则对代码里面是否用到这些危险函数进行相应检测</p>
+<h2 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h2><p>SQL注入漏洞的原因是用户输入直接拼接到了SQL查询语句里面，在<code>python Web</code>应用中一般都是用orm库来进行数据库相关操作，比如<code>Flask</code>和<code>Tornado</code>经常使用<code>Sqlalchemy</code>，而<code>Django</code>有自己自带的orm引擎。</p>
+<p>但是如果没有使用orm，而直接拼接sql语句的话就会存在SQL注入的风险</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sql = &quot;SELECT * FROM user WHERE id=%s;&quot; %id</span><br><span class="line">con.execute(sql)</span><br></pre></td></tr></table></figure>
+
+<p>在Django中的示例代码，此处就存在SQL注入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username = c.execute(&#x27;SELECT username FROM auth_user WHERE id = %s;&#x27; %str(id)).fetchall()</span><br></pre></td></tr></table></figure>
+
+<p>Flask中使用SQLAlchemy进行数据库操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user = User.query.filter(User.id == id)</span><br></pre></td></tr></table></figure>
+
+<p>对应的原始SQL语句如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT users.id AS users_id, users.name AS users_name, users.email AS users_email</span><br><span class="line">FROM users</span><br><span class="line">WHERE users.id = ?</span><br></pre></td></tr></table></figure>
+
+<p>一般来说这种情况下就不会出现SQL注入了，但在某些我们没有正确使用API操作的时候还是会存在SQL注入漏洞，例如phithon的<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/pwnhub-web-classroom-django-sql-injection.html">Pwnhub Web题Classroom题解与分析</a><br>其中最关键的部分<code>view.py</code>的代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class LoginView(JsonResponseMixin, generic.TemplateView):</span><br><span class="line">    template_name = &#x27;login.html&#x27;</span><br><span class="line"></span><br><span class="line">    def post(self, request, *args, **kwargs):</span><br><span class="line">        data = json.loads(request.body.decode())</span><br><span class="line">        stu = models.Student.objects.filter(**data).first()</span><br><span class="line">        if not stu or stu.passkey != data[&#x27;passkey&#x27;]:</span><br><span class="line">            return self._jsondata(&#x27;账号或密码错误&#x27;, 403)</span><br><span class="line">        else:</span><br><span class="line">            request.session[&#x27;is_login&#x27;] = True</span><br><span class="line">            return self._jsondata(&#x27;登录成功&#x27;, 200) </span><br></pre></td></tr></table></figure>
+
+<p>可以看到这一行代码<code>stu = models.Student.objects.filter(**data).first()</code></p>
+<p>我们传入的data数据直接被带入了<code>filter</code>语句，在前面的介绍中，<code>filter</code>的操作是这样的<code>.filter(User.id == id)</code>，这两者的不同之处在于前者的参数名被我们所控制，进而可以查询我们想要的数据</p>
+<p>另外虽然ORM框架能防御SQL注入，但使用不当的情况下还会造成二次注入，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">def files(request):</span><br><span class="line">    if request.GET.get(&#x27;url&#x27;):</span><br><span class="line">        url = request.GET.get(&#x27;url&#x27;)</span><br><span class="line">        File.objects.create(filename=url)</span><br><span class="line">        return HttpResponse(&#x27;保存成功&#x27;)</span><br><span class="line">    else:</span><br><span class="line">        filename = File.objects.get(pk=23).filename</span><br><span class="line">        cur = connection.cursor()</span><br><span class="line">        cur.execute(&quot;&quot;&quot;select * from code_audit_file where filename=&#x27;%s&#x27;&quot;&quot;&quot; %(filename))</span><br><span class="line">        str = cur.fetchall()</span><br><span class="line">        cur.close()</span><br><span class="line">        return HttpResponse(str)</span><br></pre></td></tr></table></figure>
+
+<p>当我们保存字段<code>filename</code>的时候，如果filename的值是<code>&#39; or &#39;1&#39;=&#39;1</code>，则会被转义为<code>\&#39; or \&#39;1\&#39;=\&#39;1</code>，但是其中的单引号并不会被去除，而是被当作字符串被保存到数据库中，在后续的过程中被触发SQL注入漏洞<br><code>cur.execute(&quot;&quot;&quot;select * from code_audit_file where filename=&#39;%s&#39;&quot;&quot;&quot; %(filename))</code></p>
+<p>因为正则匹配规则的死板，二次注入或者<code>Django</code>的历史漏洞想要在正则匹配中写出通用的规则是非常困难的，也需要有庞大的规则库才能实现</p>
+<p>借鉴``代码中<code>select</code>查询正则如下，删改查操作的正则匹配也类似<br>“select\s{1,4}.{1,60}from.{1,50}where\s{1,3}.{1,50}=[“\s.]{0,10}$\w{1,20}(([[“‘]|[)${0,1}[\w[]“‘]{0,30}){0,1}”</p>
+<h2 id="RCE"><a href="#RCE" class="headerlink" title="RCE"></a>RCE</h2><p>常见的执行命令模块和函数有</p>
+<ul>
+<li>os</li>
+<li>subprocess</li>
+<li>pty</li>
+<li>codecs</li>
+<li>popen</li>
+<li>eval</li>
+<li>exec</li>
+<li>…</li>
+</ul>
+<p>包括我自己在最开始写爬虫的时候也会有这种不规范：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">os.system(&#x27;python exp.py -u http://evil.com&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>如果反制爬虫的URL为<code>&quot;http://evil.com|rm -rf / &amp;</code>，进一步也可以控制服务器权限</p>
+<p>CTF题目里面常见的命令执行操作<code>ping</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">os.system(&#x27;ping -n 4 %s&#x27; %ip)</span><br></pre></td></tr></table></figure>
+
+<p>动态调用实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">oper_type=__import__(&#x27;os&#x27;).system(&#x27;sleep 5&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>又比如使用<code>eval</code>将字符串转字典</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; json1=&quot;&#123;&#x27;a&#x27;:1&#125;&quot;</span><br><span class="line">&gt;&gt;&gt; eval(json1)</span><br><span class="line">&#123;&#x27;a&#x27;: 1&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果<code>json1</code>可控也会造成RCE</p>
+<p><code>subprocess.run</code>的案例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">def COMMAND(request):</span><br><span class="line">    if request.GET.get(&#x27;ip&#x27;):</span><br><span class="line">        ip = request.GET.get(&#x27;ip&#x27;)</span><br><span class="line">        cmd = &#x27;ping -n 4 %s&#x27; %shlex.quote(ip)</span><br><span class="line">        flag = subprocess.run(cmd, shell=False, stdout=subprocess.PIPE)</span><br><span class="line">        stdout = flag.stdout</span><br><span class="line">        return HttpResponse(&#x27;&lt;p&gt;%s&lt;/p&gt;&#x27; %str(stdout, encoding=chardet.detect(stdout)[&#x27;encoding&#x27;]))</span><br><span class="line">    else:</span><br><span class="line">        return HttpResponse(&#x27;&lt;p&gt;请输入IP地址&lt;/p&gt;&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p><code>subprocess</code>是一个为了代替os其中的命令执行库而出现的，python3.5以后的版本，建议是使用<code>subprocess.run</code>来操作，3.5之前的可以使用库中你认为合适的函数。不过实际上都是基于<code>subprocess.Popen</code>的封装实现的，也可以执行使用<code>subprocess.Popen</code>来执行较复杂的操作，在<code>shell=False</code>的时候，第一个字符是列表，或者传入字符串。当使用<code>shell=True</code>的时候，python会调用<code>/bin/sh</code>来执行命令，届时会造成命令执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cmd = request.values.get(&#x27;cmd&#x27;)</span><br><span class="line">s = subprocess.Popen(&#x27;ping -n 4 &#x27;+cmd, shell=True, stdout=subprocess.PIPE)</span><br><span class="line">stdout = s.communicate()</span><br><span class="line">return Response(&#x27;&lt;p&gt;输入的值为：%s&lt;/p&gt;&#x27; %str(stdout[0], encoding=chardet.detect(stdout[0])[&#x27;encoding&#x27;]))</span><br></pre></td></tr></table></figure>
+
+<h2 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h2><p>XSS和SQL注入相同点都是对用户的输入参数没有过滤和正确引用，导致输出的时候造成代码注入到页面上</p>
+<p>示例如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">name = request.GET.get(&#x27;name&#x27;)</span><br><span class="line">return HttpResponse(&quot;&lt;p&gt;name: %s&lt;/p&gt;&quot; %name)</span><br></pre></td></tr></table></figure>
+
+<p>Django上的XSS示例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">def XSS(request):</span><br><span class="line">    if request.GET.get(&#x27;name&#x27;):</span><br><span class="line">        name = request.GET.get(&#x27;name&#x27;)</span><br><span class="line">        return HttpResponse(&quot;&lt;p&gt;name: %s&lt;/p&gt;&quot; %name)</span><br></pre></td></tr></table></figure>
+
+<p>Flask上的XSS示例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&#x27;/xss&#x27;)</span><br><span class="line">def XSS():</span><br><span class="line">    if request.args.get(&#x27;name&#x27;):</span><br><span class="line">        name = request.args.get(&#x27;name&#x27;)</span><br><span class="line">        return Response(&quot;&lt;p&gt;name: %s&lt;/p&gt;&quot; %name)</span><br></pre></td></tr></table></figure>
+
+<p>在<code>flask</code>中使用<code>render_template</code>能够防御XSS漏洞，但在使用<code>safe</code>过滤器的情况下还是会导致XSS</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return render_template(&#x27;xss.html&#x27;, name=name)</span><br></pre></td></tr></table></figure>
+
+<p>前端代码为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;h1&gt;Hello &#123;&#123; name|safe &#125;&#125;!&lt;/h1&gt;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://springbird3.oss-cn-chengdu.aliyuncs.com/lianxiang/20220430182946.png"><img src="https://springbird3.oss-cn-chengdu.aliyuncs.com/lianxiang/20220430182946.png" alt="img"></a></p>
+<h2 id="XXE"><a href="#XXE" class="headerlink" title="XXE"></a>XXE</h2><p>XML外部实体注入。当允许引用外部实体时，通过构造恶意内容，就可能导致任意文件读取、系统命令执行、内网端口探测、攻击内网网站等危害</p>
+<p>在python中有三种方法解析XML：</p>
+<ul>
+<li>SAX<ul>
+<li><code>xml.sax.parse()</code></li>
+</ul>
+</li>
+<li>DOM<ul>
+<li><code>xml.dom.minidom.parse()</code></li>
+<li><code>xml.dom.pulldom.parse()</code></li>
+</ul>
+</li>
+<li>ElementTree<ul>
+<li><code>xml.etree.ElementTree()</code></li>
+</ul>
+</li>
+</ul>
+<p>另外python中第三方xml解析库也很多，<code>libxml2</code>是使用C语言开发的xml解析器，而<code>lxml</code>是python基于<code>libxml2</code>开发的，该库存在XXE漏洞</p>
+<p>存在漏洞的示例代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">def xxe():</span><br><span class="line">    # tree = etree.parse(&#x27;xml.xml&#x27;)</span><br><span class="line">    # tree = lxml.objectify.parse(&#x27;xml.xml&#x27;)</span><br><span class="line">    # return etree.tostring(tree.getroot())</span><br><span class="line">    xml = b&quot;&quot;&quot;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">            &lt;!DOCTYPE title [ &lt;!ELEMENT title ANY &gt;</span><br><span class="line">            &lt;!ENTITY xxe SYSTEM &quot;file:///c:/windows/win.ini&quot; &gt;]&gt;</span><br><span class="line">            &lt;channel&gt;</span><br><span class="line">                &lt;title&gt;&amp;xxe;&lt;/title&gt;</span><br><span class="line">                &lt;description&gt;A blog about things&lt;/description&gt;</span><br><span class="line">            &lt;/channel&gt;&quot;&quot;&quot;</span><br><span class="line">    tree = etree.fromstring(xml)</span><br><span class="line">    return etree.tostring(tree)</span><br></pre></td></tr></table></figure>
+
+<p>此处利用<code>file</code>协议读取服务器上的敏感文件，漏洞存在的原因是<code>XMLparse</code>方法中<code>resolve_entities</code>默认设置为<code>True</code>，导致可以解析外部实体</p>
+<p>下表概述了标准库XML已知的攻击以及各种模块是否容易受到攻击。</p>
+<table>
+<thead>
+<tr>
+<th align="left">种类</th>
+<th align="left">sax</th>
+<th align="left">etree</th>
+<th align="left">minidom</th>
+<th align="left">pulldom</th>
+<th align="left">xmlrpc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">billion laughs</td>
+<td align="left"><strong>易受攻击</strong></td>
+<td align="left"><strong>易受攻击</strong></td>
+<td align="left"><strong>易受攻击</strong></td>
+<td align="left"><strong>易受攻击</strong></td>
+<td align="left"><strong>易受攻击</strong></td>
+</tr>
+<tr>
+<td align="left">quadratic blowup</td>
+<td align="left"><strong>易受攻击</strong></td>
+<td align="left"><strong>易受攻击</strong></td>
+<td align="left"><strong>易受攻击</strong></td>
+<td align="left"><strong>易受攻击</strong></td>
+<td align="left"><strong>易受攻击</strong></td>
+</tr>
+<tr>
+<td align="left">external entity expansion</td>
+<td align="left">安全 (4)</td>
+<td align="left">安全 (1)</td>
+<td align="left">安全 (2)</td>
+<td align="left">安全 (4)</td>
+<td align="left">安全 (3)</td>
+</tr>
+<tr>
+<td align="left"><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Document_type_definition">DTD</a> retrieval</td>
+<td align="left">安全 (4)</td>
+<td align="left">安全</td>
+<td align="left">安全</td>
+<td align="left">安全 (4)</td>
+<td align="left">安全</td>
+</tr>
+<tr>
+<td align="left">decompression bomb</td>
+<td align="left">安全</td>
+<td align="left">安全</td>
+<td align="left">安全</td>
+<td align="left">安全</td>
+<td align="left"><strong>易受攻击</strong></td>
+</tr>
+</tbody></table>
+<p>一些版本比较低的第三方解析excel库内部是使用lxml模块实现的，采用的也是默认配置，导致存在XXE漏洞，例如<code>openpyxl&lt;=2.3.5</code></p>
+<h2 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h2><p>因为<code>flask</code>的设计哲学，所以在<code>flask</code>中默认没有<code>csrf</code>的防护</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&#x27;/csrf&#x27;, methods=[&quot;GET&quot;,&quot;POST&quot;])</span><br><span class="line">def CSRF():</span><br><span class="line">    if request.method == &quot;POST&quot;:</span><br><span class="line">        name = request.values.get(&#x27;name&#x27;)</span><br><span class="line">        email = request.values.get(&#x27;email&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>但是用户可以自行选择使用扩展插件<code>flask_wtf.csrf</code>实现让所有模块接受csrf防护</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">from flask_wtf.csrf import CSRFProtect</span><br><span class="line">CSRFPortect(app) #保护全部视图</span><br></pre></td></tr></table></figure>
+
+<p>如果想要取消某个路由的csrf防护，则使用装饰器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@csrf.exempt</span><br></pre></td></tr></table></figure>
+
+<p>Django中默认存在csrf中间件<code>django.middleware.csrf.CsrfViewMiddleware</code>，但是也可以通过<code>@csrf_exempt</code>进行某个视图的取消保护</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@csrf_exempt</span><br><span class="line">def CSRF(request):</span><br><span class="line">    if request.method == &quot;POST&quot;:</span><br></pre></td></tr></table></figure>
+
+<p>如果设置中取消了默认的中间件，也可以通过<code>@csrf_protect</code>对路由进行token防护</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@csrf_protect</span><br><span class="line">def CSRF(request):</span><br><span class="line">    if request.method == &quot;POST&quot;:</span><br></pre></td></tr></table></figure>
+
+<h2 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h2><p>代码中存在网络请求的时候就可能有SSRF漏洞</p>
+<p>python的可以造成这种问题的常用请求库：</p>
+<ul>
+<li>pycurl</li>
+<li>urllib</li>
+<li>urllib3</li>
+<li>requests</li>
+</ul>
+<p>因为我个人用<code>requests</code>比较多，这里就以<code>requests</code>为案例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&#x27;/ssrf&#x27;)</span><br><span class="line">def SSRF():</span><br><span class="line">    if request.values.get(&#x27;file&#x27;):</span><br><span class="line">        file = request.values.get(&#x27;file&#x27;)</span><br><span class="line">        req = requests.get(file)</span><br><span class="line">        return render_template(&#x27;ssrf.html&#x27;, file=req.content.decode(&#x27;utf-8&#x27;))</span><br><span class="line">    else:</span><br><span class="line">        return Response(&#x27;&lt;p&gt;请输入file地址&lt;/p&gt;&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>不过<code>requests</code>有一个Adapter的字典，请求类型为<code>http://</code>或者<code>https://</code>，在某种程度上也算有限制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">self.mount(&#x27;https://&#x27;, HTTPAdapter())</span><br><span class="line">self.mount(&#x27;http://&#x27;, HTTPAdapter())</span><br></pre></td></tr></table></figure>
+
+<p>要是需要利用来读取文件，可以配合<code>requests_file</code>来增加对file协议的支持。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">from requests_file import FileAdapter</span><br><span class="line"></span><br><span class="line">s = requests.Session()</span><br><span class="line">s.mount(&#x27;file://&#x27;, FileAdapter())</span><br><span class="line">req = s.get(file)</span><br></pre></td></tr></table></figure>
+
+<p>python中另外两个URL请求的库相比就没有这么多限制，能够构造的SSRF payload就更多</p>
+<p>关于python SSRF的防御，P师傅早年写过一篇文章<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PYTHON/defend-ssrf-vulnerable-in-python.html">谈一谈如何在Python开发中拒绝SSRF漏洞</a>，虽然有的方法现在已经不适用了，但可以进行思路上的启发</p>
+<h2 id="SSTI"><a href="#SSTI" class="headerlink" title="SSTI"></a>SSTI</h2><p>不同语言在使用模板渲染的时候都有可能存在模板注入漏洞，python中以flask为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def ssti():</span><br><span class="line">    if request.values.get(&#x27;name&#x27;):</span><br><span class="line">        name = request.values.get(&#x27;name&#x27;)</span><br><span class="line">        template = &quot;&lt;p&gt;%s&lt;p1&gt;&quot; %name</span><br><span class="line">        return render_template_string(template)</span><br><span class="line">        </span><br><span class="line">        #template = Template(&#x27;&lt;p&gt;%s&lt;p1&gt;&#x27; %name)</span><br><span class="line">        #return template.render()</span><br><span class="line">    else:</span><br><span class="line">        return render_template_string(&#x27;&lt;p&gt;输入name值&lt;/p&gt;&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>其中大概有两个点是值得在意的，一个是格式化字符串，另一个是函数<code>render_template_string</code>。其是这两个更像是配合利用，像这么使用就不会有这个问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def ssti():</span><br><span class="line">    if request.values.get(&#x27;name&#x27;):</span><br><span class="line">        name = request.values.get(&#x27;name&#x27;)</span><br><span class="line">        template = &quot;&lt;p&gt;&#123;&#123; name &#125;&#125;&lt;p1&gt;&quot;</span><br><span class="line">        return render_template_string(template, name=name)</span><br><span class="line">    else:</span><br><span class="line">        return render_template_string(&#x27;&lt;p&gt;输入name值&lt;/p&gt;&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>这么看的话，问题出在格式化字符串上面，而非某个函数<code>render_template_string</code>上，当前者传入<code>&#123;&#123;config&#125;&#125;</code>时，会被模板当作合法语句来执行，而后者会把参数当作字符串处理而不进行相关解析。</p>
+<p>为了安全模板引擎基本上都拥有沙盒环境，模板注入并不会直接解析python代码造成任意代码执行，所以想要利用SSTI一般还需要配合沙箱逃逸，例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">().__class__.__mro__[-1].__subclasses__()[72].__init__.__globals__[&#x27;os&#x27;].system(&#x27;whoami&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>沙箱逃逸不是我们这里的重点，就不进一步阐述了。</p>
+<p>在django中，使用一些IDE创建项目的时候可以很明显看到，使用的模板是<code>Django</code>模板，当然我们也可以使用jinja2模板，不过django自己的模板并是很少见过ssti这种问题，倒是由于格式化字符串导致信息泄露，如下使用两种格式化字符串才造成问题的情况。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def SSTI(request):</span><br><span class="line">    if request.GET.get(&#x27;name&#x27;):</span><br><span class="line">        name = request.GET.get(&#x27;name&#x27;)</span><br><span class="line">        template = &quot;&lt;p&gt;user:&#123;user&#125;, name:%s&lt;p1&gt;&quot; %name</span><br><span class="line">        return HttpResponse(template.format(user=request.user))</span><br><span class="line">    else:</span><br><span class="line">        return HttpResponse(&#x27;&lt;p&gt;输入name值&lt;/p&gt;&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>其中，当name传入<code>&#123;user.password&#125;</code>会读取到登陆用户的密码，此处使用管理员账号。那么为什么会传入的参数是name，而下面解析的时候被按照变量来读取了。</p>
+<p>使用<code>format</code>来格式化字符串的时候，我们设定的user是等于<code>request.user</code>，而传入的是<code>&#123;user.password&#125;</code>，相当于template是<code>&lt;p&gt;user:&#123;user&#125;, name:&#123;user.password&#125;&lt;p1&gt;</code>，这样再去格式化字符串就变成了，<code>name:request.user.password</code>，导致被读取到信息。</p>
+<p>在<code>format</code>格式符的情况下，出现ssti的情况也极少，比如使用如下代码，只能获得一个eval函数调用，<code>format</code>只能使用点和中括号，导致执行受到了限制。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;user.__init__.__globals__[__builtins__][eval]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>p牛给过两个代码用来利用django读取信息</p>
+<ul>
+<li><code>http://localhost:8000/?email=&#123;user.groups.model._meta.app_config.module.admin.settings.SECRET_KEY&#125;</code></li>
+<li><code>http://localhost:8000/?email=&#123;user.user_permissions.model._meta.app_config.module.admin.settings.SECRET_KEY&#125;</code></li>
+</ul>
+<p>再找几个也可以使用的，上面都是直接使用auth模块来执行，因此可以先使用<code>&#123;user.groups.model._meta.apps.app_configs&#125;</code>找到包含的APP。</p>
+<ul>
+<li><code>&#123;user.groups.model._meta.apps.app_configs[auth].module.middleware.settings.SECRET_KEY&#125;</code></li>
+<li><code>&#123;user.groups.model._meta.apps.app_configs[sessions].module.middleware.settings.SECRET_KEY&#125;</code></li>
+<li><code>&#123;user.groups.model._meta.apps.app_configs[staticfiles].module.utils.settings.SECRET_KEY&#125;</code></li>
+</ul>
+<h2 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h2><p>文件操作即文件的增删查改</p>
+<p>增和改都可以利用<code>write</code>方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fo = open(&quot;foo.txt&quot;, &quot;a&quot;)</span><br><span class="line">fo.write( &quot;testfile\n&quot;)</span><br><span class="line">fo.close()</span><br></pre></td></tr></table></figure>
+
+<p>当使用<code>write</code>的时候就容易出现任意文件上传漏洞</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&#x27;/upload&#x27;, methods=[&#x27;GET&#x27;,&#x27;POST&#x27;])</span><br><span class="line">def upload():</span><br><span class="line">    if request.files.get(&#x27;filename&#x27;):</span><br><span class="line">        file = request.files.get(&#x27;filename&#x27;)</span><br><span class="line">        upload_dir = os.path.join(os.path.dirname(__file__), &#x27;uploadfile&#x27;)</span><br><span class="line">        dir = os.path.join(upload_dir, file.filename)</span><br><span class="line">        with open(dir, &#x27;wb&#x27;) as f:</span><br><span class="line">            f.write(file.read())</span><br><span class="line">        # file.save(dir)</span><br><span class="line">        return render_template(&#x27;upload.html&#x27;, file=&#x27;上传成功&#x27;)</span><br><span class="line">    else:</span><br><span class="line">        return render_template(&#x27;upload.html&#x27;, file=&#x27;选择文件&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>django中的一个文件上传样例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def UPLOADFILE(request):</span><br><span class="line">    if request.method == &#x27;GET&#x27;:</span><br><span class="line">        return render(request, &#x27;upload.html&#x27;, &#123;&#x27;file&#x27;:&#x27;选择文件&#x27;&#125;)</span><br><span class="line">    elif request.method == &#x27;POST&#x27;:</span><br><span class="line">        dir = os.path.join(os.path.dirname(__file__), &#x27;../static/upload&#x27;)</span><br><span class="line">        file = request.FILES.get(&#x27;filename&#x27;)</span><br><span class="line">        name = os.path.join(dir, file.name)</span><br><span class="line">        with open(name, &#x27;wb&#x27;) as f:</span><br><span class="line">            f.write(file.read())</span><br><span class="line">        return render(request, &#x27;upload.html&#x27;, &#123;&#x27;file&#x27;:&#x27;上传成功&#x27;&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>在这些样例代码中都存在未限制文件大小，未限制文件后缀等问题，但上传上去的python文件会像例如php一句话木马一样被解析吗</p>
+<p>我们知道<code>flask</code>,<code>Django</code>都是通过路由来进行请求，如果我们单纯上传一个<code>python</code>文件，并不会造成常规的文件上传利用，除非后续处理用使用了<code>eval</code></p>
+<p>但如果使用<code>Apache</code>和<code>python</code>的环境开发，那就跟常规的网站类似了，例如在httpd.conf中配置了对python的解析存在一段<code>AddHandler mod_python .py</code>。那么通过链接请求的时候，比如<code>http://www.xxx.com/test.py</code>，python文件就会被正常解析。</p>
+<p>还有一种是文件名的文件覆盖，例如功能需要批量上传，允许压缩包形式上传文件，然后解压到用户资源目录，如果此处存在问题，可能会覆盖关键文件来造成代码执行。比如<code>__init__.py</code>文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&#x27;/zip&#x27;, methods=[&#x27;GET&#x27;,&#x27;POST&#x27;])</span><br><span class="line">def zip():</span><br><span class="line">    if request.files.get(&#x27;filename&#x27;):</span><br><span class="line">        zip_file = request.files.get(&#x27;filename&#x27;)</span><br><span class="line">        files = []</span><br><span class="line">        with zipfile.ZipFile(zip_file, &quot;r&quot;) as z:</span><br><span class="line">            for fileinfo in z.infolist():</span><br><span class="line">                filename = fileinfo.filename</span><br><span class="line">                dat = z.open(filename, &quot;r&quot;)</span><br><span class="line">                files.append(filename)</span><br><span class="line">                outfile = os.path.join(app.config[&#x27;UPLOAD_FOLDER&#x27;], filename)</span><br><span class="line">                if not os.path.exists(os.path.dirname(outfile)):</span><br><span class="line">                    try:</span><br><span class="line">                        os.makedirs(os.path.dirname(outfile))</span><br><span class="line">                    except OSError as exc:</span><br><span class="line">                        if exc.errno != errno.EEXIST:</span><br><span class="line">                            print(&quot;\n[WARN] OS Error: Race Condition&quot;)</span><br><span class="line">                if not outfile.endswith(&quot;/&quot;):</span><br><span class="line">                    with io.open(outfile, mode=&#x27;wb&#x27;) as f:</span><br><span class="line">                        f.write(dat.read())</span><br><span class="line">                dat.close()</span><br><span class="line">        return render_template(&#x27;upload.html&#x27;, file=files)</span><br><span class="line">    else:</span><br><span class="line">        return render_template(&#x27;upload.html&#x27;, file=&#x27;选择文件&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>以上就是一个上传压缩包并且解压到目录的代码，他会按照解压出来的文件夹和文件进行写入目录。构造一个存在问题的压缩包，上传后可以看到文件并不在uploadfile目录，而在根目录下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; z_info = zipfile.ZipInfo(r&quot;../__init__.py&quot;)</span><br><span class="line">&gt;&gt;&gt; z_file = zipfile.ZipFile(&quot;C:/Users/user/Desktop/bad.zip&quot;, mode=&quot;w&quot;)</span><br><span class="line">&gt;&gt;&gt; z_file.writestr(z_info, &quot;print(&#x27;test&#x27;)&quot;)</span><br><span class="line">&gt;&gt;&gt; z_file.close()</span><br></pre></td></tr></table></figure>
+
+<p>项目如果被重新启动，就会看到界面输出了test字段。</p>
+<p><code>python</code>中也提供了一种安全的方法来解压，``zipfile.extract<code>替换</code>zipfile.ZipFile<code>，但是并不代表</code>extractall`也是安全的。</p>
+<p>使用<code>os.remove</code>对文件进行删除</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line">os.remove(&quot;test2.txt&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>任意文件删除的案例如下，这个方法是用来删除七天后的文件，通过<code>django</code>的文件系统来获取目录下的文件，然后根据时间来删除。唯一的问题是<code>dir_path</code>，但是原系统中不存在问题，只是因为使用的时候这个目录是硬编码进去的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">def directory_cleanup(dir_path, ndays):</span><br><span class="line">    if not default_storage.exists(dir_path):</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">    foldernames, filenames = default_storage.listdir(dir_path)</span><br><span class="line">    for filename in filenames:</span><br><span class="line">        if not filename:</span><br><span class="line">            continue</span><br><span class="line">        file_path = os.path.join(dir_path, filename)</span><br><span class="line">        modified_dt = default_storage.get_modified_time(file_path)</span><br><span class="line">        if modified_dt + timedelta(days=ndays) &lt; datetime.now():</span><br><span class="line">            # the file is older than ndays, delete it</span><br><span class="line">            default_storage.delete(file_path)</span><br><span class="line">    for foldername in foldernames:</span><br><span class="line">        folder_path = os.path.join(dir_path, foldername)</span><br><span class="line">        directory_cleanup(folder_path, ndays)</span><br></pre></td></tr></table></figure>
+
+<p>当传入参数为<code>file</code>协议的形式就可以读取系统上任意文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&#x27;/read&#x27;)</span><br><span class="line">def readfile():</span><br><span class="line">    if request.values.get(&#x27;file&#x27;):</span><br><span class="line">        file = request.values.get(&#x27;file&#x27;)</span><br><span class="line">        req = urllib.request.urlopen(file)</span><br><span class="line">        return Response(req.read().decode(&#x27;utf-8&#x27;))</span><br><span class="line">    else:</span><br><span class="line">        return Response(&#x27;&lt;p&gt;请输入file地址&lt;/p&gt;&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>当然也可以用刚才的文件读取模块来读取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def READFILE(request):</span><br><span class="line">    if request.GET.get(&#x27;file&#x27;):</span><br><span class="line">        file = request.GET.get(&#x27;file&#x27;)</span><br><span class="line">        file = open(file)</span><br><span class="line">        return HttpResponse(file)</span><br><span class="line">    else:</span><br><span class="line">        return HttpResponse(&#x27;&lt;p&gt;请输入file地址&lt;/p&gt;&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>flask中还有一个文件读取下载的方法<code>send_from_directory</code>，操作不当的时候也能够进行敏感文件读取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return send_from_directory(os.path.join(os.path.dirname(__file__), &#x27;uploadfile&#x27;), file)</span><br></pre></td></tr></table></figure>
+
+<h2 id="反序列化"><a href="#反序列化" class="headerlink" title="反序列化"></a>反序列化</h2><p>Python 的序列化的目的也是为了保存、传递和恢复对象的方便性，在众多传递对象的方式中，序列化和反序列化可以说是最简单和最容易实现的方式</p>
+<p><code>Python</code> 为我们提供了两个比较重要的库 <code>pickle</code> 和 <code>cPickle</code>以及几个比较重要的函数来实现序列化和反序列化，这里以<code>pickle</code>为例</p>
+<ul>
+<li>序列化<ul>
+<li>pickle.dump(文件)</li>
+<li>pickle.dumps(字符串)</li>
+</ul>
+</li>
+<li>反序列化<ul>
+<li>pickle.load(文件)</li>
+<li>pickle.loads(字符串)</li>
+</ul>
+</li>
+</ul>
+<p>其中可造成威胁的一般是<code>pickle.load</code>和<code>pickle.loads</code>，或者面向对象的反序列化类<code>pickle.Unpickler</code>。</p>
+<p>python官方认为并不没有义务保证你传入反序列化函数的内容是安全的，官方只负责反序列化，如果你传入不安全的内容那么自然就是不安全的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def ser():</span><br><span class="line">    ser = request.values.get(&#x27;ser&#x27;)</span><br><span class="line">    s = pickle.loads(ser)</span><br></pre></td></tr></table></figure>
+
+<p>这里不得不提一下<code>__reduce__</code>魔术方法：</p>
+<blockquote>
+<p>当序列化以及反序列化的过程中中碰到一无所知的扩展类型(这里指的就是新式类)的时候，可以通过类中定义的<code>__reduce__</code>方法来告知如何进行序列化或者反序列化</p>
+</blockquote>
+<p>我们只要在新式类中定义一个 <code>__reduce__</code> 方法，就能在序列化的使用让这个类根据我们在<code>__reduce__</code> 中指定的方式进行序列化,当<code>__reduce__</code>返回值是一个元祖的时候，可以提供2到5个参数，我们重点利用的是前两个，第一个参数是一个callable object(可调用的对象)，第二个参数可以是一个元祖为这个可调用对象提供必要的参数，示例代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import pickle</span><br><span class="line">import os</span><br><span class="line">class A(object):</span><br><span class="line">    def __reduce__(self):</span><br><span class="line">        a = &#x27;whoami&#x27;</span><br><span class="line">        return (os.system,(a,))</span><br><span class="line">a = A()</span><br><span class="line">test = pickle.dumps(a)</span><br><span class="line">pickle.loads(test)</span><br></pre></td></tr></table></figure>
+
+<p>成功执行命令<br><a target="_blank" rel="noopener" href="https://springbird3.oss-cn-chengdu.aliyuncs.com/lianxiang/20220501164030.png"><img src="https://springbird3.oss-cn-chengdu.aliyuncs.com/lianxiang/20220501164030.png" alt="img"></a></p>
+<p><code>Marshal</code>库序列化code对象，使用的<code>load</code>和<code>loads</code>方法会导致问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">import pickle,builtins,pickletools,base64</span><br><span class="line">import marshal</span><br><span class="line">import urllib</span><br><span class="line">def foo():</span><br><span class="line">    import os</span><br><span class="line">    def fib(n):</span><br><span class="line">        if n &lt;= 2:</span><br><span class="line">            return n</span><br><span class="line">        return fib(n-1) + fib(n-2)</span><br><span class="line">    print (fib(5))</span><br><span class="line">try:</span><br><span class="line">    pickle.dumps(foo.__code__)</span><br><span class="line">except Exception as e:</span><br><span class="line">    print(e)</span><br><span class="line">code_serialized = base64.b64encode(marshal.dumps(foo.__code__))</span><br><span class="line">code_unserialized = types.FunctionType(marshal.loads(base64.b64decode(code_serialized)), globals(), &#x27;&#x27;)()</span><br><span class="line">print(code_unserialized)</span><br></pre></td></tr></table></figure>
+
+<p><code>PyYAML</code>库是yaml标记语言的python实现库，支持yaml格式的语言，有自己的实现来进行yaml格式的解析。yaml有一套对象转化规则，pyyaml在解析数据的时候遇到特定格式数据会自动转换。</p>
+<p>比如，使用如下转换，实际是使用python模块执行了命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp = &quot;!!python/object/apply:subprocess.check_output [[ls]]&quot;</span><br><span class="line">yaml.load(cp)</span><br></pre></td></tr></table></figure>
+
+<p>可以构造命令的python语法，有<code>!!python/object/apply</code>和<code>!!python/object/new</code>两种。<code>!!python/object</code>接收的是一个dict类型的对象属性。并不接收args的列表参数。</p>
+<p><code>jsonpickle</code>用于将任意对象序列化为JSON的Python库。该对象必须可以通过模块进行全局访问，并且必须继承自对象（又称新类）。</p>
+<p>创建一个对象：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class Thing(object):</span><br><span class="line">    def __init__(self, name):</span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line">obj = Thing(&#x27;Awesome&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>Jsonpickle</code>将对象转换为JSON字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import jsonpickle</span><br><span class="line">frozen = jsonpickle.encode(obj)</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>Jsonpickle</code>从JSON字符串重新创建Python对象：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">thawed = jsonpickle.decode(frozen)</span><br></pre></td></tr></table></figure>
+
+<p>可以使用类似的利用方式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; class Person(object):</span><br><span class="line">...     def __reduce__(self):</span><br><span class="line">...          return (__import__(&#x27;os&#x27;).system, (&#x27;whoami&#x27;,))</span><br><span class="line">...</span><br><span class="line">&gt;&gt;&gt; admin = Person()</span><br><span class="line">jsonpickle.encode(admin)</span><br><span class="line">&#x27;&#123;&quot;py/reduce&quot;: [&#123;&quot;py/function&quot;: &quot;nt.system&quot;&#125;, &#123;&quot;py/tuple&quot;: [&quot;whoami&quot;]&#125;]&#125;&#x27;</span><br><span class="line">&gt;&gt;&gt; s = jsonpickle.encode(admin)</span><br><span class="line">&gt;&gt;&gt; jsonpickle.decode(s)</span><br><span class="line">misaki\user</span><br></pre></td></tr></table></figure>
+
+<p><code>Shelve</code>是对象持久化保存方法，将对象保存到文件里面，缺省（即默认）的数据存储文件是二进制的。</p>
+<p>由于shelve是使用pickle来序列化数据，所以可以使用pickle的方式来执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">import shelve</span><br><span class="line">import os</span><br><span class="line">class exp(object):</span><br><span class="line">    def __reduce__(self):</span><br><span class="line">        return (os.system(&#x27;whoami&#x27;))</span><br><span class="line">file = shelve.open(&quot;test&quot;)</span><br><span class="line">file[&#x27;exp&#x27;] = exp()</span><br></pre></td></tr></table></figure>
+
+<h2 id="任意URL跳转"><a href="#任意URL跳转" class="headerlink" title="任意URL跳转"></a>任意URL跳转</h2><p>任意URL的跳转案例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">def urlbypass():</span><br><span class="line">    if request.values.get(&#x27;url&#x27;):</span><br><span class="line">        url = request.values.get(&#x27;url&#x27;)</span><br><span class="line">        return redirect(url)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>python里面的安全问题还有很多，这里也只是列举了一些常见并且危害较大的漏洞，还需要在后续不断总结。如何在自动化白盒审计中检测到这些漏洞？使用传统的正则表达式匹配危险函数局限性非常大，误报导致代码审计人员花费大量时间回溯危险函数的调用；利用AST语法树的方式辅助代码审计现在逐步成为主流，以<code>CodeQL</code>为例，需要自己先学习QL语言，然后编写匹配规则，不同语言的规则库不同这些问题无形之中拉高了学习门槛，其本身也有标准库覆盖不完全等问题</p>
+<p>所以编写一个python的白盒代码审计系统就是后续的工作啦:-)</p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/06/26/7.29/linux%E6%9D%83%E9%99%90/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>docker基础</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/06/22/7.29/python%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E1/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      python web常见漏洞01
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

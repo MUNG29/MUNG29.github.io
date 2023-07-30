@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        文件上传bypass | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">文件上传bypass</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/OWASP/" class="post-tag">#OWASP</a>
+  
+    <a href="/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" class="post-tag">#文件上传</a>
+  
+
+
+          <span class="post-date">2023-04-03</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E7%BC%80%E6%A0%A1%E9%AA%8C"><span class="toc-text">后缀校验</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%BB%91%E5%90%8D%E5%8D%95"><span class="toc-text">黑名单</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#fuzz%E5%90%8E%E7%BC%80"><span class="toc-text">fuzz后缀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%B3%BB%E7%BB%9F%E7%89%B9%E6%80%A7"><span class="toc-text">利用系统特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%99%BD%E5%90%8D%E5%8D%95"><span class="toc-text">白名单</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%AA%E6%96%AD"><span class="toc-text">截断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="toc-text">解析漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8C%85%E5%90%AB"><span class="toc-text">包含</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%85%E5%AE%B9"><span class="toc-text">内容</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%A4%B4"><span class="toc-text">文件头</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E9%A9%AC"><span class="toc-text">图片马</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WAF"><span class="toc-text">WAF</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E6%AC%A1%E6%B8%B2%E6%9F%93"><span class="toc-text">二次渲染</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-text">其他</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89"><span class="toc-text">条件竞争</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%95WAF"><span class="toc-text">绕WAF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AAfilename"><span class="toc-text">多个filename</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%A4%E6%8D%A2name%E5%92%8Cfilename%E7%9A%84%E9%A1%BA%E5%BA%8F"><span class="toc-text">交换name和filename的顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%BB%E6%8E%89%E5%BC%95%E5%8F%B7-%E5%8F%8C%E5%BC%95%E5%8F%B7%E5%8F%98%E6%88%90%E5%8D%95%E5%BC%95%E5%8F%B7"><span class="toc-text">去掉引号,双引号变成单引号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E5%B0%8F%E5%86%99"><span class="toc-text">大小写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A9%BA%E6%A0%BC"><span class="toc-text">空格</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%BB%E6%8E%89%E6%88%96%E4%BF%AE%E6%94%B9Content-Disposition%E5%80%BC"><span class="toc-text">去掉或修改Content-Disposition值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AAboundary"><span class="toc-text">多个boundary</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AA%E5%88%86%E5%8F%B7"><span class="toc-text">多个分号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Header%E5%9C%A8boundary%E5%89%8D%E6%B7%BB%E5%8A%A0%E4%BB%BB%E6%84%8F%E5%AD%97%E7%AC%A6"><span class="toc-text">Header在boundary前添加任意字符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#filename%E6%8D%A2%E8%A1%8C"><span class="toc-text">filename换行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#name%E5%92%8Cfilename%E6%B7%BB%E5%8A%A0%E4%BB%BB%E6%84%8F%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">name和filename添加任意字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#POST-GET"><span class="toc-text">POST&#x2F;GET</span></a></li></ol></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/image-20230403120046628.webp" alt="image-20230403120046628" style="zoom: 67%;" />
+
+
+
+<p>js前端校验就不说了，前端一般只验证后缀名，抓包改即可</p>
+<p>常见content-type</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、text开头</span><br><span class="line">text/html： HTML格式</span><br><span class="line">text/plain：纯文本格式</span><br><span class="line">text/xml： XML格式</span><br><span class="line"><span class="number">2</span>、图片格式</span><br><span class="line">image/gif ：gif 图片格式</span><br><span class="line">image/jpeg ：jpg 图片格式</span><br><span class="line">image/png：png 图片格式</span><br><span class="line"><span class="number">3</span>、application开头</span><br><span class="line">application/xhtml+xml：XHTML 格式</span><br><span class="line">application/xml：XML 数据格式</span><br><span class="line">application/atom+xml：Atom XML 聚合格式</span><br><span class="line">application/json：JSON 数据格式</span><br><span class="line">application/pdf：pdf 格式</span><br><span class="line">application/msword：Word 文档格式</span><br><span class="line">application/octet-stream：二进制流数据（如常见的文件下载）</span><br><span class="line">application/x-www-form-urlencoded：表单发送默认格式</span><br><span class="line"><span class="number">4</span>、媒体文件</span><br><span class="line">audio/x-wav：wav文件</span><br><span class="line">audio/x-ms-wma：w文件</span><br><span class="line">audio/mp3：mp3文件</span><br><span class="line">video/x-ms-wmv：wmv文件</span><br><span class="line">video/mpeg4：mp4文件</span><br><span class="line">video/avi：avi文件</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="后缀校验"><a href="#后缀校验" class="headerlink" title="后缀校验"></a>后缀校验</h1><h2 id="黑名单"><a href="#黑名单" class="headerlink" title="黑名单"></a>黑名单</h2><h3 id="fuzz后缀"><a href="#fuzz后缀" class="headerlink" title="fuzz后缀"></a>fuzz后缀</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">php:  Php|php2|php3|php4|php5|php6|php7|pht|phtm|phtml</span><br><span class="line">sap:  asp、aspx、asa、asax、ascx、ashx、asmx、cer</span><br><span class="line">jsp:  jsp、jspa、jspx、jsw、jsv、jspf、jhtml</span><br></pre></td></tr></table></figure>
+
+<p>fuzz工具：<a target="_blank" rel="noopener" href="https://github.com/c0ny1/upload-fuzz-dic-builder">https://github.com/c0ny1/upload-fuzz-dic-builder</a></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python2 upload-fuzz-dic-builder.py -n test -a jpg -l php -m apache --os win -o upload_file.txt</span><br></pre></td></tr></table></figure>
+
+<img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/image-20230403143812551.webp" alt="image-20230403143812551" style="zoom:67%;" />
+
+
+
+<h3 id="利用系统特性"><a href="#利用系统特性" class="headerlink" title="利用系统特性"></a>利用系统特性</h3><p>貌似主要是windows,常见的：1、大小写 2、点绕过（<code>.</code> 或者 <code>.空格.</code>） 3、空格绕过  4、::$DATA绕过</p>
+<p>Windows 下文件名结尾加入<code>&lt;</code>、<code>&gt;</code>、<code>&gt;&gt;&gt;</code>、<code>_</code>、<code>0x81-0xff</code>等字符，最终生成的文件均被 windows 忽略。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">shell.pHp</span><br><span class="line">shell.php. </span><br><span class="line">shell.php. .</span><br><span class="line">shell.php_</span><br><span class="line">shell.php空格 </span><br><span class="line">shell.php:1.jpg </span><br><span class="line">shell. php::$DATA </span><br></pre></td></tr></table></figure>
+
+
+
+<p>php</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">后缀名：.php3 ,.php5,.php7</span><br><span class="line">大小写：pHp</span><br><span class="line">解析漏洞：</span><br><span class="line">1.php.jpg</span><br><span class="line">1.jpg.php</span><br><span class="line">1.php  jpg(jpg前面两个空格)</span><br><span class="line">1.php jpg(jpg前面一个空格)</span><br><span class="line">/1.jpg/1.php</span><br><span class="line">/1.jpg%00.php</span><br><span class="line">/1.jpg/.php</span><br><span class="line">/1.jpg/php</span><br></pre></td></tr></table></figure>
+
+<p>jsp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.jsp.jpg.jsp-用两个jsp包围中间的jpg</span><br><span class="line">后缀名：jspf,jspa,jsps</span><br></pre></td></tr></table></figure>
+
+<p>asp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">解析漏洞:</span><br><span class="line">.asp;.jpg</span><br><span class="line">.asp.jpg</span><br><span class="line">.asp;jpg</span><br><span class="line">+111.asp;+222.jpg</span><br><span class="line">/111.asp/1.jpg</span><br><span class="line">/111.aspx/1.jpg</span><br><span class="line">后缀名：</span><br><span class="line">asa,cer,cdx,ashx,asmx,xml,htr,asax</span><br><span class="line">双文件扩展：</span><br><span class="line">test.asp.jpg</span><br><span class="line">RTLO：</span><br><span class="line">asp.html-内容为一句话</span><br><span class="line">php.txt-内容为一句话</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h2 id="白名单"><a href="#白名单" class="headerlink" title="白名单"></a>白名单</h2><h3 id="截断"><a href="#截断" class="headerlink" title="截断"></a>截断</h3><p>截断原理:由于00代表结束符,所以会把00后面的所有字符都截断</p>
+<p>截断条件:PHP版本小于5.3.4,PHP的magic_quotes_gpc为OFF状态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.直接加%00 如 1.php%00</span><br><span class="line">2.二进制x00  去bp16进制里改00</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="解析漏洞"><a href="#解析漏洞" class="headerlink" title="解析漏洞"></a>解析漏洞</h3><blockquote>
+<p><strong>一、重写解析规则</strong></p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/287193.html">浅析.htaccess和.user.ini文件上传</a></p>
+<p>==.htaccess==</p>
+<p>.htaccess的配置文件只能在Apache服务器中起作用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;FiileMatch &quot;.jpg&quot;&gt;</span><br><span class="line">SetHandler application/x-httpd-php</span><br><span class="line">AddHandler php5-script .jpg</span><br><span class="line">&lt;/FiileMatch&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>==.user.ini==</p>
+<p><code>条件</code></p>
+<ul>
+<li>服务器脚本语言为PHP 服务器使用CGI</li>
+<li>FastCGI模式</li>
+<li>上传目录下要有可执行的php文件</li>
+</ul>
+<p>是php里ini文件的一种，和php.ini不同，他是可以动态加载的，无需重启中间件即可生效</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">auto_prepend_file=1.gif    # 要访问的文件加载之前加载，</span><br><span class="line">或者</span><br><span class="line">auto_append_file=1.gif # 要访问的文件加载之后加载</span><br></pre></td></tr></table></figure>
+
+<p>上传一个包含webshell代码的1.gif：</p>
+<p>访问本目录下任意文件就可以实现命令执行</p>
+<p><strong>虽然.user.ini也有限制条件，但是相比.htaccess的用于更加广泛，不仅适用于Apache，还可以在Nginx上操作。<br>除此之外，还可以利用.user.ini进行<code>隐藏后门</code>，在php目录下留下图片马。</strong></p>
+<blockquote>
+<p><strong>二、中间件解析漏洞</strong></p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">IIS</span><br><span class="line">一共有三个解析漏洞：</span><br><span class="line">1. IIS 6.0 文件解析 xx.asp;.jpg</span><br><span class="line">2. IIS 6.0 目录解析 xx.asp/1.jpg(xx.asp命名的文件夹里的文件都将会被当成ASP文件执行)</span><br><span class="line">3. IIS 7.5 畸形解析 xxx.jpg/x.php(传一个jpg，后面写/x.php这种目录，会把jpg当php解析)</span><br><span class="line"></span><br><span class="line">Apahce</span><br><span class="line">1. %0a (CVE-2017-15715)</span><br><span class="line">2. 未知后缀 test.php.xxx</span><br><span class="line">3.test.php.a.b  (apache解析文件的规则是从右到左开始判断解析，如果后缀名为不可识别文件解析，就再往左判断)</span><br><span class="line"></span><br><span class="line">后缀不识别：1.php.php123</span><br><span class="line">配置错误：1.php.jpg</span><br><span class="line"></span><br><span class="line">nginx</span><br><span class="line">解析漏洞有三个：</span><br><span class="line">1. 访问链接加 /xxx.php，即 test.jpg/xxx.php</span><br><span class="line">2. 畸形解析漏洞 test.jpg%00xxx.php</span><br><span class="line">3. CVE-2013-4547 test.jpg(非编码空格)\0x.php</span><br><span class="line"></span><br><span class="line">tomcat</span><br><span class="line">用于上传绕过的有三种，部分限制在 windows 操作系统下。</span><br><span class="line">1. xxx.jsp/</span><br><span class="line">2. xxx.jsp%20</span><br><span class="line">3. xxx.jsp::$DATA</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="包含"><a href="#包含" class="headerlink" title="包含"></a>包含</h3><p>传个图片然后包含</p>
+<h1 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h1><h2 id="文件头"><a href="#文件头" class="headerlink" title="文件头"></a>文件头</h2><p>文件内容带上二进制文件头</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GIF：47 49 46 38 39 61 </span><br><span class="line">png：89 50 4E 47 0D 0A 1A 0A </span><br><span class="line">JPG：FF D8 FF E0 00 10 4A 46 49 46</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="图片马"><a href="#图片马" class="headerlink" title="图片马"></a>图片马</h2><p>如果用getimagesize、php_exif判断上传图片类型，直接传图片马就可以绕过</p>
+<p>一般解析图片马需要结合<code>解析漏洞</code>或者<code>文件包含</code>才能解析图片马</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">copy a.png /b + a.php /a 3.php  </span><br><span class="line">/b:指定以二进制格式复制、合并文件，用于图像或者声音类文件</span><br><span class="line">/a:指定以ascii格式复制、合并文件用于txt等文本类文件</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="WAF"><a href="#WAF" class="headerlink" title="WAF"></a>WAF</h2><p>有些主机WAF软件为了不影响web服务器的性能，会对校验的用户数据设置大小上限，比如1M。</p>
+<p>构造一个大文件，前面1M的内容为==垃圾内容==，后面才是真正的木马内容，便可以绕过WAF对文件内容的校验</p>
+<h2 id="二次渲染"><a href="#二次渲染" class="headerlink" title="二次渲染"></a>二次渲染</h2><blockquote>
+<p>目前很多网站都会对用户上传的图片再次压缩、裁剪等渲染操作（如PHP中的<code>imagecreatefromjpeg()</code>等函数），所以普通的图片马都难逃被渲染的悲剧。</p>
+<p>经常是白名单+二次渲染的情况下，我们二次渲染传入图片马再找包含或者解析漏洞。</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/1ink/p/15115240.html">https://www.cnblogs.com/1ink/p/15115240.html</a></p>
+</blockquote>
+<p>原理：将一个正常显示的图片，上传到服务器。寻找图片被渲染后与原始图片部分对比仍然相同的数据块部分，</p>
+<p>将 Webshell 代码插在该部分，然后上传。具体实现需要自己编写 Python 程序，人工尝试基本是不可能构造出能绕过渲染函数的图片 webshell 的。</p>
+<ul>
+<li><p>GIF</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">渲染前后的两张 GIF，没有发生变化的数据块部分直接插入 Webshell 即可</span><br></pre></td></tr></table></figure></li>
+<li><p>PNG</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PNG 没有 GIF 那么简单，需要将数据写入到 PLTE 数据块 或者 IDAT 数据块</span><br></pre></td></tr></table></figure></li>
+<li><p>JPG</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">JPG </span>需要使用脚本将数据插入到特定的数据块，而且可能会不成功，所以需要多次尝试 </span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2657#toc-12">https://xz.aliyun.com/t/2657#toc-12</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/">https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/</a></li>
+</ul>
+<h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><h2 id="条件竞争"><a href="#条件竞争" class="headerlink" title="条件竞争"></a>条件竞争</h2><ul>
+<li>利用条件竞争删除文件时间差绕过。</li>
+<li>在脚本运行的时候，访问 Webshell</li>
+</ul>
+<h2 id="绕WAF"><a href="#绕WAF" class="headerlink" title="绕WAF"></a>绕WAF</h2><ul>
+<li>在恶意代码前加==垃圾数据==；</li>
+<li>在数据包前加垃圾数据；</li>
+<li>在Content-Disposition参数后面加垃圾数据；</li>
+<li>==多加一个filename==；</li>
+<li>==更改HTTP请求方法==；</li>
+<li>==双写后缀==</li>
+<li>删除实体里面的Conten-Type字段；<br>第一种是删除Content整行，第二种是删除C后面的字符。删除掉ontent-Type: image/jpeg只留下c，将.php加c后面即可，但是要注意额，双引号要跟着c.php。</li>
+<li>删除Content-Disposition字段里的空格</li>
+<li>增加一个空格</li>
+<li>修改Content-Disposition字段值的大小写</li>
+<li>文件名后缀处回车</li>
+<li>多个Content-Disposition</li>
+</ul>
+<h3 id="多个filename"><a href="#多个filename" class="headerlink" title="多个filename"></a>多个filename</h3><p>早期版本安全狗，可以多加一个filename</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file_x&quot;; filename=&quot;test.txt&quot;; filename=&quot;test.php&quot;</span><br></pre></td></tr></table></figure>
+
+<p>最终上传成功的文件名是test.php。但是由于解析文件名时，会解析到第一个。正则默认都会匹配到第一个。</p>
+<h3 id="交换name和filename的顺序"><a href="#交换name和filename的顺序" class="headerlink" title="交换name和filename的顺序"></a>交换name和filename的顺序</h3><p>规定Content-Disposition必须在最前面，所以只能交换name和filename的顺序。有的WAF可能会匹配name在前面，filename在后面，所以下面姿势会导致Bypass。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; filename=&quot;xx.php&quot;; name=file_x</span><br></pre></td></tr></table></figure>
+
+<h3 id="去掉引号-双引号变成单引号"><a href="#去掉引号-双引号变成单引号" class="headerlink" title="去掉引号,双引号变成单引号"></a>去掉引号,双引号变成单引号</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=file_x; filename=&quot;xx.php&quot;</span><br><span class="line">Content-Disposition: form-data; name=file_x; filename=xx.php</span><br><span class="line">Content-Disposition: form-data; name=&quot;file_x&quot;; filename=xx.php</span><br><span class="line">Content-Disposition: form-data; name=&#x27;file_x&#x27;; filename=&#x27;xx.php&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>单引号、双引号、不要引号，都能上传。</p>
+<h3 id="大小写"><a href="#大小写" class="headerlink" title="大小写"></a>大小写</h3><p>对这三个固定的字符串进行大小写转换</p>
+<ul>
+<li><p>Content-Disposition</p>
+</li>
+<li><p>name</p>
+</li>
+<li><p>filename</p>
+<h3 id="空格"><a href="#空格" class="headerlink" title="空格"></a>空格</h3><p>在: ; =添加1个或者多个空格。</p>
+</li>
+</ul>
+<h3 id="去掉或修改Content-Disposition值"><a href="#去掉或修改Content-Disposition值" class="headerlink" title="去掉或修改Content-Disposition值"></a>去掉或修改Content-Disposition值</h3><p>有的WAF在解析的时候，认为Content-Disposition值一定是form-data，造成绕过。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: name=&#x27;file_x&#x27;; filename=&#x27;xx.php&#x27;</span><br></pre></td></tr></table></figure>
+
+<h3 id="多个boundary"><a href="#多个boundary" class="headerlink" title="多个boundary"></a>多个boundary</h3><p>最后上传的文件是test.php而非test.txt，但是取的文件名只取了第一个就会被Bypass。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">------WebKitFormBoundaryj1oRYFW91eaj8Ex2</span><br><span class="line">Content-Disposition: form-data; name=&quot;file_x&quot;; filename=&quot;test.txt&quot;</span><br><span class="line">Content-Type: text/javascript</span><br><span class="line"></span><br><span class="line">------WebKitFormBoundaryj1oRYFW91eaj8Ex2</span><br><span class="line">Content-Disposition: form-data; name=&quot;file_x&quot;; filename=&quot;test.php&quot;</span><br><span class="line">Content-Type: text/javascript</span><br></pre></td></tr></table></figure>
+
+<h3 id="多个分号"><a href="#多个分号" class="headerlink" title="多个分号"></a>多个分号</h3><p>文件解析时，可能解析不到文件名，导致绕过。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file_x&quot;;;; filename=&quot;test.php&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Header在boundary前添加任意字符"><a href="#Header在boundary前添加任意字符" class="headerlink" title="Header在boundary前添加任意字符"></a>Header在boundary前添加任意字符</h3><p>PHP支持，JAVA报错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Type: multipart/form-data; bypassboundary=----WebKitFormBoundaryj1oRYFW91eaj8Ex2</span><br></pre></td></tr></table></figure>
+
+<h3 id="filename换行"><a href="#filename换行" class="headerlink" title="filename换行"></a>filename换行</h3><p>PHP支持，Java不支持</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: form-data; name=&quot;file_x&quot;; file</span><br><span class="line">name=&quot;test.php&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="name和filename添加任意字符串"><a href="#name和filename添加任意字符串" class="headerlink" title="name和filename添加任意字符串"></a>name和filename添加任意字符串</h3><p>PHP支持，Java不支持</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Disposition: name=&quot;file_x&quot;; bypass waf upload; filename=&quot;test.php&quot;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="POST-GET"><a href="#POST-GET" class="headerlink" title="POST/GET"></a>POST/GET</h3><p>有些WAF的规则是：如果数据包为POST类型，则校验数据包内容。<br>此种情况可以上传一个POST型的数据包，抓包将POST改为GET。</p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/04/04/%E7%AE%97%E6%B3%95%E5%9F%BA%E7%A1%80/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>python 算法基础</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/04/01/XXE%E5%A7%BF%E5%8A%BF/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      XXE姿势
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

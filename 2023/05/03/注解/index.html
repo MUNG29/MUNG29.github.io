@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        注解 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">注解</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/java/" class="post-tag">#java</a>
+  
+    <a href="/tags/servlet/" class="post-tag">#servlet</a>
+  
+
+
+          <span class="post-date">2023-05-03</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#WebServlet-%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="toc-text">@WebServlet 注解的属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WebServlet-%E6%B3%A8%E8%A7%A3%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">@WebServlet 注解的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%90%AF%E7%94%A8%E6%B3%A8%E8%A7%A3%E6%94%AF%E6%8C%81"><span class="toc-text">1. 启用注解支持</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BD%BF%E7%94%A8-WebServlet-%E6%B3%A8%E8%A7%A3"><span class="toc-text">2. 使用 @WebServlet 注解</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#WebServlet-%E6%B3%A8%E8%A7%A3-%E5%92%8C-web-xml-%E7%9A%84%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-text">@WebServlet 注解 和 web.xml 的优缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#WebServlet-%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE-Servlet"><span class="toc-text">@WebServlet 注解配置 Servlet</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#web-xml-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AE-Servlet"><span class="toc-text">web.xml 配置文件配置 Servlet</span></a></li></ol></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <blockquote>
+<p>不引入注解的情况下，即使是很简单的项目，web.xml里面的配置信息也会非常多，这非常不利于开发</p>
+<p>故servlet3.0之后，推出了各种注解式开发</p>
+<p>@注解名(属性名=属性值,属性名=属性值,属性名=属性值…)</p>
+</blockquote>
+<h2 id="WebServlet-注解的属性"><a href="#WebServlet-注解的属性" class="headerlink" title="@WebServlet 注解的属性"></a>@WebServlet 注解的属性</h2><p>@WebServlet 用于将一个类声明为 Servlet，该注解会在部署时被容器处理，容器根据其具体的属性配置将相应的类部署为 Servlet。该注解具有下表给出的一些常用属性。</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>类型</th>
+<th>标签</th>
+<th>描述</th>
+<th>是否必需</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+<td>String</td>
+<td><servlet-name></td>
+<td>指定 Servlet 的 name 属性。 如果没有显式指定，则取值为该 Servlet 的完全限定名，即包名+类名。</td>
+<td>否</td>
+</tr>
+<tr>
+<td>==value==</td>
+<td>String[ ]</td>
+<td><url-pattern></td>
+<td>该属性等价于 urlPatterns 属性，两者不能同时指定。 如果同时指定，通常是忽略 value 的取值。</td>
+<td>是</td>
+</tr>
+<tr>
+<td>==urlPatterns==</td>
+<td>String[ ]</td>
+<td><url-pattern></td>
+<td>指定一组 Servlet 的 映射路径,指定的多个路径都访问这个servlet</td>
+<td>是</td>
+</tr>
+<tr>
+<td>loadOnStartup</td>
+<td>int</td>
+<td><load-on-startup></td>
+<td>指定 Servlet 的加载顺序。</td>
+<td>否</td>
+</tr>
+<tr>
+<td>initParams</td>
+<td>WebInitParam[ ]</td>
+<td><init-param></td>
+<td>指定一组 Servlet 初始化参数。</td>
+<td>否</td>
+</tr>
+<tr>
+<td>asyncSupported</td>
+<td>boolean</td>
+<td><async-supported></td>
+<td>声明 Servlet 是否支持异步操作模式。</td>
+<td>否</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td><description></td>
+<td>指定该 Servlet 的描述信息。</td>
+<td>否</td>
+</tr>
+<tr>
+<td>displayName</td>
+<td>String</td>
+<td><display-name></td>
+<td>指定该 Servlet 的显示名。</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<h2 id="WebServlet-注解的使用"><a href="#WebServlet-注解的使用" class="headerlink" title="@WebServlet 注解的使用"></a>@WebServlet 注解的使用</h2><h4 id="1-启用注解支持"><a href="#1-启用注解支持" class="headerlink" title="1. 启用注解支持"></a>1. 启用注解支持</h4><p>web.xml 的顶层标签 <web-app> 中有一个属性：metadata-complete，该属性用于指定当前 web.xml 是否是完全的。若该属性设置为 true，则容器在部署时将只依赖 web.xml，忽略所有的注解。若不配置该属性，或者将其设置为 false，则表示启用注解支持。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span><br><span class="line">&lt;web-app xmlns:xsi=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span><br><span class="line">    xmlns=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;</span></span><br><span class="line">    xsi:schemaLocation=<span class="string">&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd&quot;</span></span><br><span class="line">    id=<span class="string">&quot;WebApp_ID&quot;</span> metadata-complete=<span class="string">&quot;false&quot;</span> version=<span class="string">&quot;4.0&quot;</span>&gt;</span><br><span class="line">    &lt;!-- metadata-complete取值为<span class="keyword">true</span>，表示关闭注解支持 --&gt;</span><br><span class="line">    &lt;!-- metadata-complete取值为<span class="keyword">false</span>，表示启用注解支持 --&gt;</span><br><span class="line">&lt;/web-app&gt;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>由于 metadata-complete 属性的默认值是 false，即默认启用 Servlet 注解支持，所以默认情况下，使用该注解时，不必创建 web.xml 文件。</p>
+</blockquote>
+<h4 id="2-使用-WebServlet-注解"><a href="#2-使用-WebServlet-注解" class="headerlink" title="2. 使用 @WebServlet 注解"></a>2. 使用 @WebServlet 注解</h4><p>@WebServlet 属于类级别的注解，标注在继承了 HttpServlet 的类之上。常用的写法是将 Servlet 的相对请求路径（即 value）直接写在注解内，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebServlet(&quot;/MyServlet&quot;)</span> </span><br></pre></td></tr></table></figure>
+
+
+<p>该写法省略了 urlPatterns 属性名，其完整的写法如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebServlet(urlPatterns = &quot;/MyServlet&quot;)</span>。</span><br></pre></td></tr></table></figure>
+
+
+<p>如果 @WebServlet 中需要设置多个属性，则属性之间必须使用逗号隔开，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> net.biancheng.www;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebInitParam;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet(asyncSupported = true, name = &quot;myServlet&quot;, description = &quot;name描述&quot;, loadOnStartup = 1, urlPatterns = &#123;</span></span><br><span class="line"><span class="meta">        &quot;/MyServlet&quot;, &quot;/*&quot; &#125;, initParams = &#123;</span></span><br><span class="line"><span class="meta">                @WebInitParam(name = &quot;编程帮&quot;, value = &quot;www.biancheng.net&quot;, description = &quot;init参数1&quot;),</span></span><br><span class="line"><span class="meta">                @WebInitParam(name = &quot;京东&quot;, value = &quot;www.jd.com&quot;, description = &quot;init参数2&quot;) &#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意事项：</p>
+<ul>
+<li>通过实现 Serlvet 接口或继承 GenericServlet 创建的 Servlet 类无法使用 @WebServlet 注解。</li>
+<li>使用 @WebServlet 注解配置的 Servlet 类，不要在 web.xml 文件中再次配置该 Servlet 相关属性。若同时使用 web.xml 与 @WebServlet 配置同一 Servlet 类，则 web.xml 中 <servlet-name> 的值与注解中 name 取值不能相同，否则容器会忽略注解中的配置。</li>
+</ul>
+<h2 id="WebServlet-注解-和-web-xml-的优缺点"><a href="#WebServlet-注解-和-web-xml-的优缺点" class="headerlink" title="@WebServlet 注解 和 web.xml 的优缺点"></a>@WebServlet 注解 和 web.xml 的优缺点</h2><p>使用 web.xml 或 @WebServlet 注解都可以配置 Servlet， 两者各有优缺点。</p>
+<h4 id="WebServlet-注解配置-Servlet"><a href="#WebServlet-注解配置-Servlet" class="headerlink" title="@WebServlet 注解配置 Servlet"></a>@WebServlet 注解配置 Servlet</h4><p>优点：@WebServlet 直接在 Servlet 类中使用，代码量少，配置简单。每个类只关注自身业务逻辑，与其他 Servlet 类互不干扰，适合多人同时开发。开发效率高，不用再编写大量的配置信息。web.xml文件体积变小了</p>
+<p>缺点：Servlet 较多时，每个 Servlet 的配置分布在各自的类中，不便于查找和修改。</p>
+<h4 id="web-xml-配置文件配置-Servlet"><a href="#web-xml-配置文件配置-Servlet" class="headerlink" title="web.xml 配置文件配置 Servlet"></a>web.xml 配置文件配置 Servlet</h4><p>优点：集中管理 Servlet 的配置，便于查找和修改。</p>
+<p>缺点：代码较繁琐，可读性不强，不易于理解。</p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/05/04/%E5%BA%93%E5%92%8C%E6%96%B9%E6%B3%95/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>python 常用库和方法</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/05/03/%E8%BD%AC%E5%8F%91&%E9%87%8D%E5%AE%9A%E5%90%91/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      转发&重定向
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

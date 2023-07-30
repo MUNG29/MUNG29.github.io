@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        tshark笔记 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">tshark笔记</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/MISC/" class="post-tag">#MISC</a>
+  
+
+
+          <span class="post-date">2023-05-31</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>tshark ⽤来提取数据很⽅便</p>
+<p>参数</p>
+<p>捕获接⼝:</p>
+<blockquote>
+<p> -i: -i <interface> 指定捕获接⼝，默认是第⼀个⾮本地循环接⼝;</p>
+<p> -f: -f <capture filter> 设置抓包过滤表达式，遵循libpcap过滤语法，这个实在抓包的过程中过滤，如果是分析本地⽂件则⽤不到。</p>
+<p>-s: -s <snaplen> 设置快照⻓度，⽤来读取完整的数据包，因为⽹络中传输有65535的限制，值0代表快照⻓度65535，默认也是这个值；</p>
+<p>-p: 以⾮混合模式⼯作，即只关⼼和本机有关的流量。</p>
+<p>-B: -B <buffer size> 设置缓冲区的⼤⼩，只对windows⽣效，默认是2M;</p>
+<p>-y: -y<link type> 设置抓包的数据链路层协议，不设置则默认为-L找到的第⼀个协议，局域⽹⼀般是EN10MB等;</p>
+<p>-D: 打印接⼝的列表并退出;</p>
+<p>-L 列出本机⽀持的数据链路层协议，供-y参数使⽤。</p>
+</blockquote>
+<p>捕获停⽌选项:</p>
+<blockquote>
+<p>  -c: -c <packet count> 捕获n个包之后结束，默认捕获⽆限个;<br>  -a: -a <autostop cond.> … duration:NUM，在num秒之后停⽌捕获;<br>filesize:NUM，在numKB之后停⽌捕获;<br>files:NUM，在捕获num个⽂件之后停⽌捕获;</p>
+</blockquote>
+<p>输⼊⽂件:</p>
+<blockquote>
+<p>-r: -r <infile> 设置读取本地⽂件</p>
+</blockquote>
+<p>处理选项:</p>
+<blockquote>
+<p>-2: 执⾏两次分析</p>
+<p>-R: -R <read filter>,包的读取过滤器，可以在wireshark的filter语法上查看；在wireshark的视图-&gt;过滤器视图，在这⼀栏点击表达式，就会列出来对所有协议的⽀持。</p>
+<p>-Y: -Y <display filter>,使⽤读取过滤器的语法，在单次分析中可以代替-R选项;</p>
+<p>-n: 禁⽌所有地址名字解析（默认为允许所有）</p>
+<p>-N: 启⽤某⼀层的地址名字解析。“m”代表MAC层，“n”代表⽹络层，“t”代表传输层，“C”代表当前异步DNS查找。如果-n和-N参数同时存在，-n将被忽略。如果-n和-N参数都不写，则默认打开所有地址名字解析。</p>
+<p>-d: 将指定的数据按有关协议解包输出,如要将tcp 8888端⼝的流量按http解包，应该写为“-d tcp.port==8888,http”;tshark -d. 可以列出所有⽀持的有效选择器。</p>
+</blockquote>
+<p>输出选项:</p>
+<blockquote>
+<p>-w: -w &lt;outfile|-&gt; 设置raw数据的输出⽂件。这个参数不设置，tshark将会把解码结果输出到stdout,“-w -”表⽰把raw输出到stdout。如果要把解码结果输出到⽂件，使⽤重定向“&gt;”⽽不要-w参数。</p>
+<p>-F: -F <output file type>,设置输出的⽂件格式，默认是.pcapng,使⽤tshark -F可列出所有⽀持的输出⽂件类型。</p>
+<p>-V: 增加细节输出;</p>
+<p>-O: -O <protocols>,只显⽰此选项指定的协议的详细信息。</p>
+<p>-P: 即使将解码结果写⼊⽂件中，也打印包的概要信息；</p>
+<p>-S: -S <separator> ⾏分割符</p>
+<p>-x: 设置在解码输出结果中，每个packet后⾯以HEX dump的⽅式显⽰具体数据。</p>
+<p>-T: -T pdml|ps|text|fields|psml,设置解码结果输出的格式，包括text,ps,psml和pdml，默认为text</p>
+<p>-e: 如果-T fields选项指定，-e⽤来指定输出哪些字段;</p>
+<p>-E: -E <fieldsoption>=<value>如果-T fields选项指定，使⽤-E来设置⼀些属性，⽐如<br>    tshark 3<br>    header=y|n<br>    separator=/t|/s|<char><br>    occurrence=f|l|a<br>    aggregator=,|/s|<char><br>-t: -t a|ad|d|dd|e|r|u|ud 设置解码结果的时间格式。“ad”表⽰带⽇期的绝对时间，“a”表⽰不带⽇期的绝对时间，“r”表⽰从第⼀个包到现在的相对时间，“d”表⽰两个相邻包之间的增量时间（delta）。</p>
+<p>-u: s|hms 格式化输出秒；</p>
+<p>-l: 在输出每个包之后flush标准输出</p>
+<p>-q: 结合-z选项进⾏使⽤，来进⾏统计分析；</p>
+<p>-X: <key>:<value> 扩展项，lua_script、read_format，具体参⻅ man pages；</p>
+<p>-z：统计选项，具体的参考⽂档;tshark -z help,可以列出，-z选项⽀持的统计⽅式。</p>
+<p>其他选项:<br>-h: 显⽰命令⾏帮助；<br>-v: 显⽰tshark 的版本信息</p>
+</blockquote>
+<p>例⼦：⽐如我想提取出这个流量包的modbus协议中的所有data数据</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306021441445.webp" alt="image-20230602144152071"></p>
+<p>我们输⼊这个命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tshark -r ./bus.pcap -T fields -e modbus.data -Y &quot;modbus.data != 0 and tcp.dstport == 502&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>-r 表⽰指定的⽂件</p>
+<p>-T fields -e modbus.data 这个⼀般组合起来</p>
+<p>⽤，⽤来提取某个协议的某个属性数据</p>
+<p>-Y 过滤器选项</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306021442159.webp" alt="image-20230602144243925"></p>
+<p>不知道-e填什么的时候去这⾥找</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306021443152.webp" alt="image-20230602144303788"></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/06/01/%E7%88%AC%E8%99%AB/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>python爬虫</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/05/30/linux%E7%9B%AE%E5%BD%95%E5%92%8C%E6%96%87%E4%BB%B6/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      Linux重要文件和目录
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

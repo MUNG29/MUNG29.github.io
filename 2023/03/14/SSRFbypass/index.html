@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        SSRF bypass | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">SSRF bypass</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/OWASP/" class="post-tag">#OWASP</a>
+  
+    <a href="/tags/SSRF/" class="post-tag">#SSRF</a>
+  
+
+
+          <span class="post-date">2023-03-14</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%95%E8%BF%87"><span class="toc-text">@绕过</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%82%B9%E5%88%86%E5%89%B2%E7%AC%A6%E5%8F%B7%E6%9B%BF%E6%8D%A2"><span class="toc-text">点分割符号替换</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%9B%9E%E7%8E%AF%E5%9C%B0%E5%9D%80"><span class="toc-text">本地回环地址</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B0%81%E9%97%AD%E5%BC%8F%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97-Enclosed-Alphanumerics-%E5%AD%97%E7%AC%A6"><span class="toc-text">封闭式字母数字 (Enclosed Alphanumerics)字符</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#URL%E5%8D%81%E5%85%AD%E8%BF%9B%E5%88%B6%E7%BC%96%E7%A0%81"><span class="toc-text">URL十六进制编码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%BD%91%E5%9D%80%E7%BC%A9%E7%9F%AD"><span class="toc-text">利用网址缩短</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%A9%E7%94%A830X%E9%87%8D%E5%AE%9A%E5%90%91"><span class="toc-text">利用30X重定向</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DNS%E8%A7%A3%E6%9E%90"><span class="toc-text">DNS解析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DNS%E9%87%8D%E7%BB%91%E5%AE%9A"><span class="toc-text">DNS重绑定</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SSRF%E7%9A%84%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7"><span class="toc-text">SSRF的测试工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SSRFmap"><span class="toc-text">SSRFmap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSRF-Testing"><span class="toc-text">SSRF-Testing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis-over-gopher"><span class="toc-text">redis-over-gopher</span></a></li></ol></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>经常会ban掉127、localhost这种关键词</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1942119">https://cloud.tencent.com/developer/article/1942119</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/11215">https://xz.aliyun.com/t/11215</a></p>
+<h1 id="绕过"><a href="#绕过" class="headerlink" title="@绕过"></a><strong>@绕过</strong></h1><p><code>http://www.baidu.com@10.10.10.10</code>与<code>http://10.10.10.10</code>请求是相同的</p>
+<p>该请求得到的内容都是10.10.10.10的内容，此绕过同样在URL跳转绕过中适用。</p>
+<h1 id="点分割符号替换"><a href="#点分割符号替换" class="headerlink" title="点分割符号替换"></a><strong>点分割符号替换</strong></h1><p>在浏览器中可以使用不同的分割符号来代替<a target="_blank" rel="noopener" href="https://cloud.tencent.com/act/pro/domain-sales?from=10680">域名</a>中的<code>.</code>分割，可以使用<code>。</code>、<code>｡</code>、<code>．</code>来代替：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//www。qq。com</span></span><br><span class="line">http:<span class="comment">//www｡qq｡com</span></span><br><span class="line">http:<span class="comment">//www．qq．com</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="本地回环地址"><a href="#本地回环地址" class="headerlink" title="本地回环地址"></a><strong>本地回环地址</strong></h1><p>127.0.0.1，通常被称为本地回环地址(Loopback Address)，指本机的虚拟接口，一些表示方法如下(ipv6的地址使用http访问需要加<code>[]</code>)：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">本地回环地址</span><br><span class="line"><span class="attr">http</span>:<span class="comment">//127.0.0.1 </span></span><br><span class="line">http:<span class="comment">//localhost </span></span><br><span class="line">http:<span class="comment">//127.255.255.254 </span></span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> - <span class="number">127.255</span><span class="number">.255</span><span class="number">.254</span> </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">进制转换</span><br><span class="line"><span class="attr">http</span>: <span class="comment">//0x7f.0.0.1/</span></span><br><span class="line">http:<span class="comment">//0177.0.0.1/</span></span><br><span class="line"></span><br><span class="line">当有的对跳转的地址的长度有要求</span><br><span class="line"><span class="attr">http</span>:<span class="comment">//127.0.1</span></span><br><span class="line">host&lt;<span class="number">5</span></span><br><span class="line"><span class="attr">http</span>:<span class="comment">//0/</span></span><br><span class="line">http:<span class="comment">//0:80</span></span><br><span class="line">http:<span class="comment">//127.1/</span></span><br><span class="line">host&lt;<span class="number">3</span></span><br><span class="line"><span class="attr">http</span>:<span class="comment">//0/</span></span><br><span class="line"></span><br><span class="line">ipv6</span><br><span class="line"><span class="attr">http</span>:<span class="comment">//[::1]</span></span><br><span class="line">http:/l[ ::ffff:7f00:<span class="number">1</span>]</span><br><span class="line"><span class="attr">http</span>:/l[ ::ffff:<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>]</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="封闭式字母数字-Enclosed-Alphanumerics-字符"><a href="#封闭式字母数字-Enclosed-Alphanumerics-字符" class="headerlink" title="封闭式字母数字 (Enclosed Alphanumerics)字符"></a><strong>封闭式字母数字 (Enclosed Alphanumerics)字符</strong></h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">List:</span><br><span class="line">① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ </span><br><span class="line">⑴ ⑵ ⑶ ⑷ ⑸ ⑹ ⑺ ⑻ ⑼ ⑽ ⑾ ⑿ ⒀ ⒁ ⒂ ⒃ ⒄ ⒅ ⒆ ⒇ </span><br><span class="line">⒈ ⒉ ⒊ ⒋ ⒌ ⒍ ⒎ ⒏ ⒐ ⒑ ⒒ ⒓ ⒔ ⒕ ⒖ ⒗ ⒘ ⒙ ⒚ ⒛ </span><br><span class="line">⒜ ⒝ ⒞ ⒟ ⒠ ⒡ ⒢ ⒣ ⒤ ⒥ ⒦ ⒧ ⒨ ⒩ ⒪ ⒫ ⒬ ⒭ ⒮ ⒯ ⒰ ⒱ ⒲ ⒳ ⒴ ⒵ </span><br><span class="line">Ⓐ Ⓑ Ⓒ Ⓓ Ⓔ Ⓕ Ⓖ Ⓗ Ⓘ Ⓙ Ⓚ Ⓛ Ⓜ Ⓝ Ⓞ Ⓟ Ⓠ Ⓡ Ⓢ Ⓣ Ⓤ Ⓥ Ⓦ Ⓧ Ⓨ Ⓩ </span><br><span class="line">ⓐ ⓑ ⓒ ⓓ ⓔ ⓕ ⓖ ⓗ ⓘ ⓙ ⓚ ⓛ ⓜ ⓝ ⓞ ⓟ ⓠ ⓡ ⓢ ⓣ ⓤ ⓥ ⓦ ⓧ ⓨ ⓩ </span><br><span class="line">⓪ ⓫ ⓬ ⓭ ⓮ ⓯ ⓰ ⓱ ⓲ ⓳ ⓴ </span><br><span class="line">⓵ ⓶ ⓷ ⓸ ⓹ ⓺ ⓻ ⓼ ⓽ ⓾ ⓿</span><br></pre></td></tr></table></figure>
+
+<p>浏览器访问时会自动识别成拉丁英文字符：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ⓔⓧⓐⓜⓟⓛⓔ.ⓒⓞⓜ  &gt;&gt;&gt;  example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="URL十六进制编码"><a href="#URL十六进制编码" class="headerlink" title="URL十六进制编码"></a><strong>URL十六进制编码</strong></h1><p>URL十六进制编码可被浏览器正常识别，编码脚本：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#-*- coding:utf-<span class="number">8</span> -*- </span><br><span class="line">data = <span class="string">&quot;www.qq.com&quot;</span>; </span><br><span class="line">alist = [] </span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> data: </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(x), <span class="number">2</span>): </span><br><span class="line">        alist.append((x[i:i+<span class="number">2</span>]).encode(<span class="string">&#x27;hex&#x27;</span>)) </span><br><span class="line">print <span class="string">&quot;http://%&quot;</span>+<span class="string">&#x27;%&#x27;</span>.join(alist)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303280936145.png" alt="image-20230328093641729"></p>
+<h1 id="利用网址缩短"><a href="#利用网址缩短" class="headerlink" title="利用网址缩短"></a><strong>利用网址缩短</strong></h1><p>网上有很多将网址转换未短网址的网站。</p>
+<p>•<a target="_blank" rel="noopener" href="https://www.985.so/">https://www.985.so/</a></p>
+<p>•<a target="_blank" rel="noopener" href="https://www.urlc.cn/">https://www.urlc.cn/</a></p>
+<h1 id="利用30X重定向"><a href="#利用30X重定向" class="headerlink" title="利用30X重定向"></a><strong>利用30X重定向</strong></h1><p>可以使用重定向来让服务器访问目标地址，可用于重定向的HTTP状态码：300、301、302、303、305、307、308。</p>
+<p>需要一个vps，把302转换的代码部署到vps上，然后去访问，就可跳转到内网中</p>
+<p>服务端代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">header(<span class="string">&quot;Location: http://192.168.1.10&quot;</span>);</span><br><span class="line">exit(); </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a><strong>DNS解析</strong></h1><p>配置域名的DNS解析到目标地址(A、cname等)，这里有几个配置解析到任意的地址的域名：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://sudo.cc</span><br><span class="line">http://owasp.org.127.0.0.1.nip.io/</span><br><span class="line">http://127.0.0.1.nip.io/</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="DNS重绑定"><a href="#DNS重绑定" class="headerlink" title="DNS重绑定"></a><strong>DNS重绑定</strong></h1><p>这里推荐一个在线的实现URL重绑定的工具(碰运气，多试几次)</p>
+<p><a target="_blank" rel="noopener" href="https://lock.cmpxchg8b.com/rebinder.html">https://lock.cmpxchg8b.com/rebinder.html</a></p>
+<h1 id="SSRF的测试工具"><a href="#SSRF的测试工具" class="headerlink" title="SSRF的测试工具"></a><strong>SSRF的测试工具</strong></h1><h3 id="SSRFmap"><a href="#SSRFmap" class="headerlink" title="SSRFmap"></a><strong>SSRFmap</strong></h3><p>SSRFmap-master - 可以在一个请求包中指定SSRF的位置，工具根据模块来发送EXP，支持了下列漏洞的利用：</p>
+<h3 id="SSRF-Testing"><a href="#SSRF-Testing" class="headerlink" title="SSRF-Testing"></a><strong>SSRF-Testing</strong></h3><p>SSRF-Testing-master - 常用的SSRF绕过测试</p>
+<h3 id="redis-over-gopher"><a href="#redis-over-gopher" class="headerlink" title="redis-over-gopher"></a><strong>redis-over-gopher</strong></h3><p>redis-over-gopher - 将请求转换为gopher协议格式</p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/03/17/Xpath%E6%B3%A8%E5%85%A5%E5%A7%BF%E5%8A%BF/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>Xpath注入姿势</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/03/14/XPath%E5%9F%BA%E7%A1%80/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      Xpath基础
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

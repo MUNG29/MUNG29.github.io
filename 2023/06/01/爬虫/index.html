@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        python爬虫 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">python爬虫</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E8%84%9A%E6%9C%AC/" class="post-tag">#脚本</a>
+  
+    <a href="/tags/python/" class="post-tag">#python</a>
+  
+
+
+          <span class="post-date">2023-06-01</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80"><span class="toc-text">基础</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-text">文件上传</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-text">一、文件上传</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-text">单文件上传</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-text">多文件上传</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%B5%81%E5%BC%8F%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6"><span class="toc-text">二、流式上传文件</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%84%E7%90%86json"><span class="toc-text">处理json</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Xpath%E7%88%AC%E5%8F%96"><span class="toc-text">Xpath爬取</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h1><h1 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h1><h2 id="一、文件上传"><a href="#一、文件上传" class="headerlink" title="一、文件上传"></a>一、文件上传</h2><blockquote>
+<p>先将文件读取至内存中，再将内存中的文件信息上传至服务器</p>
+</blockquote>
+<h3 id="单文件上传"><a href="#单文件上传" class="headerlink" title="单文件上传"></a>单文件上传</h3><p>①文件上传代码，运行后logo.png文件上传至服务器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">files = &#123;<span class="string">&#x27;file1&#x27;</span>: <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>)&#125;</span><br><span class="line">response = requests.post(<span class="string">&#x27;http://www.hangge.com/upload.php&#x27;</span>, files=files)</span><br><span class="line"><span class="built_in">print</span>(response.text)</span><br></pre></td></tr></table></figure>
+
+
+<p>②显式地设置文件名，文件类型和请求头：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">files = &#123;<span class="string">&#x27;file1&#x27;</span>:</span><br><span class="line">             (<span class="string">&#x27;logo.png&#x27;</span>,  <span class="comment"># 文件名</span></span><br><span class="line">              <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>),  <span class="comment"># 文件流</span></span><br><span class="line">              <span class="string">&#x27;image/png&#x27;</span>,  <span class="comment"># 请求头Content-Type字段对应的值</span></span><br><span class="line">              &#123;<span class="string">&#x27;Expires&#x27;</span>: <span class="string">&#x27;0&#x27;</span>&#125;)</span><br><span class="line">         &#125;</span><br><span class="line">response = requests.post(<span class="string">&#x27;http://www.hangge.com/upload.php&#x27;</span>, files=files)</span><br><span class="line"><span class="built_in">print</span>(response.text)</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="多文件上传"><a href="#多文件上传" class="headerlink" title="多文件上传"></a>多文件上传</h3><p>有时需要在一个请求中同时发送多个文件，同样使用 files 参数传入一个数组即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">files = [</span><br><span class="line">    (<span class="string">&#x27;file1&#x27;</span>, (<span class="string">&#x27;1.png&#x27;</span>, <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>), <span class="string">&#x27;image/png&#x27;</span>)),</span><br><span class="line">    (<span class="string">&#x27;file2&#x27;</span>, (<span class="string">&#x27;2.png&#x27;</span>, <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>), <span class="string">&#x27;image/png&#x27;</span>))</span><br><span class="line">]</span><br><span class="line">response = requests.post(<span class="string">&#x27;http://www.hangge.com/upload.php&#x27;</span>, files=files)</span><br><span class="line"><span class="built_in">print</span>(response.text)</span><br></pre></td></tr></table></figure>
+
+
+<p>上传文件时需要附带其它参数<br>如果我们需要在上传文件的同时传递一些其它参数，也是可以的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;hangge.com&quot;</span>,</span><br><span class="line">    <span class="string">&quot;age&quot;</span>: <span class="number">100</span></span><br><span class="line">&#125;</span><br><span class="line">files = [</span><br><span class="line">    (<span class="string">&#x27;file1&#x27;</span>, (<span class="string">&#x27;1.png&#x27;</span>, <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>), <span class="string">&#x27;image/png&#x27;</span>)),</span><br><span class="line">    (<span class="string">&#x27;file2&#x27;</span>, (<span class="string">&#x27;2.png&#x27;</span>, <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>), <span class="string">&#x27;image/png&#x27;</span>))</span><br><span class="line">]</span><br><span class="line">response = requests.post(<span class="string">&#x27;http://www.hangge.com/upload.php&#x27;</span>, data=data, files=files)</span><br><span class="line"><span class="built_in">print</span>(response.text)</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、流式上传文件"><a href="#二、流式上传文件" class="headerlink" title="二、流式上传文件"></a>二、流式上传文件</h2><blockquote>
+<p>边读取文件边上传文件</p>
+</blockquote>
+<p>1、requests-toolbelt 扩展库<br>①有时我们需要上传一个非常大的文件（比如 1G 左右），如果像上面的方式直接使用 Requests 提交，可能会造成内存不足而崩溃。</p>
+<p>②所以发送大文件时还是建议将请求做成数据流。不过默认情况下 Requests 不支持流式上传，但有个第三方包  requests-toolbelt  是支持的（本质还是 multipart/form-data 上传）</p>
+<p>③ requests-toolbelt 是python请求的实用程序集合。</p>
+<p>2、下载安装  requests-toolbelt 第三方库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install requests-toolbelt</span><br></pre></td></tr></table></figure>
+
+<p>3、使用流式上传文件：<br>实例：使用  requests-toolbelt  来实现文件的流式上传：</p>
+<p>①不同于 requests 全部读到内存中上传， requests-toolbelt 是边读边上传。</p>
+<p>②其本质还是 multipart/form-data 方式提交数据，所以服务端代码不需要变化。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> requests_toolbelt <span class="keyword">import</span> MultipartEncoder</span><br><span class="line"></span><br><span class="line">m = MultipartEncoder(</span><br><span class="line">    fields=&#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;logo.com&#x27;</span>,  <span class="comment"># 字段1</span></span><br><span class="line">            <span class="string">&quot;age&quot;</span>: <span class="string">&#x27;100&#x27;</span>,  <span class="comment"># 字段2</span></span><br><span class="line">            <span class="string">&#x27;file1&#x27;</span>: (<span class="string">&#x27;1.png&#x27;</span>, <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>), <span class="string">&#x27;image/png&#x27;</span>),  <span class="comment"># 文件1</span></span><br><span class="line">            <span class="string">&#x27;file2&#x27;</span>: (<span class="string">&#x27;2.png&#x27;</span>, <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>), <span class="string">&#x27;image/png&#x27;</span>)  <span class="comment"># 文件2</span></span><br><span class="line">            &#125;</span><br><span class="line">)</span><br><span class="line">r = requests.post(<span class="string">&#x27;http://www.hangge.com/upload.php&#x27;</span>, data=m, headers=&#123;<span class="string">&#x27;Content-Type&#x27;</span>: m.content_type&#125;)</span><br><span class="line"><span class="built_in">print</span>(r.text)</span><br></pre></td></tr></table></figure>
+
+
+<p>4、监听上传进度<br>① requests-toolbelt 库 还提供了个监视器MultipartEncoderMonitor ，该监视器接受一个回调函数，我们可以在回调中实时跟踪进度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> requests_toolbelt <span class="keyword">import</span> MultipartEncoder, MultipartEncoderMonitor</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_callback</span>(<span class="params">monitor</span>):</span></span><br><span class="line">    progress = (monitor.bytes_read / monitor.<span class="built_in">len</span>) * <span class="number">100</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\r 文件上传进度：%d%%(%d/%d)&quot;</span> % (progress, monitor.bytes_read, monitor.<span class="built_in">len</span>), end=<span class="string">&quot; &quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">e = MultipartEncoder(</span><br><span class="line">    fields=&#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;logo.com&#x27;</span>,  <span class="comment"># 参数1</span></span><br><span class="line">            <span class="string">&quot;age&quot;</span>: <span class="string">&#x27;100&#x27;</span>,  <span class="comment"># 参数2</span></span><br><span class="line">            <span class="string">&#x27;file1&#x27;</span>: (<span class="string">&#x27;1.png&#x27;</span>, <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>), <span class="string">&#x27;image/png&#x27;</span>),  <span class="comment"># 文件1</span></span><br><span class="line">            <span class="string">&#x27;file2&#x27;</span>: (<span class="string">&#x27;2.png&#x27;</span>, <span class="built_in">open</span>(<span class="string">&#x27;logo.png&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>), <span class="string">&#x27;image/png&#x27;</span>)  <span class="comment"># 文件2</span></span><br><span class="line">            &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">m = MultipartEncoderMonitor(e, my_callback)</span><br><span class="line"></span><br><span class="line">r = requests.post(<span class="string">&#x27;http://www.hangge.com/upload.php&#x27;</span>, data=m, headers=&#123;<span class="string">&#x27;Content-Type&#x27;</span>: m.content_type&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="处理json"><a href="#处理json" class="headerlink" title="处理json"></a>处理json</h1><blockquote>
+<p>json跟python中的字典看起来很像，两者之间的区别？<br>1）json的key只能是字符串，dict的key可以是任何可hash的对象，例如：字符串、数字、元组等；</p>
+<p>2）字典是一种==数据结构==，json是一种==数据格式==；字典有很多内置函数，有多种调用方法，而json是数据打包的一种格式，并不像字典具备操作性；</p>
+<p>3）json的字符串强制用双引号，dict的字符串可以用单引号、双引号；</p>
+</blockquote>
+<p>一般而言，我们会把json转化为python中的字典或者列表，再对其进行操作。<br>Pythone3的标准库JSON模块，可以很方便的帮我们进行json数据的转换和处理，这里主要指序列化（json.dumps()、json.dump()）和反序列化（json.loads()、json.load()）。</p>
+<p>常用的JSON模块方法：</p>
+<ul>
+<li><p>json.dumps():将Python中的对象转换为JSON中的字符串对象</p>
+</li>
+<li><p>json.dump()：将python对象转换成JSON字符串输出到fp流中。</p>
+</li>
+<li><p>json.loads():将JSON中的字符串对象转换为Python中的对象</p>
+</li>
+<li><p>json.load():读取包含json对象的文件。</p>
+<p><code>带s的都是和字符串相关的，不带s的都是和文件相关的。</code></p>
+</li>
+</ul>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305121641147.webp" alt="image-20230512164154768"></p>
+<p>json类型转换到Python的类型对照表</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305121642595.webp" alt="image-20230512164230404"></p>
+<p><code>实例</code></p>
+<p>把字典转换成json串</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">dic = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;xiaoming&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">29</span>&#125;</span><br><span class="line">json_str = json.dumps(dic)<span class="comment">#返回json字符串</span></span><br><span class="line"><span class="built_in">print</span>(json_str)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(json_str))</span><br><span class="line">输出：</span><br><span class="line">&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;xiaoming&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">29</span>&#125;</span><br><span class="line">&lt;<span class="class"><span class="keyword">class</span> &#x27;<span class="title">str</span>&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Python解码JSON对象</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">json_str =<span class="string">&#x27;&#123;&quot;id&quot;:&quot;09&quot;, &quot;name&quot;: &quot;Nitin&quot;, &quot;department&quot;:&quot;Finance&quot;&#125;&#x27;</span></span><br><span class="line"><span class="comment"># Convert string to Python dict</span></span><br><span class="line"><span class="built_in">dict</span> = json.loads(json_str)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">dict</span>)</span><br><span class="line"><span class="comment">#转换成字典来后，要访问其中的值，可以使用字典的key来访问</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">dict</span>[<span class="string">&#x27;id&#x27;</span>])</span><br><span class="line">输出：</span><br><span class="line">&#123;<span class="string">&#x27;id&#x27;</span>: <span class="string">&#x27;09&#x27;</span>, <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;Nitin&#x27;</span>, <span class="string">&#x27;department&#x27;</span>: <span class="string">&#x27;Finance&#x27;</span>&#125;</span><br><span class="line">09</span><br></pre></td></tr></table></figure>
+
+<p>读取json文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;test1.json&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    a = json.load(f)</span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(a))</span><br><span class="line">输出：</span><br><span class="line">&#123;<span class="string">&#x27;sites&#x27;</span>: [&#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;360&#x27;</span>, <span class="string">&#x27;url&#x27;</span>: <span class="string">&#x27;www.360.com&#x27;</span>&#125;, &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;google&#x27;</span>, <span class="string">&#x27;url&#x27;</span>: <span class="string">&#x27;www.google.com&#x27;</span>&#125;, &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;baidu&#x27;</span>, <span class="string">&#x27;url&#x27;</span>: <span class="string">&#x27;www.baidu.com&#x27;</span>&#125;]&#125;</span><br><span class="line">&lt;<span class="class"><span class="keyword">class</span> &#x27;<span class="title">dict</span>&#x27;&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>写入json文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> json</span><br><span class="line">    dic =&#123;</span><br><span class="line">        <span class="string">&quot;name&quot;</span> : <span class="string">&quot;xiaoming&quot;</span>,</span><br><span class="line">        <span class="string">&quot;age&quot;</span> : <span class="number">20</span>,</span><br><span class="line">        <span class="string">&quot;phonenumber&quot;</span> : <span class="string">&quot;15555555555&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;test2.json&quot;</span>, <span class="string">&quot;w&quot;</span>) <span class="keyword">as</span> outfile:</span><br><span class="line">        json.dump(dic, outfile)</span><br><span class="line"></span><br><span class="line">    文件test.json &#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;xiaoming&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">20</span>, <span class="string">&quot;phonenumber&quot;</span>: <span class="string">&quot;15555555555&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h1 id="Xpath爬取"><a href="#Xpath爬取" class="headerlink" title="Xpath爬取"></a>Xpath爬取</h1><p>常用规则</p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nodename</td>
+<td>选取此节点的所有子节点</td>
+</tr>
+<tr>
+<td>/</td>
+<td>从当前节点选区直接子节点</td>
+</tr>
+<tr>
+<td>//</td>
+<td>从当前节点选取子孙节点</td>
+</tr>
+<tr>
+<td>.</td>
+<td>选取当前节点</td>
+</tr>
+<tr>
+<td>..</td>
+<td>选取当前节点的父节点</td>
+</tr>
+<tr>
+<td>@</td>
+<td>选取属性</td>
+</tr>
+</tbody></table>
+<p>常用路径表达式</p>
+<ul>
+<li>nodename 选取此节点的所有子节点。</li>
+<li>/ 从根节点选取。比如 /bookstore 是选取根元素bookstore， bookstore/book 是选取属于bookstore的子元素的所有book元素。</li>
+<li>// 从匹配选择的当前节点选择文档中的节点，而不考虑它们的位置。 //book 是选取所有book子元素， bookstore//book 选择属于bookstore元素的后代的所有book元素</li>
+<li>. 选取当前节点。</li>
+<li>.. 选取当前节点的父节点。</li>
+<li>@ 选取属性。 //@lang 选取名为lang的所有属性。</li>
+<li>/text() 提取标签下面的文本内容</li>
+<li>//标签名[@属性=“属性值”] 提取包含属性为属性值的标签</li>
+</ul>
+<p><strong>谓语</strong>用来查找某个特定的节点或者包含某个指定的值的节点。谓语被嵌在方括号中。带有谓语的一些路径表达式：</p>
+<ul>
+<li>/bookstore/book[1] 选取属于 bookstore 子元素的第一个 book 元素。</li>
+<li>/bookstore/book[last()] 选取属于 bookstore 子元素的最后一个 book 元素。</li>
+<li>/bookstore/book[last()-1] 选取属于 bookstore 子元素的倒数第二个 book 元素。</li>
+<li>/bookstore/book[position()&lt;3] 选取最前面的两个属于 bookstore 元素的子元素的 book 元素。</li>
+<li>//title[@lang] 选取所有拥有名为 lang 的属性的 title 元素。</li>
+<li>//title[@lang=’eng’] 选取所有 title 元素，且这些元素拥有值为 eng 的 lang 属性。</li>
+<li>/bookstore/book[price&gt;35.00] 选取 bookstore 元素的所有 book 元素，且其中的 price 元素的值须大于 35.00。</li>
+<li>/bookstore/book[price&gt;35.00]//title 选取 bookstore 元素中的 book 元素的所有 title 元素，且其中的 price 元素的值须大于 35.00。</li>
+</ul>
+<p><strong>选取未知节点</strong></p>
+<p>XPath通配符可用来选取未知的XML元素。</p>
+<ul>
+<li>* 匹配任何元素节点。 /bookstore/* 选取 bookstore 元素的所有子元素。 //* 选取文档中的所有元素。</li>
+<li>@* 匹配任何属性节点。 //title[@*] 选取所有带有属性的 title 元素。</li>
+<li>node() 匹配任何类型的节点。</li>
+</ul>
+<p><strong>选取若干路径</strong></p>
+<ul>
+<li>//book/title | //book/price 选取 book 元素的所有 title 和 price 元素。</li>
+<li>//title | //price 选取文档中的所有 title 和 price 元素。</li>
+<li>/bookstore/book/title | //price 选取属于 bookstore 元素的 book 元素的所有 title 元素，以及文档中所有的 price 元素。</li>
+</ul>
+<p><strong>Xpath运算符</strong></p>
+<ul>
+<li>| 计算两个节点集</li>
+<li>+ - * div 分别表示加减乘除</li>
+<li>= 等于， != 不等于， &lt; 小于， &lt;= 小于或等于， &gt; 大于， &gt;= 大于或等于</li>
+<li>or 或， and 与</li>
+<li>mod 计算除法的余数</li>
+</ul>
+<p>demo</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line">logging.captureWarnings(<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">&#x27;C:\\Users\\HP\\Desktop\\bizhi\\&#x27;</span>):</span><br><span class="line">    os.makedirs(<span class="string">&#x27;C:\\Users\\HP\\Desktop\\bizhi\\&#x27;</span>)</span><br><span class="line">url=<span class="string">&#x27;https://xinzhuobu.com/?cat=1&amp;order=hot&#x27;</span></span><br><span class="line">proxies = &#123; <span class="string">&quot;http&quot;</span>: <span class="literal">None</span>, <span class="string">&quot;https&quot;</span>: <span class="literal">None</span>&#125;</span><br><span class="line">headers=&#123;<span class="string">&quot;user-agent&quot;</span>:<span class="string">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.76&quot;</span>&#125;</span><br><span class="line">page=requests.get(url=url,headers=headers,  proxies=proxies,verify=<span class="literal">False</span>).text</span><br><span class="line">tree=etree.HTML(page)</span><br><span class="line">img_list=tree.xpath(<span class="string">&#x27;//div[@class=&quot;site&quot;]/div[@class=&quot;site-content&quot;]/div[@class=&quot;container&quot;]/div[@class=&quot;row&quot;]//div[@class=&quot;content-area&quot;]//div[@class=&quot;row posts-wrapper&quot;]/div[@class=&quot;col-lg-1-5 col-6 col-sm-6 col-md-4 col-lg-3&quot;]&#x27;</span>)</span><br><span class="line">a=<span class="string">&#x27;1&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> img_list:</span><br><span class="line">    img_src=i.xpath(<span class="string">&#x27;./article/div[@class=&quot;entry-media&quot;]/div[@class=&quot;placeholder&quot;]//img/@data-src&#x27;</span>)[<span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    img_name=a+<span class="string">&#x27;.jpg&#x27;</span></span><br><span class="line">    a=<span class="built_in">str</span>(<span class="built_in">int</span>(a)+<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    imgg=requests.get(url=img_src,headers=headers ,proxies=proxies,verify=<span class="literal">False</span>).content</span><br><span class="line"></span><br><span class="line">    img_path=<span class="string">&quot;C:\\Users\\HP\\Desktop\\bizhi\\&quot;</span>+img_name</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(img_path,<span class="string">&#x27;wb&#x27;</span>)<span class="keyword">as</span> f:</span><br><span class="line">        f.write(imgg)</span><br><span class="line">        <span class="built_in">print</span>(img_name,<span class="string">&#x27;下载成功&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/06/02/flask%E5%85%A5%E9%97%A8/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>flask学习笔记</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/05/31/tshark/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      tshark笔记
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

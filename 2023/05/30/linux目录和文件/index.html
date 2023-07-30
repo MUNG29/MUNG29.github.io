@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        Linux重要文件和目录 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">Linux重要文件和目录</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E9%80%9A%E7%94%A8/" class="post-tag">#通用</a>
+  
+
+
+          <span class="post-date">2023-05-30</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95%E8%A7%92%E5%BA%A6%E7%9C%8B%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-text">目录角度看文件结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E6%96%87%E4%BB%B6%E5%92%8C%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">关键文件和环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">程序环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Web%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%87%8D%E8%A6%81%E6%96%87%E4%BB%B6"><span class="toc-text">Web服务器重要文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Proc-%E7%9B%AE%E5%BD%95%E5%9C%A8-CTF-%E4%B8%AD%E7%9A%84%E5%88%A9%E7%94%A8"><span class="toc-text">Proc 目录在 CTF 中的利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#proc-%E7%9B%AE%E5%BD%95"><span class="toc-text">&#x2F;proc 目录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#cmdline"><span class="toc-text">cmdline</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cwd"><span class="toc-text">cwd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exe"><span class="toc-text">exe</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#environ"><span class="toc-text">environ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fd"><span class="toc-text">fd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#self"><span class="toc-text">self</span></a></li></ol></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/DARKNOTES/article/details/119256775">https://blog.csdn.net/DARKNOTES/article/details/119256775</a></p>
+<p><a target="_blank" rel="noopener" href="https://johnfrod.top/%E5%AE%89%E5%85%A8/proc-%E7%9B%AE%E5%BD%95%E5%9C%A8-ctf-%E4%B8%AD%E7%9A%84%E5%88%A9%E7%94%A8/">https://johnfrod.top/%E5%AE%89%E5%85%A8/proc-%E7%9B%AE%E5%BD%95%E5%9C%A8-ctf-%E4%B8%AD%E7%9A%84%E5%88%A9%E7%94%A8/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/liushui-sky/p/9354536.html">https://www.cnblogs.com/liushui-sky/p/9354536.html</a></p>
+<h1 id="目录角度看文件结构"><a href="#目录角度看文件结构" class="headerlink" title="目录角度看文件结构"></a>目录角度看文件结构</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">目录	预期的内容</span><br><span class="line">/bin	二进制文件，存放了基本的指令，依据先后顺序。</span><br><span class="line">/sbin	超级管理员专用指令，依据先后顺序。</span><br><span class="line">/usr	用户安装的软件和文件。</span><br><span class="line">/usr/bin	也存放指令，依据先后顺序。</span><br><span class="line">/usr/sbin	也存放指令，依据先后顺序。</span><br><span class="line">/usr/local/	系统用户级管理员在本机自行安装自己下载的软件。</span><br><span class="line">/root	系统管理员用户root主目录。</span><br><span class="line">/home	除root用户的所有用户文件存储在这里，命名为其用户名。</span><br><span class="line">/proc	进程信息，虚拟目录，实际上为内存的映射，不占据空间，可用于获取进程的信息，修改会发生作用。</span><br><span class="line">/etc	主要放所有的系统管理所需要的配置文件和子目录。</span><br><span class="line">/tmp	存放系统产生的临时文件，这个目录任何人都能访问并且创建数据。</span><br><span class="line">/<span class="keyword">var</span>	存放程序、缓存、登陆文件、系统日志文件，主要是经常被修改的那些。</span><br><span class="line">/<span class="keyword">var</span>/log/	重要日志。</span><br><span class="line">/boot	Linux启动相关的文件。</span><br><span class="line">/dev	存放Linux的外部设备(Device)，操控方法和文件相同，使用需要挂载。</span><br><span class="line">/mnt	外部设备挂载时，将设备(有自己的文件系统)挂载在mnt当中。</span><br><span class="line">/lib	基本的动态链接共享库。</span><br><span class="line">/sys	一个虚拟文件系统，记录与内核相关的信息。</span><br><span class="line">/lost+found	非正常关机产生的文件。</span><br><span class="line">/opt	一些大型的或第三方的软件放置目录</span><br><span class="line">/media	软盘、光盘等设备。</span><br><span class="line">/srv	网络服务启动后所需要的数据目录。</span><br><span class="line">…	…</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="关键文件和环境变量"><a href="#关键文件和环境变量" class="headerlink" title="关键文件和环境变量"></a>关键文件和环境变量</h1><p><code>/etc/passwd</code><br>可能出现用户、工作目录、shell位置，刺探安装了那些软件，以进一步利用。</p>
+<p>同时有些时候，进行读文件测试时，也会用这个文件进行测试。</p>
+<hr>
+<p><code>$PATH</code><br>系统会按照PATH定义的目录搜索可执行文件，以分号分割。</p>
+<p>修改后，需要重启生效。</p>
+<p><code>$PATH</code>中添加<code>./</code>很危险。</p>
+<p><code>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</code><br>env命令可查看终端的全部环境变量。</p>
+<h1 id="程序环境变量"><a href="#程序环境变量" class="headerlink" title="程序环境变量"></a>程序环境变量</h1><p>进程 <code>/proc/$PID/environ</code></p>
+<p>表示的是运行时进程的环境变量，其中一个特殊的是/proc/self/，它等价于/proc/自己的PID/environ，适用于某个进程获取自己的IP，以适应不同用户不同PID，或PID发生变化的情况。</p>
+<p>pgrep命令可查看进程相关的PID，如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ pgrep nginx</span><br><span class="line">1111</span><br><span class="line">18888</span><br><span class="line">23333</span><br></pre></td></tr></table></figure>
+
+<p>export设置临时的环境变量，修改配置文件为永久修改。</p>
+<hr>
+<p><code>/etc/hosts</code><br>包含了IP地址、域名和主机别名间的映射关系，可以获得内网的一些主机信息，可以为SSRF提供便利。</p>
+<p>网络IP 主机名/域名 主机别名</p>
+<h1 id="Web服务器重要文件"><a href="#Web服务器重要文件" class="headerlink" title="Web服务器重要文件"></a>Web服务器重要文件</h1><p>Apache</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/etc/apache2/apache2.conf	<span class="comment"># 主配置文件</span></span><br><span class="line">/etc/apache2/site-available/<span class="number">000</span>-defaut.con  <span class="comment"># 网站站点根目录配置文件</span></span><br><span class="line">/etc/apache2/sites-enabled  <span class="comment"># apache2正在使用的网站配置文件</span></span><br><span class="line">/etc/apache2/site-available <span class="comment"># apache2可用的网站配置文件</span></span><br><span class="line">/<span class="keyword">var</span>/www/html/ 				<span class="comment"># 默认根目录</span></span><br><span class="line">/<span class="keyword">var</span>/log/apache2/access.log <span class="comment"># Apache服务器的访问日志文件 </span></span><br><span class="line">/<span class="keyword">var</span>/log/apache2/<span class="built_in">error</span>.log 	<span class="comment"># Apache服务器的错误日志文件</span></span><br></pre></td></tr></table></figure>
+
+
+<p>nginx</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/<span class="keyword">var</span>/log/nginx		<span class="comment"># 日志默认存放位置</span></span><br><span class="line">/etc/nginx/conf/nginx.conf		<span class="comment"># 主配置文件</span></span><br><span class="line">/usr/local/nginx/conf/nginx.conf	<span class="comment"># 配置文件</span></span><br><span class="line">/<span class="keyword">var</span>/log/nginx/access.log		<span class="comment"># 访问日志</span></span><br><span class="line">/<span class="keyword">var</span>/log/nginx/<span class="built_in">error</span>.log		<span class="comment"># 错误日志</span></span><br><span class="line">/usr/local/<span class="keyword">var</span>/log/nginx/access.log <span class="comment"># 没看到？？</span></span><br></pre></td></tr></table></figure>
+
+
+<p>PHP<br><code>/www/server/php/版本/etc/php.ini</code></p>
+<h1 id="Proc-目录在-CTF-中的利用"><a href="#Proc-目录在-CTF-中的利用" class="headerlink" title="Proc 目录在 CTF 中的利用"></a>Proc 目录在 CTF 中的利用</h1><p>在 CTF 中经常会用到 <code>/proc</code> 这个目录来进行绕过，利用它里面的一些子目录或文件读取网站源码或者环境信息等，甚至直接读取flag或者直接Getshell。</p>
+<table>
+<thead>
+<tr>
+<th align="center">cmdline</th>
+<th align="center">获取启动指定进程的完整命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">cwd</td>
+<td align="center">获取目标指定进程环境的<code>运行目录</code></td>
+</tr>
+<tr>
+<td align="center">exe</td>
+<td align="center">获得指定进程的<code>可执行文件的完整路径</code></td>
+</tr>
+<tr>
+<td align="center">environ</td>
+<td align="center">获取<code>指定进程的环境变量信息</code></td>
+</tr>
+<tr>
+<td align="center">fd</td>
+<td align="center">获得<code>指定进程打开的每个文件的路径以及文件内容</code></td>
+</tr>
+</tbody></table>
+<h2 id="proc-目录"><a href="#proc-目录" class="headerlink" title="/proc 目录"></a>/proc 目录</h2><p>Linux系统上的/proc目录是一种文件系统，即proc文件系统。与其它常见的文件系统不同的是，/proc 是一种伪文件系统（也即虚拟文件系统），存储的是当前内核运行状态的一系列特殊文件，用户可以通过这些文件查看有关系统硬件及当前<code>正在运行进程的信息</code>，甚至可以通过更改其中某些文件来改变内核的运行状态。</p>
+<p>简单来讲，<code>/proc</code> 目录即保存在系统内存中的信息，大多数虚拟文件可以使用文件查看命令如cat、more或者less进行查看，有些文件信息表述的内容可以一目了然，但也有文件的信息却不怎么具有可读性。</p>
+<p>/proc 目录中包含许多以数字命名的子目录，这些数字表示系统当前正在运行进程的进程号(PID)，里面包含对应进程相关的多个信息文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al /proc</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112334.png" alt="image-20220530222553170"></p>
+<p>下面我们简单介绍一下 <code>/proc</code> 目录中的常见文件夹与文件。</p>
+<p>上面列出的是 /proc 目录中一些进程相关的目录，每个目录中是其进程本身相关信息的文件。下面是系统上运行的一个PID为11的进程的相关文件，其中有些文件是每个进程都会具有的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al /proc/11</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112329.png" alt="image-20220530222849639"></p>
+<p>这里简单讲几个与题目相关的进程文件：</p>
+<h3 id="cmdline"><a href="#cmdline" class="headerlink" title="cmdline"></a>cmdline</h3><p>cmdline 文件存储着启动当前进程的完整命令，但僵尸进程目录中的此文件不包含任何信息。可以通过查看cmdline目录获取<code>启动指定进程的完整命令</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/1/cmdline</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112325.png" alt="image-20220530223141042"></p>
+<p>可知PID为1的进程的启动命令为<code>/init</code>。</p>
+<h3 id="cwd"><a href="#cwd" class="headerlink" title="cwd"></a>cwd</h3><p>cwd 文件是一个指向当前进程运行目录的符号链接。可以通过查看cwd文件获取目标指定进程环境的<code>运行目录</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al /proc/1/cwd</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112320.png" alt="image-20220530223354747"></p>
+<p>可见PID为1的进程的运行目录为<code>/</code>，然后我们可以直接使用<code>ls</code>目录查看该进行运行目录下的文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /proc/1/cwd</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112030.png" alt="image-20220530223755196"></p>
+<p>如上图所示，与直接查看<code>/</code>目录的效果是一样的。</p>
+<h3 id="exe"><a href="#exe" class="headerlink" title="exe"></a>exe</h3><p>exe 是一个指向启动当前进程的可执行文件（完整路径）的符号链接。通过exe文件我们可以获得指定进程的<code>可执行文件的完整路径</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al /proc/1/exe</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112016.png" alt="image-20220530223952567"></p>
+<h3 id="environ"><a href="#environ" class="headerlink" title="environ"></a>environ</h3><p>environ 文件存储着当前进程的环境变量列表，彼此间用空字符（NULL）隔开。变量用大写字母表示，其值用小写字母表示。可以通过查看environ目录来获取<code>指定进程的环境变量信息</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/1/environ</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img/20220531111309.png" alt="image-20220530224329815"></p>
+<p>常用来读取环境变量中的<code>SECRET_KEY或FLAG</code>。</p>
+<h3 id="fd"><a href="#fd" class="headerlink" title="fd"></a>fd</h3><p>fd 是一个目录，里面包含这当前进程打开的每一个文件的文件描述符（file descriptor），这些文件描述符是指向实际文件的一个符号链接，即每个通过这个进程打开的文件都会显示在这里。所以我们可以通过fd目录里的文件获得<code>指定进程打开的每个文件的路径以及文件内容</code>。</p>
+<p>查看指定进程打开的某个文件的路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al /proc/1/fd</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img/20220531111230.png" alt="image-20220530224447949"></p>
+<p>查看指定进程打开的某个文件的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/1/fd/3</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://testingcf.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img/20220531110119.png" alt="image-20220530224606017"></p>
+<p>==这个fd比较重要，因为在 linux 系统中，如果一个程序用 <strong>open()</strong> 打开了一个文件但最终没有关闭他，即便从外部（如os.remove(SECRET_FILE)）删除这个文件之后，在 /proc 这个进程的 pid 目录下的 fd 文件描述符目录下还是会有这个文件的文件描述符，通过这个文件描述符我们即可得到被删除文件的内容。==</p>
+<h3 id="self"><a href="#self" class="headerlink" title="self"></a>self</h3><p>上面这些操作列出的都是目标环境指定进程的信息，但是我们在做题的时候往往需要的<code>当前进程的信息</code>，这时候就用到了 <code>/proc</code> 目录中的 self 子目录。</p>
+<p><code>/proc/self</code> 表示当前进程目录。前面说了通过 <code>/proc/$pid/</code> 来获取指定进程的信息。如果某个进程想要获取当前进程的系统信息，就可以通过进程的pid来访问/proc/$pid/目录。但是这个方法还需要获取进程pid，在fork、daemon等情况下pid还可能发生变化。为了更方便的获取本进程的信息，linux提供了 <code>/proc/self/</code> 目录，这个目录比较独特，不同的进程访问该目录时获得的信息是不同的，内容等价于 <code>/proc/本进程pid/</code> 。进程可以通过访问 <code>/proc/self/</code> 目录来获取自己的系统信息，而不用每次都获取pid。</p>
+<p>有了self目录就方便多了，下面我们演示一下self的常见使用。</p>
+<ul>
+<li>获取当前启动进程的完整命令：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/self/cmdline</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112419.png" alt="image-20220530224825090"></p>
+<ul>
+<li>获取目标当前进程环境的运行目录与目录里的文件：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls -al /proc/self/cwd</span><br><span class="line">ls /proc/self/cwd</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112417.png" alt="image-20220530224946632"></p>
+<p>当不知道目标网站的Web路径或当前路径时，这经常使用</p>
+<ul>
+<li>获得当前进程的可执行文件的完整路径：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -al /proc/self/exe</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112529.png" alt="image-20220531112528384"></p>
+<ul>
+<li>获取当前进程的环境变量信息：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/self/environ</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/JOHN-FROD/PicGo/blog-img2/20220531112552.png" alt="image-20220531112551693"></p>
+<ul>
+<li>获取当前进程打开的文件内容：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/self/fd/&#123;id&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong>在真正做题的时候，我们是不能通过命令的方式执行通过<code>cat</code>命令读取cmdline的，因为如果是<code>cat</code>读取/proc/self/cmdline的话，得到的是cat进程的信息，所以我们要通过题目的当前进程使用读取文件（如文件包含漏洞，或者SSTI使用file模块读取文件）的方式读取/proc/self/cmdline。</p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/05/31/tshark/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>tshark笔记</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/05/28/%E5%8E%9F%E7%94%9F%E7%B1%BB/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      php原生类
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

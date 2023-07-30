@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        403bypass | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">403bypass</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E9%80%9A%E7%94%A8/" class="post-tag">#通用</a>
+  
+
+
+          <span class="post-date">2023-07-16</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTP%E5%A4%B4"><span class="toc-text">HTTP头</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bp%E6%8F%92%E4%BB%B6"><span class="toc-text">bp插件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%80%E6%BA%90%E8%84%9A%E6%9C%AC"><span class="toc-text">开源脚本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%81%E7%AB%99%E7%BB%95%E8%BF%87403"><span class="toc-text">旁站绕过403</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#URL%E8%A6%86%E7%9B%96%E7%BB%95%E8%BF%87403"><span class="toc-text">URL覆盖绕过403</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%89%A9%E5%B1%95%E5%90%8D%E7%BB%95%E8%BF%87"><span class="toc-text">扩展名绕过</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>[TOC]</p>
+<p>403 Forbidden 是HTTP协议中的一个状态码(Status Code)。 可以简单的理解为<strong>没有权限访问此站</strong></p>
+<p>示例代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// 模拟用户登录状态</span></span><br><span class="line"><span class="variable">$isLoggedIn</span> = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 检查用户是否有权限访问资源</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="variable">$isLoggedIn</span>) &#123;</span><br><span class="line">    <span class="comment">// 如果用户没有登录，重定向到登录页面</span></span><br><span class="line">    header(<span class="string">&quot;Location: /login.php&quot;</span>);</span><br><span class="line">    <span class="keyword">exit</span>();</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 如果用户已登录，但没有足够的权限访问资源，返回403 Forbidden状态码</span></span><br><span class="line">    <span class="variable">$userRole</span> = <span class="string">&quot;admin&quot;</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$userRole</span> != <span class="string">&quot;admin&quot;</span>) &#123;</span><br><span class="line">        http_response_code(<span class="number">403</span>);</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;403 Forbidden - Access Denied&quot;</span>;</span><br><span class="line">        <span class="keyword">exit</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 如果用户已登录且有足够的权限访问资源，继续执行业务逻辑</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Welcome, admin!&quot;</span>;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Bypass403：<a target="_blank" rel="noopener" href="https://github.com/iamj0ker/bypass-403%EF%BC%89%E3%80%81">https://github.com/iamj0ker/bypass-403</a></p>
+<p>bypass4xx：<a target="_blank" rel="noopener" href="https://github.com/lobuhi/byp4xx">https://github.com/lobuhi/byp4xx</a></p>
+<p>DirDar：<a target="_blank" rel="noopener" href="https://github.com/M4DM0e/DirDar">https://github.com/M4DM0e/DirDar</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/devploit/dontgo403">https://github.com/devploit/dontgo403</a><br><a target="_blank" rel="noopener" href="https://github.com/daffainfo/bypass-403">https://github.com/daffainfo/bypass-403</a></p>
+<h1 id="HTTP头"><a href="#HTTP头" class="headerlink" title="HTTP头"></a>HTTP头</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Referer: http://192.168.56.108/adminstration/</span><br><span class="line"></span><br><span class="line">X-Originating-IP: 127.0.0.1 </span><br><span class="line"></span><br><span class="line">X-Remote-IP: 127.0.0.1 </span><br><span class="line"></span><br><span class="line">X-Client-IP: 127.0.0.1 </span><br><span class="line"></span><br><span class="line">X-Forwarded-For: 127.0.0.1 </span><br><span class="line"></span><br><span class="line">X-Forwared-Host: 127.0.0.1 </span><br><span class="line"></span><br><span class="line">X-Host: 127.0.0.1 </span><br><span class="line"></span><br><span class="line">X-Custom-IP-Authorization: 127.0.0.1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>X-Forwarded-For</p>
+<img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306092148502.webp" alt="image-20230609214829209" style="zoom:67%;" />
+
+
+
+<h1 id="bp插件"><a href="#bp插件" class="headerlink" title="bp插件"></a>bp插件</h1><p>BurpSuite_403Bypasser 项目地址：<a target="_blank" rel="noopener" href="https://github.com/sting8k/BurpSuite_403Bypasser">https://github.com/sting8k/BurpSuite_403Bypasser</a></p>
+<p>把<code>/adminstration</code>路径贴上去，直接就bypass了</p>
+<p>ps:好像说还要配合knife插件</p>
+<img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306092153715.webp" alt="image-20230609215355486" style="zoom: 67%;" />
+
+
+
+<p>另外bp商店有一个403Bypasser</p>
+<p>Bypass WAF</p>
+<h1 id="开源脚本"><a href="#开源脚本" class="headerlink" title="开源脚本"></a>开源脚本</h1><p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/NumencyberLabs/bypass403.git</span><br><span class="line">cd bypass403</span><br><span class="line">pip install -r requirements.txt</span><br><span class="line">python bypass403.py -u https://www.example.com/admin</span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python3 bypass403.py -u https://www.example.com/admin</span><br><span class="line">python3 bypass403.py -l 403.txt</span><br><span class="line">## the output file</span><br><span class="line">python3 bypass403.py -u https://www.example.com/admin -o example.txt</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="旁站绕过403"><a href="#旁站绕过403" class="headerlink" title="旁站绕过403"></a>旁站绕过403</h1><p>网站可能权限控制不严格，只是通过主机头的方式进行限制。如：只对“<a target="_blank" rel="noopener" href="http://www.abc.com”进行了限制,没有对“xxx.abc.com”进行限制,导致可以403/">www.abc.com”进行了限制，没有对“xxx.abc.com”进行限制，导致可以403</a> ByPass。那么我只要做子域名爆破，然后就可以尝试403 ByPass。</p>
+<h1 id="URL覆盖绕过403"><a href="#URL覆盖绕过403" class="headerlink" title="URL覆盖绕过403"></a>URL覆盖绕过403</h1><p>用户可以使用<code>X-Original-URL</code>或<code>X-Rewrite-URL</code> HTTP请求标头覆盖请求URL中的路径，尝试绕过对更高级别的缓存和Web服务器的限制。<br>可以这样绕过的原因：有很多的web应用，只对uri地址内容进行权限检查，这就导致uri路径正常访问之后，我又覆盖了新的地址，导致403 ByPass</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">X-Original-URL</span><span class="punctuation">: </span>/adminstration</span><br><span class="line"><span class="attribute">X-Rewrite-URL</span><span class="punctuation">: </span>/adminstration</span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>www.abc.com</span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>192.168.56.108</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="扩展名绕过"><a href="#扩展名绕过" class="headerlink" title="扩展名绕过"></a>扩展名绕过</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">site.com/admin =&gt; 403</span><br><span class="line">site.com/admin/ =&gt; 200</span><br><span class="line">site.com/admin// =&gt; 200</span><br><span class="line">site.com//admin// =&gt; 200</span><br><span class="line">site.com/admin/* =&gt; 200</span><br><span class="line">site.com/admin/*/ =&gt; 200</span><br><span class="line">site.com/admin/. =&gt; 200</span><br><span class="line">site.com/admin/./ =&gt; 200</span><br><span class="line">site.com/./admin/./ =&gt; 200</span><br><span class="line">site.com/admin/./. =&gt; 200</span><br><span class="line">site.com/admin/./. =&gt; 200</span><br><span class="line">site.com/admin? =&gt; 200</span><br><span class="line">site.com/admin?? =&gt; 200</span><br><span class="line">site.com/admin??? =&gt; 200</span><br><span class="line">site.com/admin..;/ =&gt; 200</span><br><span class="line">site.com/admin/..;/ =&gt; 200</span><br><span class="line">site.com/%2f/admin =&gt; 200</span><br><span class="line">site.com/%2e/admin =&gt; 200</span><br><span class="line">site.com/admin%20/ =&gt; 200</span><br><span class="line">site.com/admin%09/ =&gt; 200</span><br><span class="line">site.com/%20admin%20/ =&gt; 200</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306092219576.webp" alt="image-20230609221919361"></p>
+<p>参考</p>
+<p><a target="_blank" rel="noopener" href="https://www.bmabk.com/index.php/post/134220.html">https://www.bmabk.com/index.php/post/134220.html</a></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/07/18/7.29/nodejs%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>nodejs开发基础</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/07/15/7.29/python%E5%B9%B6%E5%8F%91/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      python并发详解
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

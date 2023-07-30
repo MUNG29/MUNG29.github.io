@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        phpinfo敏感信息 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">phpinfo敏感信息</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/php%E5%AE%89%E5%85%A8/" class="post-tag">#php安全</a>
+  
+
+
+          <span class="post-date">2023-03-28</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#version"><span class="toc-text">version</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#system"><span class="toc-text">system</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#http-x-real-ip"><span class="toc-text">http_x_real_ip</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Configure-Command-%E7%BC%96%E8%AF%91%E5%91%BD%E4%BB%A4"><span class="toc-text">Configure Command(编译命令)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Loaded-Configuration-File-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BD%8D%E7%BD%AE"><span class="toc-text">Loaded Configuration File(配置文件位置)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Registered-PHP-Streams-%E6%94%AF%E6%8C%81%E7%9A%84%E6%B5%81"><span class="toc-text">Registered PHP Streams(支持的流)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Registered-Stream-Filters-%E6%94%AF%E6%8C%81%E7%9A%84%E6%B5%81%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-text">Registered Stream Filters(支持的流过滤器)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Core-%E6%A0%B8%E5%BF%83"><span class="toc-text">Core(核心)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#allow-url-fopen-amp-allow-url-include"><span class="toc-text">allow_url_fopen&amp;allow_url_include</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#disable-functions"><span class="toc-text">disable_functions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E6%8F%90%E7%A4%BA"><span class="toc-text">错误提示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#enable-dl"><span class="toc-text">enable_dl</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#extension-dir"><span class="toc-text">extension_dir</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#include-path"><span class="toc-text">include_path</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#open-basedir"><span class="toc-text">open_basedir</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#short-open-tag"><span class="toc-text">short_open_tag</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#phar"><span class="toc-text">phar</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#session"><span class="toc-text">session</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP-Variables"><span class="toc-text">PHP Variables</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-SERVER-%E2%80%98PATH%E2%80%99"><span class="toc-text">(1)_SERVER[‘PATH’]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-SERVER-%E2%80%9CSCRIPT-FILENAME%E2%80%9D"><span class="toc-text">(2)_SERVER[“SCRIPT_FILENAME”]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-SERVER-%E2%80%9CSERVER-ADDR%E2%80%9D"><span class="toc-text">(3)_SERVER[“SERVER_ADDR”]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-FILES-%E2%80%9Cfilename%E2%80%9D"><span class="toc-text">(4)_FILES[“filename”]</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#gopher"><span class="toc-text">gopher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fastcgi"><span class="toc-text">fastcgi</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84%E7%A8%8B%E5%BA%8F"><span class="toc-text">支持的程序</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6"><span class="toc-text">临时文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#asp-tags"><span class="toc-text">asp_tags</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#magic-quotes-gpc"><span class="toc-text">magic_quotes_gpc</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Zend-OPcache"><span class="toc-text">Zend OPcache</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6"><span class="toc-text">组件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#imagick"><span class="toc-text">imagick</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#libxml"><span class="toc-text">libxml</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#memcache"><span class="toc-text">memcache</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redis"><span class="toc-text">redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#session-1"><span class="toc-text">session</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#xdebug"><span class="toc-text">xdebug</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gopher-1"><span class="toc-text">gopher</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fastcgi-1"><span class="toc-text">fastcgi</span></a></li></ol></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>在比赛中经常遇到phpinfo，这个页面可以看到很多配置信息，我们需要在这么多信息中，着重看一下几个内容： </p>
+<h1 id="version"><a href="#version" class="headerlink" title="version"></a>version</h1><p>php版本信息</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091311971.webp" alt="image-20230609131119810"></p>
+<h1 id="system"><a href="#system" class="headerlink" title="system"></a>system</h1><p>系统版本信息</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091311283.webp" alt="image-20230609131154119"></p>
+<h1 id="http-x-real-ip"><a href="#http-x-real-ip" class="headerlink" title="http_x_real_ip"></a>http_x_real_ip</h1><p>直接获取真实ip，无视代理、cdn。本地环境并没有发现这个参数，应该是ini配置问题。顺便说下HTTP_X_FORWARDED_FOR的区别，HTTP_X_FORWARDED_FOR会记录代理过程且可伪造.</p>
+<h1 id="Configure-Command-编译命令"><a href="#Configure-Command-编译命令" class="headerlink" title="Configure Command(编译命令)"></a>Configure Command(编译命令)</h1><p>这个其实就是编译 php 的时候的命令,这里面其实包含了几乎所有的， php 要加载的扩展和功能，但是看起来不是很方便(因为比较乱),但也是一目了然</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091321290.webp" alt="image-20230609132154061"></p>
+<h1 id="Loaded-Configuration-File-配置文件位置"><a href="#Loaded-Configuration-File-配置文件位置" class="headerlink" title="Loaded Configuration File(配置文件位置)"></a>Loaded Configuration File(配置文件位置)</h1><p>这一栏表明了 php.ini 这个 php 配置文件的位置，在有文件读取的情况下可以进行读取，在渗透中还是很有帮助的。</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091322851.webp" alt="image-20230609132239704"></p>
+<h1 id="Registered-PHP-Streams-支持的流"><a href="#Registered-PHP-Streams-支持的流" class="headerlink" title="Registered PHP Streams(支持的流)"></a>Registered PHP Streams(支持的流)</h1><p>这个在文件包含、反序列化还有一些关键的 bypass 的时候非常有用</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091323228.webp" alt="image-20230609132320080"></p>
+<h1 id="Registered-Stream-Filters-支持的流过滤器"><a href="#Registered-Stream-Filters-支持的流过滤器" class="headerlink" title="Registered Stream Filters(支持的流过滤器)"></a>Registered Stream Filters(支持的流过滤器)</h1><p>这个同样在文件包含、反序列化还有一些关键的 bypass 的时候非常有用</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091323769.webp" alt="image-20230609132354598"></p>
+<h1 id="Core-核心"><a href="#Core-核心" class="headerlink" title="Core(核心)"></a>Core(核心)</h1><p>这个栏目里面有非常多重要的配置信息，我们可以简单的看一下：</p>
+<h2 id="allow-url-fopen-amp-allow-url-include"><a href="#allow-url-fopen-amp-allow-url-include" class="headerlink" title="allow_url_fopen&amp;allow_url_include"></a>allow_url_fopen&amp;allow_url_include</h2><p>文件包含必看选项之一</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091324129.webp" alt="image-20230609132451970"></p>
+<h2 id="disable-functions"><a href="#disable-functions" class="headerlink" title="disable_functions"></a>disable_functions</h2><p>命令执行、代码执行必看选项之一</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091309045.webp" alt="image-20230609130951894"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">passthru,exec,system,putenv,chroot,chgrp,chown,shell_exec,popen,proc_open,pcntl_exec,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,imap_open,apache_setenv</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h2><p>调试过程中经常使用的错误提示在没有关闭的情况下放入生产环境是不堪设想的</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091326413.webp" alt="image-20230609132644255"></p>
+<h2 id="enable-dl"><a href="#enable-dl" class="headerlink" title="enable_dl"></a>enable_dl</h2><p>该选项<strong>默认为 on(在未来将被移除)</strong> ，我们看一下 官方手册怎么说的</p>
+<blockquote>
+<p>该指令仅对 Apache 模块版本的 PHP 有效。 你可以针对每个虚拟机或每个目录开启或关闭 dl() 动态加载 PHP 模块。</p>
+<p>关闭动态加载的主要原因是为了安全。通过动态加载，有可能忽略所有 open_basedir 限制。 默认允许动态加载，除了使用 安全模式。在安全模式，总是无法使用 dl()。</p>
+</blockquote>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091327713.webp" alt="image-20230609132729560"></p>
+<h2 id="extension-dir"><a href="#extension-dir" class="headerlink" title="extension_dir"></a>extension_dir</h2><p>PHP扩展的路径</p>
+<p>和 dl() 配合使用效果更好，具体可以看[这篇文章](<a target="_blank" rel="noopener" href="https://www.k0rz3n.com/2019/02/12/PHP">https://www.k0rz3n.com/2019/02/12/PHP</a> 中可以利用的危险的函数/)</p>
+<blockquote>
+<p>dl()函数允许在php脚本里动态加载php模块，<strong>默认是加载extension_dir目录里的扩展，</strong>该选项是PHP_INI_SYSTEM范围可修改的，只能在php.ini或者apache主配置文件里修改。当然，你也可以通过enable_dl选项来关闭动态加载功能，而这个选项默认为On的，事实上也很少人注意到这个<strong>。dl()函数在设计时存在安全漏洞，可以用../这种目录遍历的方式指定加载任何一个目录里的so等扩展文件</strong>，extension_dir限制可以被随意饶过。所以我们可以上传自己的so文件，并<strong>且用dl函数加载这个so文件然后利用so文件里的函数执行其他操作，包括系统命令。</strong></p>
+</blockquote>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091312844.webp" alt="image-20230609131239684"></p>
+<h2 id="include-path"><a href="#include-path" class="headerlink" title="include_path"></a>include_path</h2><p>PHP 用include()函数包函文件时的默认路径</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091330475.webp" alt="image-20230609133026317"></p>
+<h2 id="open-basedir"><a href="#open-basedir" class="headerlink" title="open_basedir"></a>open_basedir</h2><p>这个配置选项可以将访问限制在某个目录下。<br><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091309872.webp" alt="image-20230609130924679"><br>可以用冒号设置多个目录</p>
+<h2 id="short-open-tag"><a href="#short-open-tag" class="headerlink" title="short_open_tag"></a>short_open_tag</h2><p>判断服务器是不是支持短标签，这在写 shell 的时候很有帮助</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091331234.webp" alt="image-20230609133134082"></p>
+<h2 id="phar"><a href="#phar" class="headerlink" title="phar"></a>phar</h2><p>文件包含还有反序列化重点关注</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091332153.webp" alt="image-20230609133216904"></p>
+<h2 id="session"><a href="#session" class="headerlink" title="session"></a>session</h2><p>session.save_path=”” –设置session的存储路径<br>session.save_handler=”” –设定用户自定义存储函数，如果想使用PHP内置会话存储机制之外的可以使用本函数(数据库等方式)<br>session.auto_start boolen –指定会话模块是否在请求开始时启动一个会话,默认为0不启动<br>session.serialize_handler string –定义用来序列化/反序列化的处理器名字。默认使用php</p>
+<p><strong>例如：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">session.save_path=&quot;D:\xampp\tmp&quot;表明所有的session文件都是存储在xampp/tmp下</span><br><span class="line">session.save_handler=files    表明session是以文件的方式来进行存储的</span><br><span class="line">session.auto_start=0表明默认不启动session</span><br><span class="line">session.serialize_handler=php    表明session的默认序列话引擎使用的是php序列话引擎</span><br></pre></td></tr></table></figure>
+
+
+<p>注意，其中的Local Value可以在程序中通过类似<code>ini_set</code>修改，Master Value是配置文件php.ini中的值。</p>
+<h2 id="PHP-Variables"><a href="#PHP-Variables" class="headerlink" title="PHP Variables"></a>PHP Variables</h2><h4 id="1-SERVER-‘PATH’"><a href="#1-SERVER-‘PATH’" class="headerlink" title="(1)_SERVER[‘PATH’]"></a><strong>(1)_SERVER[‘PATH’]</strong></h4><p>这个是 windows 下特有的，能显示出系统的所有环境变量</p>
+<h4 id="2-SERVER-“SCRIPT-FILENAME”"><a href="#2-SERVER-“SCRIPT-FILENAME”" class="headerlink" title="(2)_SERVER[“SCRIPT_FILENAME”]"></a><strong>(2)_SERVER[“SCRIPT_FILENAME”]</strong></h4><p>这个是最常用，也是最有效的一个办法，找到phpinfo()页面可以直接找到网站的绝对路径，对于写shell和信息搜集是必不可少的。</p>
+<p><a target="_blank" rel="noopener" href="https://picture-1253331270.cos.ap-beijing.myqcloud.com/PHPINFO17.png"><img src="https://picture-1253331270.cos.ap-beijing.myqcloud.com/PHPINFO17.png" alt="此处输入图片的描述"></a>此处输入图片的描述<br><a target="_blank" rel="noopener" href="https://picture-1253331270.cos.ap-beijing.myqcloud.com/PHPINFO18.png"><img src="https://picture-1253331270.cos.ap-beijing.myqcloud.com/PHPINFO18.png" alt="此处输入图片的描述"></a>此处输入图片的描述</p>
+<h4 id="3-SERVER-“SERVER-ADDR”"><a href="#3-SERVER-“SERVER-ADDR”" class="headerlink" title="(3)_SERVER[“SERVER_ADDR”]"></a><strong>(3)_SERVER[“SERVER_ADDR”]</strong></h4><p>显示该网站的真实的 ip 地址，有时候通过phpinfo()泄漏的ip可以查查旁站、c段什么的，直接无视cdn。</p>
+<h4 id="4-FILES-“filename”"><a href="#4-FILES-“filename”" class="headerlink" title="(4)_FILES[“filename”]"></a><strong>(4)_FILES[“filename”]</strong></h4><p>在给PHP发送POST数据包时，如果数据包里包含文件区块，无论你访问的代码中有没有处理文件上传的逻辑，PHP都会将这个文件保存成一个临时文件（通常是/tmp/php[6个随机字符]），文件名可以在$_FILES变量中找到。这个临时文件，在请求结束后就会被删除。</p>
+<p>这是常用的配合文件包含 get,shell 的方式，具体可见[这篇文章](<a target="_blank" rel="noopener" href="https://www.k0rz3n.com/2018/11/20/%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E5%B8%A6%E4%BD%A0%E7%90%86%E8%A7%A3%E6%BC%8F%E6%B4%9E%E4%B9%8B">https://www.k0rz3n.com/2018/11/20/一篇文章带你理解漏洞之</a> PHP 文件包含漏洞/)</p>
+<h2 id="gopher"><a href="#gopher" class="headerlink" title="gopher"></a>gopher</h2><p>可以配合 SSRF 发起攻击</p>
+<h2 id="fastcgi"><a href="#fastcgi" class="headerlink" title="fastcgi"></a>fastcgi</h2><p>查看是否开启fastcgi和fastcgi的版本，可能导致解析漏洞、远程命令执行、任意文件读取等问题</p>
+<h2 id="支持的程序"><a href="#支持的程序" class="headerlink" title="支持的程序"></a>支持的程序</h2><p>可以通过phpinfo()查看一些特殊的程序服务，比如redis、memcache、mysql、SMTP、curl等等如果服务器装了redis或者memcache可以通过ssrf来getshell了，在discuz中都出现过此类问题。如果确定装了redis或memcache的话，在没有思路的情况下，可以着重找一下ssrf</p>
+<h1 id="临时文件"><a href="#临时文件" class="headerlink" title="临时文件"></a>临时文件</h1><p>phpinfo-lfi getshell很老的一个洞了,大家可以了解一下<a target="_blank" rel="noopener" href="https://www.kingkk.com/2018/07/phpinfo-with-LFI/">phpinfo with LFI</a><br>不过这个漏洞利用条件十分苛刻</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.phpinfo</span><br><span class="line">2.开启了文件缓存</span><br><span class="line">3.没有gpc等函数限制</span><br><span class="line">4.开启lfi,有包含点</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="asp-tags"><a href="#asp-tags" class="headerlink" title="asp_tags"></a>asp_tags</h1><p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091314983.webp" alt="image-20230609131440811"><br>php标签有四种格式，这个是asp风格的，默认不开启。可以上传.haccess/user.ini 绕过(php7移除)</p>
+<h1 id="magic-quotes-gpc"><a href="#magic-quotes-gpc" class="headerlink" title="magic_quotes_gpc"></a>magic_quotes_gpc</h1><p>魔术引号，它是用来实现addslshes()和stripslashes()这两个功能的，对SQL注入进行防御。顺便提一嘴用了addslshes()除非是有编码问题要不然是不存在注入的。</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306091316951.webp" alt="image-20230609131612746"></p>
+<h1 id="Zend-OPcache"><a href="#Zend-OPcache" class="headerlink" title="Zend OPcache"></a>Zend OPcache</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">opcache.enable=1  #开启</span><br><span class="line">opcache.memory_consumption=128 #缓存opcode的最大内存空间</span><br><span class="line">opcache.interned_strings_buffer=32 </span><br><span class="line">opcache.max_accelerated_files=200000 #可缓存的PHP文件数量</span><br><span class="line">opcache.validate_timestamps=1 #时间戳验证</span><br><span class="line">opcache.revalidate_freq=60 #PHPcode缓存时间</span><br><span class="line">opcache.save_comments=0 #不缓存注释内容</span><br><span class="line">opcache.file_cache=/tmp  #huan&#x27;cu</span><br></pre></td></tr></table></figure>
+
+<h1 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h1><h3 id="imagick"><a href="#imagick" class="headerlink" title="imagick"></a>imagick</h3><p>php_imagick是一个可以供PHP调用ImageMagick功能的PHP扩展，使用这个扩展可以使PHP具备和ImageMagick相同的功能。<br>部分版本存在远程执行漏洞</p>
+<h3 id="libxml"><a href="#libxml" class="headerlink" title="libxml"></a>libxml</h3><p>libxml 2.9以前的版本默认支持并开启了外部实体的引用，服务端解析用户提交的 xml 文件时未对 xml 文件引用的外部实体（含外部普通实体和外部参数实体）做合适的处理，会导致XXE。</p>
+<h3 id="memcache"><a href="#memcache" class="headerlink" title="memcache"></a>memcache</h3><p><a target="_blank" rel="noopener" href="http://blog.nsfocus.net/memcache-unauthorized-access-exploit/">Memcache未授权访问漏洞利用及修复</a></p>
+<h3 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h3><p>Redis 是一个高性能的key-value数据库。<br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/4051">初识Redis未授权访问</a></p>
+<h3 id="session-1"><a href="#session-1" class="headerlink" title="session"></a>session</h3><h3 id="xdebug"><a href="#xdebug" class="headerlink" title="xdebug"></a>xdebug</h3><h3 id="gopher-1"><a href="#gopher-1" class="headerlink" title="gopher"></a>gopher</h3><p><a target="_blank" rel="noopener" href="https://blog.chaitin.cn/gopher-attack-surfaces/">利用 Gopher 协议拓展攻击面</a></p>
+<h3 id="fastcgi-1"><a href="#fastcgi-1" class="headerlink" title="fastcgi"></a>fastcgi</h3><p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/fastcgi-and-php-fpm.html">Fastcgi协议分析 &amp;&amp; PHP-FPM未授权访问漏洞 &amp;&amp; Exp编写</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.k0rz3n.com/2019/02/12/PHPINFO%20%E4%B8%AD%E7%9A%84%E9%87%8D%E8%A6%81%E4%BF%A1%E6%81%AF/">https://www.k0rz3n.com/2019/02/12/PHPINFO%20%E4%B8%AD%E7%9A%84%E9%87%8D%E8%A6%81%E4%BF%A1%E6%81%AF/</a></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/04/01/XXE%E5%9F%BA%E7%A1%80/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>XXE基础</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/03/27/%E7%9B%B8%E5%85%B3js%E5%9F%BA%E7%A1%80/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      XSS相关js基础
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

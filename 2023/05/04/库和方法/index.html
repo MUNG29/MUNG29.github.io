@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        python 常用库和方法 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">python 常用库和方法</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E8%84%9A%E6%9C%AC/" class="post-tag">#脚本</a>
+  
+    <a href="/tags/python/" class="post-tag">#python</a>
+  
+
+
+          <span class="post-date">2023-05-04</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%93"><span class="toc-text">库</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#math"><span class="toc-text">math</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fractions"><span class="toc-text">fractions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#itertools"><span class="toc-text">itertools</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#datetime"><span class="toc-text">datetime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#random"><span class="toc-text">random</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%B9%E6%B3%95"><span class="toc-text">方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#len"><span class="toc-text">len</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#split"><span class="toc-text">split</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#map"><span class="toc-text">map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sort-amp-sorted"><span class="toc-text">sort&amp;sorted</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ord"><span class="toc-text">ord</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#join"><span class="toc-text">join</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#count"><span class="toc-text">count</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dedupe"><span class="toc-text">dedupe</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="库"><a href="#库" class="headerlink" title="库"></a>库</h1><h2 id="math"><a href="#math" class="headerlink" title="math"></a>math</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">数学常量：</span><br><span class="line">math.pi：π的值，约为 <span class="number">3.141592653589793</span>。</span><br><span class="line">math.e：自然常数 e 的值，约为 <span class="number">2.718281828459045</span>。</span><br><span class="line">math.inf：正无穷大的表示方式。</span><br><span class="line">math.nan：非数字的表示方式。</span><br><span class="line">对数和指数函数：</span><br><span class="line">math.log(x)：求以 e 为底数的自然对数。</span><br><span class="line">math.log10(x)：求以 <span class="number">10</span> 为底数的对数。</span><br><span class="line">math.exp(x)：求 e 的 x 次幂。</span><br><span class="line">math.<span class="built_in">pow</span>(x, y)：求 x 的 y 次幂。</span><br><span class="line">数值函数：</span><br><span class="line">math.sqrt(x)：求平方根。</span><br><span class="line">math.floor(x)：求不大于 x 的最大整数。</span><br><span class="line">math.ceil(x)：求不小于 x 的最小整数。</span><br><span class="line">math.trunc(x)：求 x 的整数部分。</span><br><span class="line">math.fmod(x, y)：求 x 除以 y 的余数。</span><br><span class="line">其他函数：</span><br><span class="line">math.degrees(x)：将 x 从弧度转换为角度。</span><br><span class="line">math.radians(x)：将 x 从角度转换为弧度。</span><br><span class="line">math.hypot(x, y)：求直角三角形的斜边长度。</span><br><span class="line">math.isfinite(x)：判断 x 是否为有限数。</span><br><span class="line">math.isinf(x)：判断 x 是否为正无穷大或负无穷大。</span><br><span class="line">math.isnan(x)：判断 x 是否为非数字。</span><br><span class="line">math.factorial(x)：求 x 的阶乘。</span><br><span class="line">三角函数：</span><br><span class="line">math.sin(x)：求正弦值。</span><br><span class="line">math.cos(x)：求余弦值。</span><br><span class="line">math.tan(x)：求正切值。</span><br><span class="line">math.asin(x)：求反正弦值。</span><br><span class="line">math.acos(x)：求反余弦值。</span><br><span class="line">math.atan(x)：求反正切值。</span><br><span class="line">math.atan2(y, x)：求以弧度为单位的反正切值。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="fractions"><a href="#fractions" class="headerlink" title="fractions"></a>fractions</h2><p>是Python中一个内置模块，用于处理有理数。比如想表示五分之一这种的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Fraction()：创建一个有理数对象。</span><br><span class="line">gcd(a, b)：计算a和b的最大公约数。</span><br><span class="line">Fraction.from_float(f)：将一个浮点数f转换为最简分数的有理数。</span><br><span class="line">Fraction.limit_denominator(max_denominator=<span class="number">1000000</span>)：返回最接近当前有理数且分母不超过max_denominator的有理数。</span><br><span class="line">Fraction.numerator：返回有理数的分子。</span><br><span class="line">Fraction.denominator：返回有理数的分母。</span><br><span class="line">Fraction.__float__()：将有理数转换为浮点数。</span><br><span class="line">Fraction.__str__()：将有理数转换为字符串。</span><br><span class="line">Fraction.__eq__(other)：判断两个有理数是否相等。</span><br><span class="line">Fraction.__lt__(other)：判断一个有理数是否小于另一个有理数。</span><br><span class="line">Fraction.__add__(other)：将一个有理数加上另一个有理数。</span><br><span class="line">Fraction.__sub__(other)：将一个有理数减去另一个有理数。</span><br><span class="line">Fraction.__mul__(other)：将一个有理数乘以另一个有理数。</span><br><span class="line">Fraction.__truediv__(other)：将一个有理数除以另一个有理数。</span><br><span class="line">Fraction.__pow__(n)：将一个有理数的n次幂。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> fractions</span><br><span class="line"></span><br><span class="line">m = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>,<span class="number">10</span>):</span><br><span class="line">  m += fractions.Fraction(<span class="number">1</span>,i)</span><br><span class="line"></span><br><span class="line">等价于</span><br><span class="line"><span class="number">1</span>-<span class="number">1</span>/<span class="number">4</span>-<span class="number">1</span>/<span class="number">5.</span>.....-<span class="number">1</span>/<span class="number">9</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="itertools"><a href="#itertools" class="headerlink" title="itertools"></a>itertools</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">itertools.chain()：将多个迭代器连接成一个迭代器。</span><br><span class="line">itertools.combinations()：返回可迭代对象中所有长度为 n 的组合。</span><br><span class="line">itertools.count()：从指定的起始数字开始返回连续的数字。</span><br><span class="line">itertools.cycle()：将一个可迭代对象无限重复。</span><br><span class="line">itertools.dropwhile()：返回可迭代对象中第一个不符合条件的元素之后的所有元素。</span><br><span class="line">itertools.groupby()：将可迭代对象分组，返回一个由键值对组成的迭代器。</span><br><span class="line">itertools.islice()：返回可迭代对象的切片。</span><br><span class="line">itertools.permutations()：返回可迭代对象中所有长度为 n 的排列。</span><br><span class="line">itertools.product()：返回可迭代对象的笛卡尔积。</span><br><span class="line">itertools.repeat()：重复一个元素若干次，返回一个迭代器。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> permutations</span><br><span class="line">a=[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> permutations(a):</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br><span class="line"></span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">(<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>)</span><br><span class="line">(<span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line">(<span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">(<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">(<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="datetime"><a href="#datetime" class="headerlink" title="datetime"></a>datetime</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">datetime.datetime(year, month, day, hour=<span class="number">0</span>, minute=<span class="number">0</span>, second=<span class="number">0</span>, microsecond=<span class="number">0</span>)：创建一个 datetime 对象，表示一个日期和时间。参数 year、month 和 day 表示日期，参数 hour、minute、second 和 microsecond 表示时间，默认为 <span class="number">0</span>。</span><br><span class="line"></span><br><span class="line">datetime.date(year, month, day)：创建一个 date 对象，表示一个日期。参数 year、month 和 day 表示日期。</span><br><span class="line"></span><br><span class="line">datetime.time(hour=<span class="number">0</span>, minute=<span class="number">0</span>, second=<span class="number">0</span>, microsecond=<span class="number">0</span>)：创建一个 time 对象，表示一个时间。参数 hour、minute、second 和 microsecond 表示时间，默认为 <span class="number">0</span>。</span><br><span class="line"></span><br><span class="line">datetime.datetime.now()：返回当前日期和时间的 datetime 对象。</span><br><span class="line"></span><br><span class="line">datetime.datetime.today()：返回当前日期和时间的 datetime 对象（同 datetime.datetime.now()）。</span><br><span class="line"></span><br><span class="line">datetime.datetime.strptime(date_string, <span class="built_in">format</span>)：将一个字符串按照指定的格式转换为 datetime 对象。参数 date_string 是要转换的字符串，参数 <span class="built_in">format</span> 是转换格式。</span><br><span class="line"></span><br><span class="line">datetime.datetime.strftime(<span class="built_in">format</span>)：将一个 datetime 对象按照指定的格式转换为字符串。参数 <span class="built_in">format</span> 是转换格式。</span><br><span class="line"></span><br><span class="line">datetime.timedelta(days=<span class="number">0</span>, seconds=<span class="number">0</span>, microseconds=<span class="number">0</span>, milliseconds=<span class="number">0</span>, minutes=<span class="number">0</span>, hours=<span class="number">0</span>, weeks=<span class="number">0</span>)：创建一个时间差对象，表示两个时间之间的差距。参数 days、seconds、microseconds、milliseconds、minutes、hours 和 weeks 分别表示相差的天数、秒数、微秒数、毫秒数、分钟数、小时数和周数。</span><br><span class="line"></span><br><span class="line">datetime.datetime.date()：返回 datetime 对象所表示的日期的 date 对象。</span><br><span class="line"></span><br><span class="line">datetime.datetime.time()：返回 datetime 对象所表示的时间的 time 对象。</span><br><span class="line"></span><br><span class="line">datetime.datetime.timestamp()：返回 datetime 对象所表示的 Unix 时间戳。</span><br><span class="line"></span><br><span class="line">datetime.datetime.fromtimestamp(timestamp)：将一个 Unix 时间戳转换为 datetime 对象。</span><br><span class="line"></span><br><span class="line">datetime.datetime.combine(date, time)：将一个 date 对象和一个 time 对象合并为一个 datetime 对象。</span><br><span class="line"></span><br><span class="line">datetime.datetime.astimezone(tz=<span class="literal">None</span>)：将一个 datetime 对象转换为指定时区的时间。参数 tz 是一个 tzinfo 对象，表示目标时区。</span><br><span class="line"></span><br><span class="line">datetime.datetime.replace(year=<span class="literal">None</span>, month=<span class="literal">None</span>, day=<span class="literal">None</span>, hour=<span class="literal">None</span>, minute=<span class="literal">None</span>, second=<span class="literal">None</span>, microsecond=<span class="literal">None</span>, tzinfo=<span class="literal">None</span>)：创建一个新的 datetime 对象，将指定的属性替换为新的值。</span><br><span class="line"></span><br><span class="line">datetime.datetime.weekday()：返回 datetime 对象所表示的日期是星期几（<span class="number">0</span> 表示星期一，<span class="number">6</span> 表示星期日）。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="random"><a href="#random" class="headerlink" title="random"></a>random</h2><p>抽奖</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> random</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>values = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.choice(values)</span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.choice(values)</span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.choice(values)</span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.choice(values)</span><br><span class="line"><span class="number">4</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.choice(values)</span><br><span class="line"><span class="number">6</span></span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>提取</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.sample(values, <span class="number">2</span>)</span><br><span class="line">[<span class="number">6</span>, <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.sample(values, <span class="number">2</span>)</span><br><span class="line">[<span class="number">4</span>, <span class="number">3</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.sample(values, <span class="number">3</span>)</span><br><span class="line">[<span class="number">4</span>, <span class="number">3</span>, <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.sample(values, <span class="number">3</span>)</span><br><span class="line">[<span class="number">5</span>, <span class="number">4</span>, <span class="number">1</span>]</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>打乱顺序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.shuffle(values)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>values</span><br><span class="line">[<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">5</span>, <span class="number">3</span>, <span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.shuffle(values)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>values</span><br><span class="line">[<span class="number">3</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">4</span>]</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>生成随机整数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.randint(<span class="number">0</span>,<span class="number">10</span>)</span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.randint(<span class="number">0</span>,<span class="number">10</span>)</span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.randint(<span class="number">0</span>,<span class="number">10</span>)</span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.randint(<span class="number">0</span>,<span class="number">10</span>)</span><br><span class="line"><span class="number">7</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.randint(<span class="number">0</span>,<span class="number">10</span>)</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.randint(<span class="number">0</span>,<span class="number">10</span>)</span><br><span class="line"><span class="number">3</span></span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>生成0到1范围内浮点数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.random()</span><br><span class="line"><span class="number">0.9406677561675867</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.random()</span><br><span class="line"><span class="number">0.133129581343897</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>random.random()</span><br><span class="line"><span class="number">0.4144991136919316</span></span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h1><h2 id="len"><a href="#len" class="headerlink" title="len"></a>len</h2><p>返回字符串、列表、字典、元组等长度</p>
+<h2 id="split"><a href="#split" class="headerlink" title="split"></a>split</h2><p>语法：str.split(str=””,num=string.count(str))[n]</p>
+<p>参数说明：<br>str:表示为分隔符，==默认为空格==，但是不能为空(’’)。若字符串中没有分隔符，则把整个字符串作为列表的一个元素<br>num:表示分割次数。如果存在参数num，则仅分隔成 num+1 个子字符串，并且每一个子字符串可以赋给新的变量</p>
+<p>n:表示选取第n个分片</p>
+<p>注意：当使用空格作为分隔符时，对于中间为空的项会自动忽略</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">input</span>().split()</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="map"><a href="#map" class="headerlink" title="map"></a>map</h2><p>map(function,iterable,…)<br>第一个参数接受一个函数名，后面的参数接受一个或多个可迭代的序列，返回的是一个==集合==。</p>
+<p>map不改变原list，而是返回一个==新==list。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">del</span> square(x):</span><br><span class="line">    <span class="keyword">return</span> x ** <span class="number">2</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">map</span>(square,[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 结果如下:</span></span><br><span class="line">[<span class="number">1</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">16</span>,<span class="number">25</span>]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a,b,c=<span class="built_in">map</span>(<span class="built_in">int</span>,<span class="built_in">input</span>().split())</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="sort-amp-sorted"><a href="#sort-amp-sorted" class="headerlink" title="sort&amp;sorted"></a>sort&amp;sorted</h2><p>都用来排序列表，不同的是sort直接改变原列表，sorted是返回新的列表</p>
+<h2 id="ord"><a href="#ord" class="headerlink" title="ord"></a>ord</h2><p>返回字符的ascii值</p>
+<h2 id="join"><a href="#join" class="headerlink" title="join"></a>join</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str.join(sequence)</span><br><span class="line">sequence -- 要连接的元素序列。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">parts = [<span class="string">&#x27;Is&#x27;</span>, <span class="string">&#x27;Chicago&#x27;</span>, <span class="string">&#x27;Not&#x27;</span>, <span class="string">&#x27;Chicago?&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">&#x27; &#x27;</span>.join(parts)</span><br><span class="line"><span class="string">&#x27;Is Chicago Not Chicago?&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">&#x27;,&#x27;</span>.join(parts)</span><br><span class="line"><span class="string">&#x27;Is,Chicago,Not,Chicago?&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">&#x27;&#x27;</span>.join(parts)</span><br><span class="line"><span class="string">&#x27;IsChicagoNotChicago?&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="count"><a href="#count" class="headerlink" title="count"></a>count</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str.count(sub, start= 0,end=len(string))</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>sub – 搜索的子字符串</li>
+<li>start – 字符串开始搜索的位置。默认为第一个字符,第一个字符索引值为0。</li>
+<li>end – 字符串中结束搜索的位置。字符中第一个字符的索引为 0。默认为字符串的最后一个位置。</li>
+</ul>
+<p>该方法返回子字符串在字符串中出现的次数。</p>
+<h2 id="dedupe"><a href="#dedupe" class="headerlink" title="dedupe"></a>dedupe</h2><p>消除重复元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; a = [1, 5, 2, 1, 9, 1, 5, 10]</span><br><span class="line">&gt;&gt;&gt; list(dedupe(a))</span><br><span class="line">[1, 5, 2, 9, 10]</span><br></pre></td></tr></table></figure>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/05/09/20230509/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>博客搭建首记</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/05/03/%E6%B3%A8%E8%A7%A3/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      注解
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

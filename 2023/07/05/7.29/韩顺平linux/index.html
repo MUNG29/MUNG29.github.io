@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        linux学习小总结 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">linux学习小总结</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E7%B3%BB%E7%BB%9F/" class="post-tag">#系统</a>
+  
+    <a href="/tags/linux/" class="post-tag">#linux</a>
+  
+
+
+          <span class="post-date">2023-07-05</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-text">目录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4"><span class="toc-text">基础命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E7%B1%BB%E5%91%BD%E4%BB%A4"><span class="toc-text">文件目录类命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E6%97%A5%E6%9C%9F%E7%B1%BB%E6%8C%87%E4%BB%A4"><span class="toc-text">时间日期类指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E6%8C%87%E4%BB%A4"><span class="toc-text">查找指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%E5%92%8C%E8%A7%A3%E5%8E%8B"><span class="toc-text">压缩和解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B7"><span class="toc-text">用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%BB%84"><span class="toc-text">用户组</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E7%BA%A7%E5%88%AB"><span class="toc-text">运行级别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BB%84%E5%92%8C%E6%9D%83%E9%99%90"><span class="toc-text">组和权限</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="toc-text">定时任务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-text">语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8"><span class="toc-text">使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#crond"><span class="toc-text">crond</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#at"><span class="toc-text">at</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F"><span class="toc-text">命令格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E9%80%89%E9%A1%B9"><span class="toc-text">命令选项</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-text">时间表达式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E5%92%8C%E5%88%A0%E9%99%A4"><span class="toc-text">查询和删除</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A3%81%E7%9B%98"><span class="toc-text">磁盘</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA"><span class="toc-text">磁盘分区</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE"><span class="toc-text">网络配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ip%E9%85%8D%E7%BD%AE"><span class="toc-text">ip配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E6%9C%BA%E5%90%8D%E5%92%8Chost%E6%98%A0%E5%B0%84"><span class="toc-text">主机名和host映射</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B"><span class="toc-text">进程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ps%E5%91%BD%E4%BB%A4"><span class="toc-text">ps命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kill-amp-killall"><span class="toc-text">kill&amp;killall</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2"><span class="toc-text">查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pstree"><span class="toc-text">pstree</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1"><span class="toc-text">服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#service"><span class="toc-text">service</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#chkconfig"><span class="toc-text">chkconfig</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#systemctl"><span class="toc-text">systemctl</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#firewall"><span class="toc-text">firewall</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7"><span class="toc-text">动态监控</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B-1"><span class="toc-text">进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C"><span class="toc-text">网络</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-text">软件包</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#rpm"><span class="toc-text">rpm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#yum"><span class="toc-text">yum</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>[TOC]</p>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><p>Linux的文件系统时采用层级式的树状目录结构，在此结构中的最上层时根目录“/“</p>
+<p>==Linux中，一切皆文件==</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">目录	预期的内容</span><br><span class="line">/bin	二进制文件，存放了基本的指令，依据先后顺序。</span><br><span class="line">/sbin	超级管理员专用指令，依据先后顺序。</span><br><span class="line">/usr	用户安装的软件和文件。</span><br><span class="line">/usr/bin	也存放指令，依据先后顺序。</span><br><span class="line">/usr/sbin	也存放指令，依据先后顺序。</span><br><span class="line">/usr/local/	系统用户级管理员在本机自行安装自己下载的软件。</span><br><span class="line">/root	系统管理员用户root主目录。</span><br><span class="line">/home	除root用户的所有用户文件存储在这里，命名为其用户名。</span><br><span class="line">/proc	进程信息，虚拟目录，实际上为内存的映射，不占据空间，可用于获取进程的信息，修改会发生作用。</span><br><span class="line">/etc	主要放所有的系统管理所需要的配置文件和子目录。</span><br><span class="line">/tmp	存放系统产生的临时文件，这个目录任何人都能访问并且创建数据。</span><br><span class="line">/var	存放程序、缓存、登陆文件、系统日志文件，主要是经常被修改的那些。</span><br><span class="line">/var/log/	重要日志。</span><br><span class="line">/boot	Linux启动相关的文件。</span><br><span class="line">/dev	存放Linux的外部设备(Device)，操控方法和文件相同，使用需要挂载。</span><br><span class="line">/mnt	外部设备挂载时，将设备(有自己的文件系统)挂载在mnt当中。</span><br><span class="line">/lib	基本的动态链接共享库。</span><br><span class="line">/sys	一个虚拟文件系统，记录与内核相关的信息。</span><br><span class="line">/lost+found	非正常关机产生的文件。</span><br><span class="line">/opt	一些大型的或第三方的软件放置目录</span><br><span class="line">/media	软盘、光盘等设备。</span><br><span class="line">/srv	网络服务启动后所需要的数据目录。</span><br><span class="line">…	…</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="基础命令"><a href="#基础命令" class="headerlink" title="基础命令"></a>基础命令</h1><h2 id="文件目录类命令"><a href="#文件目录类命令" class="headerlink" title="文件目录类命令"></a>文件目录类命令</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">pwd 显示当前目录的绝对路径</span><br><span class="line">ls  -a 所有的，包括隐藏文件  -l 列表方式呈现 -h列出文件大小</span><br><span class="line">cd ~  返回当前用户的home目录</span><br><span class="line">mkdir 创建目录  -p创建多级目录</span><br><span class="line">rmdir 删除空目录  若非空，则带上-rf参数</span><br><span class="line">rm    -r递归  -f强制</span><br><span class="line">touch 创建空文件</span><br><span class="line">cp    拷贝文件到某目录</span><br><span class="line">mv    移动</span><br><span class="line">cat   -n显示行号</span><br><span class="line">more   基于vi，全屏幕显示 </span><br><span class="line">       空格    下一页 </span><br><span class="line">       enter   下一行</span><br><span class="line">       q       退出</span><br><span class="line">       ctrl b   上一页</span><br><span class="line">less   类似于more ，更强大       </span><br><span class="line">echo   输出内容</span><br><span class="line">head    -n 行数   显示文件开头内容  </span><br><span class="line">tail   -n  行数   显示文件结尾内容  </span><br><span class="line">&gt;      重定向（覆盖）</span><br><span class="line">&gt;&gt;     重定向（追加）</span><br><span class="line">ln     软连接（符号链接）  ln -s 文件或目录 软连接名</span><br><span class="line">history  查看执行过的历史命令  加上数字几就显示几条</span><br><span class="line">         执行历史编号为5的指令   !5</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="时间日期类指令"><a href="#时间日期类指令" class="headerlink" title="时间日期类指令"></a>时间日期类指令</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">date  时间日期</span><br><span class="line">cal   日历</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="查找指令"><a href="#查找指令" class="headerlink" title="查找指令"></a>查找指令</h2><ul>
+<li><p>find</p>
+<p><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/779.html">http://c.biancheng.net/view/779.html</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">find 搜索路径 [选项] 搜索内容</span><br><span class="line"></span><br><span class="line">-name 查询文件名  -iname表示忽略大小写</span><br><span class="line">-user 用户名  查找属于某用户的所有文件</span><br><span class="line">-size 文件大小  +大于 -小于 不写 等于</span><br><span class="line">-type d 表示只查找目录 f 表示只查找文件</span><br><span class="line">-perm-权限模式</span><br></pre></td></tr></table></figure></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">locate 快速定位文件路径 使用前用updatedb创建locate数据库</span><br><span class="line">which  查找某个指令在哪个目录下</span><br><span class="line">grep [option] pattern file 详见文本三剑客那个笔记  往往跟管道一块用</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="压缩和解压"><a href="#压缩和解压" class="headerlink" title="压缩和解压"></a>压缩和解压</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">gzip/gunzip</span><br><span class="line">gzip 压缩文件，只能将文件压缩为*.gz文件</span><br><span class="line">gunzip 文件.gz  解压文件</span><br><span class="line"></span><br><span class="line">zip/unzip</span><br><span class="line">zip [选项] XXX.zip -r 递归压缩</span><br><span class="line">unzip      -d 指定解压后文件的存放目录</span><br><span class="line"></span><br><span class="line">tar</span><br><span class="line">可以打包，也可以解压，打包的文件是 .tar.gz</span><br><span class="line">tar [选项] XXX.tar.gz 打包的内容</span><br><span class="line">    -c    产生.tar打包文件</span><br><span class="line">    -v    显示详细信息</span><br><span class="line">    -f    指定压缩后的文件名</span><br><span class="line">    -z    打包同时压缩</span><br><span class="line">    -x    解包.tar文件</span><br><span class="line">    tar -zcvf 打包</span><br><span class="line">    tar -zxvf 解包</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="用户"><a href="#用户" class="headerlink" title="用户"></a>用户</h2><p>linux系统是一个多用户多任务的操作系统，任何一个要使用系统资源的用户，都必须首先向系统管理员申请一个账号，然后以这个账号的身份进入系统</p>
+<p>==添加用户==</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">useradd 用户名</span><br></pre></td></tr></table></figure>
+
+<p>当创建用户成功后，会自动创建和用户同名的home目录</p>
+<p>也可以通过<code>useradd -d 指定目录 用户名</code>，给新创建的用户指定home目录</p>
+<p>-m 　创建用户的主目录</p>
+<p>==删除用户==</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">userdel 用户名</span><br></pre></td></tr></table></figure>
+
+<p>如果加上 -r 则把它的home目录下也删掉</p>
+<p>==修改密码==</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">passwd 用户名</span><br></pre></td></tr></table></figure>
+
+
+
+<p>==用户信息==</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">id 用户名</span><br><span class="line"></span><br><span class="line">#当前用户</span><br><span class="line">whoami</span><br></pre></td></tr></table></figure>
+
+
+
+<p>==创建用户并用来登录==</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. useradd -m 用户名</span><br><span class="line">2. passwd 用户名</span><br><span class="line">3. 输入两遍密码</span><br><span class="line">4. usermod -a -G sudo 用户名</span><br><span class="line">5. chsh -s /usr/bin/bash 用户名</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="用户组"><a href="#用户组" class="headerlink" title="用户组"></a>用户组</h2><p>类似于角色，系统可以对有共性的多个用户进行统一的管理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">1.新增组</span><br><span class="line">groupadd 组名</span><br><span class="line"></span><br><span class="line">2.删除组</span><br><span class="line">groupdel 组名</span><br><span class="line"></span><br><span class="line">3.增加用户时直接加上组</span><br><span class="line">useradd -g 用户组 用户名</span><br><span class="line"></span><br><span class="line">4.修改用户的组</span><br><span class="line">usermod -g 用户组 用户名</span><br><span class="line"></span><br><span class="line">5.修改用户的home目录</span><br><span class="line">usermod -d 目录名 用户名</span><br><span class="line"></span><br><span class="line">6.列出所有组</span><br><span class="line">cut -d: -f1 /etc/group</span><br></pre></td></tr></table></figure>
+
+<p>用户和组相关文件</p>
+<ul>
+<li><p>/etc/passwd  用户的配置文件，记录用户的各种信息</p>
+<p>用户名:口令:用户标识号:组标识号:注释性描述:主目录:登录shell</p>
+</li>
+<li><p>/etc/shadow  口令的配置文件</p>
+<p>登录名:加密口令:最后一次修改时间:最小时间间隔:最大时间间隔:警告时间:不活动时间:失效时间:标志</p>
+</li>
+<li><p>/etc/group   组的配置文件</p>
+<p>组名:口令:组标识号:组内用户列表</p>
+</li>
+</ul>
+<h1 id="运行级别"><a href="#运行级别" class="headerlink" title="运行级别"></a>运行级别</h1><p>基本运行级别：</p>
+<p>0：关机</p>
+<p>1：单用户【找回丢失密码】</p>
+<p>2∶多用户状态没有网络服务</p>
+<p>3∶多用户状态有网络服务</p>
+<p>4∶系统未使用保留给用户</p>
+<p>5∶图形界面</p>
+<p>6∶系统重启</p>
+<p>常用运行级别是3和5 ，也可以指定默认运行级别</p>
+<p>通过<code>init 数字</code>切换级别</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202307272216154.webp" alt="image-20230727221603811"></p>
+<h1 id="组和权限"><a href="#组和权限" class="headerlink" title="组和权限"></a>组和权限</h1><p>linux中的每个用户必须属于一个组，不能独立于组外</p>
+<p>linux有所有者、所在组、其他组的概念，用户所在的组是可以改变的</p>
+<ul>
+<li><p>文件/目录 所有者</p>
+<p>一般为文件的创建者</p>
+<ul>
+<li>查看文件的所有者 <code>ls -ahl</code></li>
+<li>修改文件所有者  <code>chown 用户名 文件名</code></li>
+</ul>
+</li>
+<li><p>所在组</p>
+<ul>
+<li>修改文件所在的组 <code>chgrp 组名 文件名</code></li>
+<li>修改用户所在的组 <code>usermod -g 用户组 用户名</code></li>
+</ul>
+</li>
+<li><p>其他组</p>
+<p>除文件的所有者和所在组的用户外，系统的其他用户都是文件的其他组</p>
+<ul>
+<li>修改用户所在的组   <code>usermod -g 用户组 用户名</code></li>
+<li>修改用户的home目录 <code>usermod -d 目录名 用户名</code></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>当一个用户创建一个文件时，该文件的所有权和所属组将与创建者的用户ID和组ID相关联。如果在创建文件a时，用户test属于用户组A，那么文件a将被分配给用户组A作为其所属组。但是，当用户test被移动到另一个用户组B时，文件a的所属组不会自动更改。文件a仍然保持原来的所属组A</p>
+</blockquote>
+<h1 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h1><p>crontab 进行定时任务的设置</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>任务调度：是指操作系统在某个时间执行的特定的命令或程序</p>
+<p>任务调度分类：</p>
+<p>1、系统工作：有些重要的工作必须周二不是的执行，如病毒扫描等</p>
+<p>2、个别用户工作：用户希望执行的程序，比如数据库定时备份</p>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>crontab</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">crontab [ -u user ] [ -i ] &#123; -e | -l | -r &#125;</span><br><span class="line"></span><br><span class="line">-e 编辑crontab定时任务</span><br><span class="line">-l 查询crontab任务</span><br><span class="line">-r 删除当前用户所有的crontab任务</span><br><span class="line"></span><br><span class="line">service crond restart [重启任务调度]</span><br></pre></td></tr></table></figure>
+
+<p>at</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">at [选项] [时间]</span><br><span class="line">Ctrl + D 结束at命令</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h3 id="crond"><a href="#crond" class="headerlink" title="crond"></a>crond</h3><p>设置任务调度文件：/etc/crontab</p>
+<p>设置个人任务调度：执行<code>crontab -e</code>命令</p>
+<p>接着输入任务到调度文件</p>
+<p>如<code>*/1****ls -l \etc\ &gt; /tmp/to.txt</code></p>
+<p>意思是每分钟执行ls -l \etc\ &gt; /tmp/to.txt命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* 0,3,10,13 1 * * sudo apt-get update&amp;&amp;sudo apt-get upgrade &gt;&gt; /tmp/apt-upgrade.txt</span><br></pre></td></tr></table></figure>
+
+
+
+<p>==参数==</p>
+<p>5个占位符</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>含义</th>
+<th>范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第一个*</td>
+<td>一小时当中的第几分钟</td>
+<td>0-59</td>
+</tr>
+<tr>
+<td>第二个*</td>
+<td>一天当中的第几小时</td>
+<td>0-23</td>
+</tr>
+<tr>
+<td>第三个*</td>
+<td>一个月当中的第几天</td>
+<td>1-31</td>
+</tr>
+<tr>
+<td>第四个*</td>
+<td>一年当中的第几月</td>
+<td>1-12</td>
+</tr>
+<tr>
+<td>第五个*</td>
+<td>一周当中的星期几</td>
+<td>0-7(0和7都代表星期日)</td>
+</tr>
+</tbody></table>
+<p>特殊符号</p>
+<table>
+<thead>
+<tr>
+<th>特殊符号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>*</td>
+<td>代表任何时间，比如第一个 * 就代表一小时中每分钟都执行一次</td>
+</tr>
+<tr>
+<td>,</td>
+<td>代表不连续的时间，比如 0 8,12,16***， 代表在每天的8点0分，12点0分，16点0分都执行一次</td>
+</tr>
+<tr>
+<td>-</td>
+<td>代表连续的时间范围，比如 0 5 * * 1-6, 代表周一到周六的5点.分执行命令</td>
+</tr>
+<tr>
+<td>*/n</td>
+<td>代表没隔多久执行一次，比如 */10 * * * * 代表每隔10分钟执行一次命令</td>
+</tr>
+</tbody></table>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202307241153548.webp" alt="image-20230724115330903"></p>
+<h3 id="at"><a href="#at" class="headerlink" title="at"></a>at</h3><ol>
+<li>at命令是一次性==定时计划任务==，at的守护进程atd会以后台模式运行，检查作业队列来运行。</li>
+<li>默认情况下，atd守护进程每60秒检查作业队列，有作业时，会检查作业运行时间，如果时间与当前时间匹配，则运行此作业。 n.</li>
+<li>at命令是==一次性定时计划任务==，执行完一个任务后不再执行此任务了</li>
+<li>在使用at命令的时候，一定要保证atd进程的启动，可以使用相关指令来查看</li>
+</ol>
+<h4 id="命令格式"><a href="#命令格式" class="headerlink" title="命令格式"></a>命令格式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">at [选项] [时间]</span><br><span class="line">ctrl + d结束at命令的输入</span><br><span class="line"></span><br><span class="line">可以使用 ps -ef | grep atd查看at命令是否运行</span><br></pre></td></tr></table></figure>
+
+<h4 id="命令选项"><a href="#命令选项" class="headerlink" title="命令选项"></a>命令选项</h4><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202307271148564.webp" alt="image-20230727114843148" style="zoom:67%;" />
+
+
+
+<h4 id="时间表达式"><a href="#时间表达式" class="headerlink" title="时间表达式"></a>时间表达式</h4><p>前面提到过，<code>at</code> 命令使用的是我们日常生活中所使用的时间格式，非常方便：</p>
+<ul>
+<li>YYMMDDhhmm[.ss]<br>（缩写年、月、日、小时、分钟[秒]）</li>
+<li>CCYYMMDDhhmm[.ss]<br>（完整年、月、日、小时、分钟和[秒]）</li>
+<li>now</li>
+<li>midnight</li>
+<li>noon</li>
+<li>teatime`（下午4点）</li>
+<li>AM</li>
+<li>PM</li>
+</ul>
+<p>时间和日期可以是绝对的，也可以添加一个加号 ( <em>+</em> ) 使它们相对于<em>现在</em>。在指定相对时间时，下面这些日常生活中所使用的词汇都可以使用：</p>
+<ul>
+<li>minutes</li>
+<li>hours</li>
+<li>days</li>
+<li>weeks</li>
+<li>months</li>
+<li>years</li>
+</ul>
+<p>下面是一些 <code>at</code> 命令有效表达式的示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&quot;rsync -av /home/tux me@myserver:/home/tux/&quot;</span> | at 3:30 AM tomorrow</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&quot;/opt/batch.sh ~/Pictures&quot;</span> | at 3:30 AM 08/01/2022</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">echo</span> <span class="string">&quot;echo hello&quot;</span> | at now + 3 days</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="查询和删除"><a href="#查询和删除" class="headerlink" title="查询和删除"></a>查询和删除</h4><p>随时时间的推移，我们可以忘记在 <code>at</code> 命令队列时设置了多少个任务，如果你想进行查看，可以使用 <code>atq</code> 命令：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">$</span> <span class="string">atq</span></span><br><span class="line"><span class="number">10</span> <span class="string">Thu</span> <span class="string">Jul</span> <span class="number">29</span> <span class="number">12</span><span class="string">:19:00</span> <span class="number">2021 </span><span class="string">a</span> <span class="string">tux</span></span><br><span class="line"><span class="number">9</span>  <span class="string">Tue</span> <span class="string">Jul</span> <span class="number">27</span> <span class="number">03</span><span class="string">:30:00</span> <span class="number">2021 </span><span class="string">a</span> <span class="string">tux</span></span><br><span class="line"><span class="number">7</span>  <span class="string">Tue</span> <span class="string">Jul</span> <span class="number">27</span> <span class="number">00</span><span class="string">:00:00</span> <span class="number">2021 </span><span class="string">a</span> <span class="string">tux</span></span><br></pre></td></tr></table></figure>
+
+<p>要从队列中删除任务，请使用 <code>atrm</code> 命令和任务编号。例如要删除任务 7 ：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ </span>atrm <span class="number">7</span></span><br><span class="line"><span class="variable">$ </span>atq</span><br><span class="line"><span class="number">10</span> Thu Jul <span class="number">29</span> <span class="number">12</span><span class="symbol">:</span><span class="number">19</span><span class="symbol">:</span><span class="number">00</span> <span class="number">2021</span> a tux</span><br><span class="line"><span class="number">9</span>  Tue Jul <span class="number">27</span> <span class="number">03</span><span class="symbol">:</span><span class="number">30</span><span class="symbol">:</span><span class="number">00</span> <span class="number">2021</span> a tux</span><br></pre></td></tr></table></figure>
+
+<p>如果想要查看计划任务中的具体内容，就必须查看 <code>at spool</code> 。只有 root 用户才能查看<code>at</code> spool，因此你必须使用 <code>sudo</code> 来查看 <code>spool</code> 或 <code>cat</code> 任务的内容。</p>
+<h1 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h1><h2 id="磁盘分区"><a href="#磁盘分区" class="headerlink" title="磁盘分区"></a>磁盘分区</h2><p>对linux来说无论有几个分区，分给哪一个目录使用，它都只有一个根目录，一个独立且唯一的文件结构，linux中每个分区都用来组成文件系统的一部分。</p>
+<p>linux采用了一种叫==“载入”==的处理方法，它的整个文件系统中包含了一整套文件和目录，并且将一个分区和一个目录联系起来，这时要载入的一个分区将使它的存储空间在一个目录下获得。</p>
+<p>查看挂载情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsblk</span><br></pre></td></tr></table></figure>
+
+
+
+<p>磁盘说明</p>
+<ul>
+<li>linux硬盘分IDE硬盘和SCSI硬盘，目前基本上是SCSI硬盘<ul>
+<li>对于IDE硬盘，驱动器标识符为 <code>hdx~</code>，其中“hd”表明分区所在设备的类型，这里是指IDE硬盘，”x“为盘号（a为基本盘，b为基本从属盘，c为辅助主盘，d为辅助从属盘），”~“代表分区，前四个分区用数字1-4表示，他们是主分区或扩展分区，从5开始就是逻辑分区。如 hda3 表示第一个IDE硬盘上的第三个主分区或扩展分区。</li>
+<li>对于SCSI硬盘则标识为<code>sdx~</code>，SCSI硬盘用“sd”表示分区所在设备的类型，其余则和IDE硬盘的表示方法一样。</li>
+</ul>
+</li>
+</ul>
+<h1 id="网络配置"><a href="#网络配置" class="headerlink" title="网络配置"></a>网络配置</h1><h2 id="ip配置"><a href="#ip配置" class="headerlink" title="ip配置"></a>ip配置</h2><ul>
+<li><p>自动获取，缺点是每次登录获得的ip可能不一样，那就不能作服务器</p>
+</li>
+<li><p>手动配置</p>
+<ul>
+<li><p>直接修改配置文件，<code>vi /etc/sysconfig/network-scripts/ifcfg-ens33</code></p>
+<p>要求：将ip地址配置成静态的</p>
+</li>
+<li><p><code>ifcfg-ens33</code>文件说明</p>
+<p>DEVICE=eth0  接口名（设备、网卡）</p>
+<p>HWADDR=00:0C:2x:6x:0x:xx  mac地址</p>
+<p>TYPE=Ethernet    网络类型，通常是Ethernet</p>
+<p>UUID=XXXXXXXXX   随机id</p>
+<p>ONBOOT=yes    系统启动的时候网络接口是否有效</p>
+<p>BOOTPROTO=static    [none|static|bootp|dhcp](引导时不使用协议|静态分配ip|bootp协议|dhcp协议)</p>
+<p>IPADDR=        ip地址</p>
+<p>GATEWAY=       网关</p>
+<p>DNS1=          域名解析服务器ip</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>kali网络配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">ifconfig命令用于显示当前主机中状态为“激活”的网络接口信息。</span><br><span class="line">ifconfig -a命令用于显示当前主机中所有网络接口信息（包括未激活的网络接口）</span><br><span class="line"></span><br><span class="line">route命令用于显示当前Linux系统中的路由信息，从route命令的显示结果可以看到当前主机所在的子网和默认网关的地址</span><br><span class="line"></span><br><span class="line">网卡的启用和停用：</span><br><span class="line">ifconfig up</span><br><span class="line">ifconfig down</span><br><span class="line"></span><br><span class="line">&quot;/etc/network/&quot;目录下的”interfaces&quot;文件是kali linux中最重要的网络配置文件之一，该文件用于描述主机中所有的网络接口的信息，不论Linux主机中作为DHCP客户端还是配置使用静态IP地址，都需要对该文件进行修改。</span><br><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line">auto eth0</span><br><span class="line">iface eth0 inet static //配置eth0使用默认的静态地址</span><br><span class="line">address 192.168.77.133 //设置eth0的IP地址</span><br><span class="line">netmask 255.255.255.0 //配置eth0的子网掩码</span><br><span class="line">gateway 192.168.77.254 //配置当前主机的默认网关</span><br><span class="line"></span><br><span class="line">Kali Linux的DNS服务器地址使用文件“/etc/resovl.conf”进行配置，用户可以通过“nameserver”配置项设置DNS服务器的 IP地址；“resolv.conf”文件中最多可以使用</span><br><span class="line">的DNS服务器IP地址进行域名的解析。</span><br><span class="line">在resolv.conf中的格式如下：</span><br><span class="line">domain</span><br><span class="line">nameserver 10.10.10.10</span><br><span class="line">nameserver 102.54.16.2</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="主机名和host映射"><a href="#主机名和host映射" class="headerlink" title="主机名和host映射"></a>主机名和host映射</h2><p>windows配置<code>C:\Windows\System32\drivers\etc\hosts</code></p>
+<p>kali 配置<code>/etc/hosts</code></p>
+<p>windows查看系统DNS记录和清理缓存</p>
+<p><code>ipconfig /displaydns</code></p>
+<p><code>ipconfig /flushdns</code></p>
+<h1 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h1><p>linux中每个进程都会分配一个pid号</p>
+<h2 id="ps命令"><a href="#ps命令" class="headerlink" title="ps命令"></a>ps命令</h2><p>ps是用来查看当前系统中有哪些进程正在执行以及执行状况，可以不加参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ps -a  显示所有终端下执行的进程，包含其他用户的进程</span><br><span class="line">ps -A  显示所有进程</span><br><span class="line">ps -e  和-A功能一样</span><br><span class="line">ps -H  显示树状结构，表示程序间的相互关系</span><br><span class="line">ps -f  全格式显示进程</span><br><span class="line">ps -L  根据进程查看线程</span><br><span class="line"></span><br><span class="line">ps a   显示当前终端下执行的进程</span><br><span class="line">ps c   显示进程的真实名称</span><br><span class="line">ps e   列出程序所使用的环境变量</span><br><span class="line">ps f   用ASCII字符显示树状结构，表达程序间的相互关系</span><br><span class="line">ps x   显示所有进程，无论是否运行在终端上</span><br><span class="line">ps u   显示用户相关的进程或者与用户相关的属性</span><br><span class="line">ps r   只显示正在运行的进程</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">USER，用户名称；</span><br><span class="line">PID，进程号；</span><br><span class="line">PPID 父进程</span><br><span class="line">%CPU，该进程所占用CPU百分比；</span><br><span class="line">%MEM，该进程所占用内存百分比；</span><br><span class="line">VSZ，进程所占用的虚拟内存大小；</span><br><span class="line">RSS，进程所占用的实际内存大小；</span><br><span class="line">TTY，该进程运行在哪个终端上面，若与终端无关，则显示 ?；</span><br><span class="line">STAT，进程状态；</span><br><span class="line">START，进程启动时间；</span><br><span class="line">TIME，进程实际占用CPU的时间；</span><br><span class="line">COMMAND，该进程对应的执行程序；</span><br></pre></td></tr></table></figure>
+
+
+
+<p>运行状态 stat</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>R</td>
+<td>Running.运行中</td>
+</tr>
+<tr>
+<td>S</td>
+<td>Interruptible Sleep.等待调用</td>
+</tr>
+<tr>
+<td>D</td>
+<td>Uninterruptible Sleep.等待磁盘IO</td>
+</tr>
+<tr>
+<td>T</td>
+<td>Stoped.暂停或者跟踪状态</td>
+</tr>
+<tr>
+<td>X</td>
+<td>Dead.即将被撤销</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>Zombie.进程已经结束，仅映像名留存，所谓的僵尸进程</td>
+</tr>
+<tr>
+<td>W</td>
+<td>Paging.内存交换</td>
+</tr>
+<tr>
+<td>N</td>
+<td>优先级低的进程</td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>优先级高的进程</td>
+</tr>
+<tr>
+<td>s</td>
+<td>进程的领导者</td>
+</tr>
+<tr>
+<td>L</td>
+<td>锁定状态</td>
+</tr>
+<tr>
+<td>l</td>
+<td>多线程状态</td>
+</tr>
+<tr>
+<td>+</td>
+<td>前台进程</td>
+</tr>
+</tbody></table>
+<h2 id="kill-amp-killall"><a href="#kill-amp-killall" class="headerlink" title="kill&amp;killall"></a>kill&amp;killall</h2><p><code>kill [选项] 进程号</code> 通过进程号杀进程</p>
+<p><code>killall 进程名称</code>  通过进程名称杀死进程，支持通配符</p>
+<p>常用选项</p>
+<p><code>-9</code> 强迫进程立即停止</p>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>通过端口号查询pid</p>
+<p><code>lsof -i:端口号</code></p>
+<p>根据pid查进程名</p>
+<p><code>ps -p PID -o comm=</code></p>
+<p>根据进程名查pid</p>
+<p><code>ps -C 进程名 -o pid=</code></p>
+<h2 id="pstree"><a href="#pstree" class="headerlink" title="pstree"></a>pstree</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pstree [选项]    可以更直观的查看进程信息</span><br><span class="line">-p    显示进程的pid</span><br><span class="line">-u    显示进程的所属用户</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h1><p>服务(service)本质就是进程，是运行在后台的，通常会监听某个端口，等待其他程序的请求，比如mysql,ssh,防火墙等，因此我们又称为守护进程。</p>
+<h2 id="service"><a href="#service" class="headerlink" title="service"></a>service</h2><p><code>service 服务名 [start|stop|restart|reload|status]</code></p>
+<p>在centOS7后，很多服务器不再用service而是<code>systemctl</code></p>
+<p>service指令管理的服务在<code>/etc/init.d</code>查看</p>
+<h2 id="chkconfig"><a href="#chkconfig" class="headerlink" title="chkconfig"></a>chkconfig</h2><p>该命令可以给服务的==各个运行级别==设置自 启动、关闭</p>
+<p>chkconfig 指令管理的服务在<code>/etc/init.d</code>查看</p>
+<p>在centOS7后，很多服务器不再用chkconfig而是<code>systemctl</code></p>
+<p>基本语法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chkconfig --list[|grep xxx] 查看服务</span><br><span class="line">chkconfig 服务名 config</span><br><span class="line">chkconfig --level 5 服务名 on/off</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="systemctl"><a href="#systemctl" class="headerlink" title="systemctl"></a>systemctl</h2><p>systemctl管理指令</p>
+<p>1.基本语法:systemctl [start | stop | restart | status]服务名</p>
+<p>2.systemctl指令管理的服务在/usr/lib/systemd/system查看</p>
+<p>systemctl设置服务的自启动状态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. systemctl list-unit-files [l grep服务名](查看服务开机启动状念, grep 可以进行过滤)</span><br><span class="line">2.systemctl enable 服务名(设置服务开机启动)</span><br><span class="line">3. systemctl disable 服务名(关闭服务开机启动)</span><br><span class="line">4.systemctl is-enabled服务名(查询某个服务是否是自启动的)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="firewall"><a href="#firewall" class="headerlink" title="firewall"></a>firewall</h2><ul>
+<li><p>打开或者关闭指定端口<br>在真正的生产环境，往往需要将防火墙打开，但问题来了，如果我们把防火墙打开，那么外部请求数据包就不能跟服务器监听端口通讯。这时，需要打开指定的端口。比如80、22、8080等</p>
+</li>
+<li><p>firewall指令</p>
+<ul>
+<li>打开端口: <code>firewall-cmd --permanent --add-port=端口号/协议</code></li>
+<li>关闭端口:<code>firewall-cmd --permanent --remove-port=端口号/协议</code></li>
+<li>重新载入,才能生效: <code>firewall-cmd --reload</code></li>
+<li>查询端口是否开放:<code>firewall-cmd --query-port=端口/协议</code></li>
+</ul>
+</li>
+</ul>
+<h1 id="动态监控"><a href="#动态监控" class="headerlink" title="动态监控"></a>动态监控</h1><h2 id="进程-1"><a href="#进程-1" class="headerlink" title="进程"></a>进程</h2><p>top和ps指令类似，不同在于top在执行以后可以更新正在运行的进程,类似于win的任务管理器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">top [选项]</span><br><span class="line">-d 秒数  每隔几秒更新，默认为3</span><br><span class="line">-i      不显示任何闲置或者将死的进程</span><br><span class="line">-p pid  通过监控某一进程</span><br><span class="line"></span><br><span class="line">交互操作</span><br><span class="line">p       以cpu的使用率排序</span><br><span class="line">M       以内存使用率排序</span><br><span class="line">N       以PID排序</span><br><span class="line">q       退出top</span><br><span class="line">u或U：用于筛选显示特定用户的进程。</span><br><span class="line">k或kill：向top当前选中的进程发送信号，可以用于终止或暂停某个进程。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><p>netstat</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-a  所有连接</span><br><span class="line">-t -u  TCP/UDP</span><br><span class="line">-n  只用ip</span><br><span class="line">-l  显示监听</span><br><span class="line">-p  pid</span><br><span class="line">-s  统计</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="软件包"><a href="#软件包" class="headerlink" title="软件包"></a>软件包</h1><h2 id="rpm"><a href="#rpm" class="headerlink" title="rpm"></a>rpm</h2><p>rpm用于互联网下载包的打包及安装工具，它包含在某些Linux分发版中。它生成具有.RPM扩展名的文件。RPM是RedHat Package Manager (<code>RedHat</code>软件包管理工具）的缩写，类似windows的setup.exe，这一文件格式名称虽然打上了RedHat的标志，但理念是通用的。</p>
+<p>Linux的分发版本都有采用(suse,redhat, centos等等），可以算是公认的行业标准了。</p>
+<p>rpm包的简单查询指令</p>
+<p>查询已安装的rpm列表 rpm -qa|grep xx</p>
+<p>rpm包名基本格式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">一个rpm包名:firefox-60.2.2-1.el7.centos.x86_64</span><br><span class="line">名称:firefox</span><br><span class="line">版本号:60.2.2-1</span><br><span class="line">适用操作系统: el7.centos.x86_64</span><br><span class="line">表示centos7.x的64位系统</span><br><span class="line">如果是i686、i386表示32位系统，noarch表示通用。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202307281353011.webp" alt="image-20230728135303700"></p>
+<h2 id="yum"><a href="#yum" class="headerlink" title="yum"></a>yum</h2><p>介绍:</p>
+<p>Yum是一个Shell前端软件包管理器。基行于RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软件包。</p>
+<p>yum的基本指令<br>查询yum服务器是否有需要安装的软件</p>
+<p><code>yum listlgrep xx软件列表</code></p>
+<p>安装指定的yum包<br><code>yum install xxx</code></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/07/10/7.29/AWD%E5%B9%B3%E5%8F%B0/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>AWD平台搭建</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/06/29/7.29/shell%E7%BC%96%E7%A8%8B/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      shell编程
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

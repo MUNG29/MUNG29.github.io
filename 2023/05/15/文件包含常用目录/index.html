@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        文件包含常用目录 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">文件包含常用目录</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/OWASP/" class="post-tag">#OWASP</a>
+  
+    <a href="/tags/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" class="post-tag">#文件包含</a>
+  
+
+
+          <span class="post-date">2023-05-15</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="toc-text">用户信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E6%96%87%E4%BB%B6"><span class="toc-text">系统信息文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%8F%8A%E7%A8%8B%E5%BA%8F%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF"><span class="toc-text">进程及程序相关信息</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#proc%E7%9B%AE%E5%BD%95"><span class="toc-text">&#x2F;proc目录</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SSH"><span class="toc-text">SSH</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Nginx"><span class="toc-text">Nginx</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Apache"><span class="toc-text">Apache</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tomcat"><span class="toc-text">tomcat</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#jetty"><span class="toc-text">jetty</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#resin"><span class="toc-text">resin</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#svn"><span class="toc-text">svn</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%AB%A0"><span class="toc-text">参考文章</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/etc/passwd         # 用来记录每个拥有系统访问权的注册用户</span><br><span class="line">/etc/shadow         # 密码信息，获取到后可用 John the Ripper 爆破</span><br><span class="line">/root/.bash_history # 输入命令的历史记录，还有root外的其他用户</span><br><span class="line">/root/.ssh/id_rsa   # 拿到私钥后可直接ssh登陆</span><br></pre></td></tr></table></figure>
+
+<h1 id="系统信息文件"><a href="#系统信息文件" class="headerlink" title="系统信息文件"></a>系统信息文件</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/etc/hosts          # 主机信息</span><br><span class="line">/proc/version       # 内核版本</span><br><span class="line">/proc/mounts        # 挂载的文件系统列表</span><br><span class="line">/root/.bashrc       # 环境变量信息</span><br><span class="line">/proc/net/route     # 路由表信息</span><br><span class="line">/proc/net/arp       # arp表，可以获得内网其他机器的地址</span><br><span class="line">/root/.viminfo      # vim 信息</span><br></pre></td></tr></table></figure>
+
+<h1 id="进程及程序相关信息"><a href="#进程及程序相关信息" class="headerlink" title="进程及程序相关信息"></a>进程及程序相关信息</h1><h2 id="proc目录"><a href="#proc目录" class="headerlink" title="/proc目录"></a>/proc目录</h2><p>/proc目录起到一个类似于接口的作用，当我们使用cat命令获取时，它会从内存中获取信息，来返回给用户，而目录中的数字，其实就是PID号。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/proc/$PID/cmdline 启动进程时执行的命令</span><br><span class="line">/proc/$PID/environ 该文件保存进程的环境变量</span><br><span class="line">/proc/$PID/cwd 一个符号连接, 指向进程当前的工作目录</span><br><span class="line">/proc/$PID/exe 一个符号连接, 指向被执行的二进制代码</span><br><span class="line">/proc/self/fd/[num] 进程所打开的每个文件都有一个符号连接在该子目录里, 以文件描述符命名, 这个名字实际上是指向真正的文件的符号连接</span><br><span class="line">/proc/$PID/attr 进程的属性</span><br></pre></td></tr></table></figure>
+
+<p>其中PID为进程状态[pid],可能包含有用的路径信息,可以为0000-9999,可以暴力枚举，但是我们通常我们在CTF中使用的是/proc/self/这个目录，其实/proc/self 是指向当前进程的内存。 所以我们一般使用的是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/proc/self/cmdline 启动进程时执行的命令</span><br><span class="line">/proc/self/environ 该文件保存进程的环境变量</span><br><span class="line">/proc/self/cwd 一个符号连接, 指向进程当前的工作目录</span><br><span class="line">/proc/self/exe 一个符号连接, 指向被执行的二进制代码</span><br><span class="line">/proc/self/fd/[0-99] 进程所打开的每个文件都有一个符号连接在该子目录里, 以文件描述符命名, 这个名字实际上是指向真正的文件的符号连接</span><br><span class="line">/proc/self/attr 进程的属性</span><br></pre></td></tr></table></figure>
+
+<p>其中/proc/self/fd/[0-99]所带数字为0-99，同样可以使用枚举破解。所以关于进程及程序信息获取这部分，有一个Fuzz字典。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line">/proc/self/cmdline</span><br><span class="line">/proc/self/stat</span><br><span class="line">/proc/self/status</span><br><span class="line">/proc/self/environ</span><br><span class="line">/proc/verison</span><br><span class="line">/proc/cmdline</span><br><span class="line">/proc/self/cwd</span><br><span class="line">/proc/self/fd/0</span><br><span class="line">/proc/self/fd/1</span><br><span class="line">/proc/self/fd/2</span><br><span class="line">/proc/self/fd/3</span><br><span class="line">/proc/self/fd/4</span><br><span class="line">/proc/self/fd/5</span><br><span class="line">/proc/self/fd/6</span><br><span class="line">/proc/self/fd/7</span><br><span class="line">/proc/self/fd/8</span><br><span class="line">/proc/self/fd/9</span><br><span class="line">/proc/self/fd/10</span><br><span class="line">/proc/self/fd/11</span><br><span class="line">/proc/self/fd/12</span><br><span class="line">/proc/self/fd/13</span><br><span class="line">/proc/self/fd/14</span><br><span class="line">/proc/self/fd/15</span><br><span class="line">/proc/self/fd/16</span><br><span class="line">/proc/self/fd/17</span><br><span class="line">/proc/self/fd/18</span><br><span class="line">/proc/self/fd/19</span><br><span class="line">/proc/self/fd/20</span><br><span class="line">/proc/self/fd/21</span><br><span class="line">/proc/self/fd/22</span><br><span class="line">/proc/self/fd/23</span><br><span class="line">/proc/self/fd/24</span><br><span class="line">/proc/self/fd/25</span><br><span class="line">/proc/self/fd/26</span><br><span class="line">/proc/self/fd/27</span><br><span class="line">/proc/self/fd/28</span><br><span class="line">/proc/self/fd/29</span><br><span class="line">/proc/self/fd/30</span><br><span class="line">/proc/self/fd/31</span><br><span class="line">/proc/self/fd/32</span><br><span class="line">/proc/self/fd/33</span><br><span class="line">/proc/self/fd/34</span><br><span class="line">/proc/self/fd/35</span><br><span class="line">/proc/self/fd/36</span><br><span class="line">/proc/self/fd/37</span><br><span class="line">/proc/self/fd/38</span><br><span class="line">/proc/self/fd/39</span><br><span class="line">/proc/self/fd/40</span><br><span class="line">/proc/self/fd/41</span><br><span class="line">/proc/self/fd/42</span><br><span class="line">/proc/self/fd/43</span><br><span class="line">/proc/self/fd/44</span><br><span class="line">/proc/self/fd/45</span><br><span class="line">/proc/self/fd/46</span><br><span class="line">/proc/self/fd/47</span><br><span class="line">/proc/self/fd/48</span><br><span class="line">/proc/self/fd/49</span><br><span class="line">/proc/self/fd/50</span><br><span class="line">/proc/self/fd/51</span><br><span class="line">/proc/self/fd/52</span><br><span class="line">/proc/self/fd/53</span><br><span class="line">/proc/self/fd/54</span><br><span class="line">/proc/self/fd/55</span><br><span class="line">/proc/self/fd/56</span><br><span class="line">/proc/self/fd/57</span><br><span class="line">/proc/self/fd/58</span><br><span class="line">/proc/self/fd/59</span><br><span class="line">/proc/self/fd/60</span><br><span class="line">/proc/self/fd/61</span><br><span class="line">/proc/self/fd/62</span><br><span class="line">/proc/self/fd/63</span><br><span class="line">/proc/self/fd/64</span><br><span class="line">/proc/self/fd/65</span><br><span class="line">/proc/self/fd/66</span><br><span class="line">/proc/self/fd/67</span><br><span class="line">/proc/self/fd/68</span><br><span class="line">/proc/self/fd/69</span><br><span class="line">/proc/self/fd/70</span><br><span class="line">/proc/self/fd/71</span><br><span class="line">/proc/self/fd/72</span><br><span class="line">/proc/self/fd/73</span><br><span class="line">/proc/self/fd/74</span><br><span class="line">/proc/self/fd/75</span><br><span class="line">/proc/self/fd/76</span><br><span class="line">/proc/self/fd/77</span><br><span class="line">/proc/self/fd/78</span><br><span class="line">/proc/self/fd/79</span><br><span class="line">/proc/self/fd/80</span><br><span class="line">/proc/self/fd/81</span><br><span class="line">/proc/self/fd/82</span><br><span class="line">/proc/self/fd/83</span><br><span class="line">/proc/self/fd/84</span><br><span class="line">/proc/self/fd/85</span><br><span class="line">/proc/self/fd/86</span><br><span class="line">/proc/self/fd/87</span><br><span class="line">/proc/self/fd/88</span><br><span class="line">/proc/self/fd/89</span><br><span class="line">/proc/self/fd/90</span><br><span class="line">/proc/self/fd/91</span><br><span class="line">/proc/self/fd/92</span><br><span class="line">/proc/self/fd/93</span><br><span class="line">/proc/self/fd/94</span><br><span class="line">/proc/self/fd/95</span><br><span class="line">/proc/self/fd/96</span><br><span class="line">/proc/self/fd/97</span><br><span class="line">/proc/self/fd/98</span><br><span class="line">/proc/self/fd/99</span><br><span class="line">/proc/sched_debug</span><br><span class="line">/proc/mounts</span><br><span class="line">/proc/net/arp</span><br><span class="line">/proc/net/route</span><br><span class="line">/proc/net/tcp</span><br><span class="line">/proc/net/udp</span><br><span class="line">/proc/net/fib_trie</span><br></pre></td></tr></table></figure>
+
+<h1 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a>SSH</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/root/.ssh/id_rsa</span><br><span class="line">/root/.ssh/id_rsa.pub</span><br><span class="line">/root/.ssh/authorized_keys</span><br><span class="line">/etc/ssh/sshd_config</span><br><span class="line">/var/log/secure</span><br></pre></td></tr></table></figure>
+
+<h1 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/etc/nginx/nginx.conf</span><br><span class="line">/var/www/html</span><br><span class="line">/usr/local/services/nginx-1.6.2/logs/access.log     #根据情况替换[version]</span><br><span class="line">/usr/local/services/nginx-[version]/logs/error.log</span><br><span class="line">/usr/local/services/nginx-[version]/nginx.conf</span><br><span class="line">/usr/local/services/nginx-[version]/conf/nginx.conf</span><br><span class="line">/usr/local/services/nginx-[version]/conf/proxy.conf</span><br><span class="line">/usr/local/services/nginx-[version]/conf/extra/haolaiyao.conf</span><br></pre></td></tr></table></figure>
+
+<h1 id="Apache"><a href="#Apache" class="headerlink" title="Apache"></a>Apache</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/home/httpd/</span><br><span class="line">/home/httpd/www/</span><br></pre></td></tr></table></figure>
+
+<h1 id="tomcat"><a href="#tomcat" class="headerlink" title="tomcat"></a>tomcat</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/services/apache-tomcat-8.0.23/logs       #根据情况替换[version]</span><br><span class="line">/usr/local/services/apache-tomcat-[version]/logs/catalina.out</span><br></pre></td></tr></table></figure>
+
+<h1 id="jetty"><a href="#jetty" class="headerlink" title="jetty"></a>jetty</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/services/jetty-8.1.16/                   #根据情况替换[version]</span><br><span class="line">/usr/local/services/jetty-8.1.16/logs/stderrout.log</span><br><span class="line">/usr/local/services/jetty-8.1.16/etc/jetty.xml</span><br></pre></td></tr></table></figure>
+
+<h1 id="resin"><a href="#resin" class="headerlink" title="resin"></a>resin</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/services/resin-4.0.44/                   #根据情况替换[version]</span><br><span class="line">/usr/local/services/resin-4.0.44/conf/resin.xml</span><br><span class="line">/usr/local/services/resin-4.0.44/conf/resin.properties</span><br></pre></td></tr></table></figure>
+
+<h1 id="svn"><a href="#svn" class="headerlink" title="svn"></a>svn</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/svnroot/</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p>[浅谈 Linux系统 proc](<a target="_blank" rel="noopener" href="https://patrilic.top/2019/09/11/%E6%B5%85%E8%B0%88">https://patrilic.top/2019/09/11/浅谈</a> Linux系统 Proc/)<br><a target="_blank" rel="noopener" href="https://www.codenong.com/cs107071361/">一些CTF 做题的tricks</a></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/05/19/%E9%99%90%E5%88%B6php%E6%89%A7%E8%A1%8C/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>限制php执行</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/05/14/%E5%8C%85%E5%90%AB%E5%9F%BA%E7%A1%80/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      文件包含基础
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

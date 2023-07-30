@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        各种编码 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">各种编码</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/MISC/" class="post-tag">#MISC</a>
+  
+
+
+          <span class="post-date">2023-06-06</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>base 编码可是 ctf 比赛中的常客了，我们通常用结尾的等号和字符判断 base 编码类型</p>
+<p>base64 编码由（ A-Z、a-z、0-9、+、/）64个字符组成，根据编码原理，base64 末尾最多有两个等号，当字符串出现多个等号时，可以考虑 base32</p>
+<p>但是有很多编码和base编码非常相似，下面总结了一些，并列出辨别他们的方法</p>
+<ul>
+<li><p>Rabbit,AES,DES</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bash</span><br><span class="line">复制代码U2FsdGVkX1/SvkGkNmN/u52RqOQ=</span><br></pre></td></tr></table></figure>
+
+<p>辨别方法：U2 开头</p>
+<p>解密网站：<a href="https://link.juejin.cn/?target=http://www.fly63.com/tool/cipher/">www.fly63.com/tool/cipher…</a></p>
+</li>
+<li><p>gzip</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ini</span><br><span class="line">复制代码<span class="attr">eJxLy0lMrzYxtEi2NExOtExLMTcyTDMwMzdLNDFJsjQ0TUk0NU41rgUA4UoLJg</span>==</span><br></pre></td></tr></table></figure>
+
+<p>辨别方法：ejx 开头</p>
+<p>解密网站：<a href="https://link.juejin.cn/?target=https://codebeautify.org/gzip-decompress-online">codebeautify.org/gzip-decomp…</a></p>
+</li>
+<li><p>jwt</p>
+<p>因为 jwt 分为三部分，之间通过点号分隔，前两部分就是 base64 编码的所以直接可以 base64 解码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">复制代码eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span><br></pre></td></tr></table></figure>
+
+<p>辨别方法：eyJ</p>
+<p>解密网站：<a href="https://link.juejin.cn/?target=https://jwt.io/">jwt.io/</a></p>
+</li>
+<li><p>方正jiam、jiemi编码</p>
+<p>这个可以说是方正公司自己定的编码规则了，具体可以看这篇文章 <a href="https://link.juejin.cn/?target=https://wooyun.js.org/drops/%E7%94%B1%E2%80%9C%E6%AD%A3%E6%96%B9%E2%80%9Djiam%E3%80%81jiemi%E4%B9%8B%E9%80%86%E5%90%91%E6%80%9D%E5%8F%8ABase64%E4%B9%8B%E9%80%86%E7%BC%96%E7%A0%81%E8%A1%A8.html">Link</a></p>
+</li>
+<li><p>base64x</p>
+<p>base64 的乱序版</p>
+<p><a href="https://link.juejin.cn/?target=https://www.biaodianfu.com/base-64x.html">参考链接</a></p>
+</li>
+<li><p>最后是base全家桶集合</p>
+<ol>
+<li><p>Base16</p>
+<p>包含字母：<code>0123456789ABCDEF</code></p>
+</li>
+<li><p>Base32</p>
+<p>包含字母：<code>ABCDEFGHIJKLMNOPQRSTUVWXYZ234567</code></p>
+</li>
+<li><p>base36</p>
+<p>包含字母：<code>0123456789abcdefghijklmnopqrstuvwxyz</code></p>
+</li>
+<li><p>base62</p>
+<p>包含字母：<code>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz</code></p>
+</li>
+<li><p>Base64</p>
+<p>包含字母：<code>ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/</code></p>
+</li>
+<li><p>base58</p>
+<p>包含字母：<code>123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz</code></p>
+</li>
+<li><p>Base85</p>
+<p>包含字母：Base85也称为Ascii85</p>
+<p>US-ASCII 模式包含以下字符</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">less</span>复制代码&lt;~<span class="selector-tag">9jqo</span>^<span class="selector-tag">BlbD-BleB1DJ</span>+*+<span class="selector-tag">F</span>(f,q/<span class="number">0</span>JhKF&lt;GL&gt;Cj@.<span class="number">4</span>Gp$d7F!,L7@&lt;<span class="number">6</span>@)/<span class="selector-tag">0JDEF</span>&lt;<span class="selector-tag">G%</span>&lt;+<span class="selector-tag">EV</span>:<span class="selector-tag">2F</span>!,</span><br><span class="line"><span class="selector-tag">O</span>&lt;<span class="selector-tag">DJ</span>+*.@&lt;*<span class="selector-tag">K0</span>@&lt;<span class="selector-tag">6L</span>(Df-\<span class="number">0</span>Ec5e;DffZ(EZee.Bl.<span class="number">9</span>pF&quot;AGXBPCsi+DGm&gt;<span class="variable">@3BB</span>/F*&amp;OCAfu2/AKY</span><br><span class="line">i(<span class="attribute">DIb</span>:<span class="variable">@FD</span>,*)+C]U=<span class="variable">@3BN</span>#EcYf8ATD3s<span class="variable">@q</span>?d$AftVqCh[NqF&lt;<span class="attribute">G</span>:<span class="number">8</span>+<span class="attribute">EV</span>:.+Cf&gt;-FD5W8ARlolDIa</span><br><span class="line">l(DId&lt;j@&lt;?<span class="number">3</span>r@:F%a+D58&#x27;ATD4$Bl<span class="variable">@l3De</span>:,-DJs`<span class="number">8</span>ARoFb/<span class="number">0</span>JMK<span class="variable">@qB4</span>^F!,R&lt;AKZ&amp;-DfTqBG%G</span><br><span class="line">&gt;uD.RTpAKYo&#x27;+CT/<span class="number">5</span>+Cei#DII?(E,<span class="number">9</span>)oF*<span class="number">2</span>M7/c~&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>base91</p>
+<p>包含字母：<code>ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789</code></p>
+</li>
+<li><p>base92</p>
+<p>包含字母：<code>!#$%&amp;&#39;()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz&#123;|&#125;</code></p>
+</li>
+<li><p>base128</p>
+<p>包含字母：<code>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\xb5\xb6\xb7\xbc\xbd\xbe\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff</code></p>
+</li>
+</ol>
+<p>要使用python脚本解码可以看这篇文章：<a href="https://link.juejin.cn/?target=https://www.cnblogs.com/pcat/p/11625834.html">www.cnblogs.com/pcat/p/1162…</a></p>
+</li>
+</ul>
+<p>参考</p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7085521513817833479">https://juejin.cn/post/7085521513817833479</a></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/06/08/%E9%9B%B6%E5%AE%BD%E9%9A%90%E5%86%99/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>零宽隐写</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/06/04/2023-06-04/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      2023-6-4
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        Hash长度扩展攻击 | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">Hash长度扩展攻击</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E9%80%9A%E7%94%A8/" class="post-tag">#通用</a>
+  
+
+
+          <span class="post-date">2023-07-18</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Hash-%E7%AE%97%E6%B3%95"><span class="toc-text">Hash 算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#md5%E7%AE%97%E6%B3%95"><span class="toc-text">md5算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hash%E9%95%BF%E5%BA%A6%E6%8B%93%E5%B1%95%E6%94%BB%E5%87%BB"><span class="toc-text">Hash长度拓展攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E5%88%A9%E7%94%A8%E5%B7%A5%E5%85%B7x3"><span class="toc-text">相关利用工具x3</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>[TOC]</p>
+<p><a target="_blank" rel="noopener" href="https://wiki.wgpsec.org/knowledge/ctf/Hash-Leng-Extension.html">https://wiki.wgpsec.org/knowledge/ctf/Hash-Leng-Extension.html</a></p>
+<h1 id="Hash-算法"><a href="#Hash-算法" class="headerlink" title="Hash 算法"></a>Hash 算法</h1><p>Hash 算法也被称为 散列算法，就是把任意长度的输入通过散列算法变换成固定长度的输出，该输出就是散列值。</p>
+<p>简单来说，就是一种通过单向函数加密明文生成消息摘要的算法。</p>
+<p>常见的 Hash 函数有 md5 和 sha-1 两种。以 MD5 为例：</p>
+<h2 id="md5算法"><a href="#md5算法" class="headerlink" title="md5算法"></a>md5算法</h2><p><strong>MD5信息摘要算法</strong>，一种被广泛使用的密码散列函数，可以产生出一个128位（16字节）的散列值（hash value），用于确保信息传输完整一致。</p>
+<blockquote>
+<p>MD5算法的原理可简要的叙述为：MD5 码以 512 位分组来处理输入的信息，且每一分组又被划分为 16 个 32 位子分组，经过了一系列的处理后，算法的输出由四个 32 位分组组成，将这四个 32 位分组级联后将生成一个 128 位散列值。</p>
+</blockquote>
+<p>MD5 算法中，最重要的就是一点就是 <strong>补位。</strong></p>
+<p><strong>补位</strong></p>
+<p>在 MD5 算法中，首先需要对信息进行填充，这个数据按位(bit)补充，要求最终的位数对 512 求模的结果为 448。</p>
+<p><strong>补位方式</strong></p>
+<p>在消息的后面加上一个 1，然后无限补 0，满足 <strong>M mod 512 == 448</strong> 为止。</p>
+<p><strong>为什么只补到 448 位？</strong></p>
+<p>因为剩下的 8字节（64位）要用来储存原消息的长度。</p>
+<p>例如：12 34 56 78 在这里会存储为 78 56 34 12</p>
+<blockquote>
+<p><strong>计算消息摘要这里就不详细讲解了。</strong></p>
+</blockquote>
+<h2 id="Hash长度拓展攻击"><a href="#Hash长度拓展攻击" class="headerlink" title="Hash长度拓展攻击"></a>Hash长度拓展攻击</h2><p>从一道题目入手：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;secret.php&quot;</span>;</span><br><span class="line">@<span class="variable">$username</span>=(<span class="keyword">string</span>)<span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>]; </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">enc</span>(<span class="params"><span class="variable">$text</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">global</span> <span class="variable">$key</span>;</span><br><span class="line">    <span class="keyword">return</span> md5(<span class="variable">$key</span>.<span class="variable">$text</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(enc(<span class="variable">$username</span>) === <span class="variable">$_COOKIE</span>[<span class="string">&#x27;verify&#x27;</span>])&#123;</span><br><span class="line">    <span class="keyword">if</span>(is_numeric(strpos(<span class="variable">$username</span>, <span class="string">&quot;admin&quot;</span>)))&#123;</span><br><span class="line">        flag</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;you are not admin&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    setcookie(<span class="string">&quot;verify&quot;</span>, enc(<span class="string">&quot;guest&quot;</span>), time()+<span class="number">60</span>*<span class="number">60</span>*<span class="number">24</span>*<span class="number">7</span>);</span><br><span class="line">    setcookie(<span class="string">&quot;len&quot;</span>, strlen(<span class="variable">$key</span>), time()+<span class="number">60</span>*<span class="number">60</span>*<span class="number">24</span>*<span class="number">7</span>);</span><br><span class="line">&#125;</span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>抓包可得到：</p>
+<ul>
+<li>md5($key.”guest”)=f8d7a112644f7e71e1e8ad068f144f61</li>
+<li>len($key)=21</li>
+</ul>
+<p>先进行 hash 长度扩展：</p>
+<p>$key 的长度为 21 个字节，后面是字符串 guest，补位到 448 位。</p>
+<p>计算数据长度：hex( (21+5)*8 ) =0xD0，再填充剩余位数。</p>
+<p>代码要求 POST 的值要有 admin 这一字符串，所以添加一个 admin 在末尾作为拓展。</p>
+<p>得到 $username ：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">guest\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xD0\x00\x00\x00\x00\x00\x00\x00admin</span><br></pre></td></tr></table></figure>
+
+<p>这里需要把 \x 转换为 %（url 编码）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">guest%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%d0%00%00%00%00%00%00%00admin</span><br></pre></td></tr></table></figure>
+
+<p>为了让判断成立，还需要计算出拓展之后的 cookie。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if(enc($username) === $_COOKIE[&#x27;verify&#x27;])</span><br></pre></td></tr></table></figure>
+
+<p>得到 flag：</p>
+<p><img src="https://pic2.zhimg.com/80/v2-75cbf2723bd0e20fb94a97a13e19fe6d_720w.webp" alt="img"></p>
+<h2 id="相关利用工具x3"><a href="#相关利用工具x3" class="headerlink" title="相关利用工具x3"></a>相关利用工具x3</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pcat/p/5478509.html">https://www.cnblogs.com/pcat/p/5478509.html</a></p>
+<p><strong>hashpump</strong></p>
+<p>在各种哈希算法中哈希长度扩展攻击的利用工具。</p>
+<p>下载地址：<a href="https://link.zhihu.com/?target=https://github.com/bwall/HashPump">https://github.com/bwall/HashPump</a></p>
+<p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/bwall/HashPump</span><br><span class="line">apt-get install g++ libssl-dev</span><br><span class="line">cd HashPump</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+<p>这里以一个<a target="_blank" rel="noopener" href="http://www.shiyanbar.com/ctf/1848">实验吧题目</a>为例，关键的代码大概如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$secret=&quot;XXXXXXXXXXXXXXX&quot;; // This secret is 15 characters long for security!</span><br><span class="line">$username=&quot;admin&quot;;</span><br><span class="line">$password = $_POST[&quot;password&quot;];</span><br><span class="line">if($COOKIE[&quot;getmein&quot;] === md5($secret . urldecode($username . $password)))&#123;</span><br><span class="line">    echo &quot;Congratulations! You are a registered user.\n&quot;;</span><br><span class="line">    die (&quot;The flag is &quot;. $flag);</span><br><span class="line">&#125;else&#123;</span><br><span class="line">    die(&quot;Your cookies don&#x27;t match up! STOP HACKING THIS SITE.&quot;);</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在题目里可以得到:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">md5($secret.&quot;adminadmin&quot;)的值为571580b26c65f306376d4f64e53cb5c7</span><br></pre></td></tr></table></figure>
+
+<p>稍微整理下我们已经知道的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$secret是密文，长度为15，如果再算上后面第一个admin，长度就是20</span><br><span class="line">而数据是$_POST[&quot;password&quot;]这里admin</span><br><span class="line">签名（哈希值）是571580b26c65f306376d4f64e53cb5c7</span><br></pre></td></tr></table></figure>
+
+<p>这时候我们使用HashPump，附加数据至少1位以上：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># hashpump</span><br><span class="line">Input Signature: 571580b26c65f306376d4f64e53cb5c7</span><br><span class="line">Input Data: admin  //注意这个admin是第二个不是第一个</span><br><span class="line">Input Key Length: 20   //secret的长度加上username也就是第一个admin的chan</span><br><span class="line">Input Data to Add: pcat  //随便加</span><br></pre></td></tr></table></figure>
+
+<p>或者直接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hashpump -s 571580b26c65f306376d4f64e53cb5c7 -d admin -k 20 -a pcat</span><br></pre></td></tr></table></figure>
+
+<p>就会得到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">3e67e8f0c05e1ad68020df30bbc505f5</span><br><span class="line">admin\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc8\x00\x00\x00\x00\x00\x00\x00pcat</span><br></pre></td></tr></table></figure>
+
+<p>第一个是新的签名，把它设置到cookies的getmein里。</p>
+<p>第二个先把\x替换为%后，post提交</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">password=admin%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%c8%00%00%00%00%00%00%00pcat</span><br></pre></td></tr></table></figure>
+
+<p>就可以通过了。</p>
+<p><strong>hash_extender</strong></p>
+<p>哈希扩展器。</p>
+<p>下载地址：<a href="https://link.zhihu.com/?target=https://github.com/iagox86/hash_extender">https://github.com/iagox86/hash_extender</a></p>
+<p><strong>md5-extension-attack</strong></p>
+<p>MD5 长度扩展攻击工具。</p>
+<p>下载地址：<a href="https://link.zhihu.com/?target=https://github.com/JoyChou93/md5-extension-attack">https://github.com/JoyChou93/md</a></p>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <div class="post-nav-item-left"></div>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/07/18/7.29/nodejs%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      nodejs开发基础
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

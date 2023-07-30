@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        HttpServlet | 东隅's blog
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/jocker.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/jocker.png"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 5.4.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/jocker.png" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/%E5%AE%89%E5%85%A8">安全</a>
+            
+              <a class="nav-menu-item" href="/%E5%BC%80%E5%8F%91">开发</a>
+            
+              <a class="nav-menu-item" href="/%E7%94%9F%E6%B4%BB">生活</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">HttpServlet</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/java/" class="post-tag">#java</a>
+  
+    <a href="/tags/servlet/" class="post-tag">#servlet</a>
+  
+
+
+          <span class="post-date">2023-05-01</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HttpServlet%E6%8A%BD%E8%B1%A1%E7%B1%BB"><span class="toc-text">HttpServlet抽象类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">常用方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E5%9F%9F%E5%AF%B9%E8%B1%A1"><span class="toc-text">应用域对象</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%B7%E6%B1%82%E5%9F%9F%E5%AF%B9%E8%B1%A1"><span class="toc-text">请求域对象</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="HttpServlet抽象类"><a href="#HttpServlet抽象类" class="headerlink" title="HttpServlet抽象类"></a>HttpServlet抽象类</h1><p>GenericServlet类实现了javax.servlet.Servlet接口，为程序开发提供了方便，但是实际开发中更多的还是使用servlet处理http请求并作出响应，所以继承GenericServlet类仍不是很方便，而javax.servlet.http.HttpServlet类对GenericServlet类进行了继承和扩展，它也是一个抽象类，提供了doGet()、doPost()等方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span>  <span class="keyword">abstract</span> HttpServlet extends GenericServlet implements <span class="title">Serializable</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h1><p>1.获得信息</p>
+<blockquote>
+<p>getRequestURL方法返回客户端发出请求时的完整URL。</p>
+<p>getRequestURI方法返回主机名到请求参数之间部分。</p>
+<p>getQueryString 方法返回请求行中的参数部分，如Myservlet?name=x，返回name=x。</p>
+<p>getRemoteAddr方法返回发出请求的客户机的IP地址</p>
+<p>getMethod得到客户机请求方式</p>
+<p>getServerPath获取请求的文件的路径，不含参数</p>
+<p>getCookies获得所有cookie对象</p>
+<p>getSession获得与请求关联的HttpSession对象</p>
+</blockquote>
+<p>2.获得请求头</p>
+<blockquote>
+<p>getHeader(string name)方法<br>getHeaders(String name)方法<br>getHeaderNames方法 </p>
+</blockquote>
+<p>3.HttpServletRequst常用方法</p>
+<blockquote>
+<p>==String getParameter(“username”)==：返回指定名字参数的值，最常用</p>
+<p>String[] getParameterValues(“hobby”)：返回指定名字参数的多个参数值。(复选框)</p>
+<p>Enumeration<String> getParameterNames()：返回所有参数名的 Enumeration 对象 </p>
+<p>Map&lt;String,String[]&gt; getParameterMap()：返回所有的参数和值所组成的Map对象</p>
+<p>setCharacterEncoding(“UTF-8”):设置请求体的字符集，可以用来解决中文乱码</p>
+<p>getContextPath():是jsp中获取路径的一种方式，返回当前页面所在的应用的名字如/dmsd-itoo-exam-log-web</p>
+<p>getServerPort()，返回当前页面所在的服务器使用的端口，80；</p>
+</blockquote>
+<p>4.HttpServletResponse常用方法</p>
+<blockquote>
+<p>OutputStream getOutputStream()：获取字节输出流对象( 文件下载)。   </p>
+<p>PrintWriter  getWriter(): 获取字符输出流对象</p>
+<p>response.setContentType(“text/html;charset=UTF-8”)，设置输出的MIME类型(内容的类型)</p>
+<p>response.setCharacterEncoding(“UTF-8”)，response.setContentType(“text/html;charset=utf-8”)，设置输出数据的编码方式   </p>
+<p>public void addCookie(): 写入cookie</p>
+<p>public void sendError(int sc,[string msg]):发送一个错误状态码，如果有msg就也发送msg（错误信息）</p>
+<p>public void sendRedirect(String location): 从定向到新的url</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">response.setContentType(“text/html;charset=UTF-<span class="number">8</span>”);</span><br><span class="line">PrintWriter out=response.getWriter()</span><br><span class="line">out.print(<span class="string">&quot;大家好，我是一名java软件工程师&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="应用域对象"><a href="#应用域对象" class="headerlink" title="应用域对象"></a>应用域对象</h1><p>ServletContext -&gt; web.xml,相当于一种缓存技术，用户共享、数据量小、很少修改的数据放到这里可以提高系统性能，因为是放在缓存中而不是数据库那种硬盘中，缓存技术还有线程池、数据库连接池、整数常量池、redis等。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*获得ServletContext对象*/</span></span><br><span class="line">ServletContext  context = <span class="keyword">this</span>.getServletContext() <span class="comment">//应用域</span></span><br><span class="line">ServletContext  context = <span class="keyword">this</span>.getservletConfig().getservletcontext()</span><br><span class="line">    </span><br><span class="line">ServletContext  context = request.getServletContext() <span class="comment">//请求域</span></span><br></pre></td></tr></table></figure>
+
+<p>ServletContext中有三个操作域的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setAttribute</span><span class="params">(String name,Object obj)</span></span>;<span class="comment">//向域中绑定数据</span></span><br><span class="line"><span class="function">Object <span class="title">getAttribute</span><span class="params">(String name)</span></span>;  <span class="comment">//从域中根据name获取数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">removeAtribute</span><span class="params">(String name)</span></span>;  <span class="comment">//将域中绑定的数据移除</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//以上操作类似于Map集合的操作</span></span><br><span class="line">Map&lt;String,Object&gt; map;</span><br><span class="line">map.put(<span class="string">&quot;name&quot;</span>,obj);  <span class="comment">//向map集合中放key和value</span></span><br><span class="line">Object obj=map.get(<span class="string">&quot;name&quot;</span>); <span class="comment">//通过map集合的key获取value</span></span><br><span class="line">map.remove(<span class="string">&quot;name&quot;</span>); <span class="comment">//通过Map集合的key删除key和value这个键值对</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="请求域对象"><a href="#请求域对象" class="headerlink" title="请求域对象"></a>请求域对象</h1><p>请求域对象生命周期只限于一次请求内</p>
+<p>它也有应用域那三个方法,request.setAttribute这样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setAttribute</span><span class="params">(String name,Object obj)</span></span>;<span class="comment">//向域中绑定数据</span></span><br><span class="line"><span class="function">Object <span class="title">getAttribute</span><span class="params">(String name)</span></span>;  <span class="comment">//从域中根据name获取数据</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">removeAtribute</span><span class="params">(String name)</span></span>;  <span class="comment">//将域中绑定的数据移除</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/05/02/%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA%E6%AD%A5%E9%AA%A4/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>项目创建步骤</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/04/29/%E8%B5%84%E6%BA%90%E7%BB%91%E5%AE%9A/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      资源绑定
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">安</div><div class="matts">得</div><div class="matts">倚</div><div class="matts">天</div><div class="matts">剑</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">跨</div><div class="matts">海</div><div class="matts">斩</div><div class="matts">长</div><div class="matts">鲸</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://blog.huamang.xyz/">huamang</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://www.cnblogs.com/Aurora-M/">Aurora</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:735587142@qq.com?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/MUNG29">github</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/QQ.png"/>
+                    <a class="foot-link" href="">735587142</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:735587142@qq.com">735587142@qq.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="https://MUNG29.github.io">东隅's blog</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>
